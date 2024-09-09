@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --corPrincipal: #3F1651;
+    --corHover: #331241;
+    --corFonte: black;
+    --corBg: #ffff;
+    --corBg2: #EBE0F0;
+    --corActive: #230d2c;
+}
+
+* {
+    font-family: "DM Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.login-page-container {
+    background: var(--corBg2);
+}
+
+.login-page-content {
+    max-width: 70vw;
+    width: 70vw;
+}
+
+
+.box-area{
+    height: 80%;
+    width: 80%;
+}
+
+.container {
+    text-align: center;
+}
+
+.left-box p {
+    font-weight: 800;
+    font-size: 26px;
+    margin-top: -10px;
+    margin-bottom: 5px;
+}
+
+.left-box small {
+    width: 17rem;
+    margin-bottom: 20px;
+}
+
+
+.redefinir {
+    width: 100%;
+    text-align: end;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.right-box {
+    padding: 40px 30px 40px 40px;
+}
+
+.right-box h2 {
+    font-size: 26px;
+    color: var(--corPrincipal);
+    font-weight: 800;
+}
+
+.right-box input {
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.btn-login {
+    width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    background: var(--corPrincipal);
+    border: none;
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: var(--corBg);
+    text-transform: uppercase;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+    &:hover {
+        background: var(--corHover);
+        color: var(--corBg);
+    }
+
+    &:active {
+        background: var(--corActive);
+        color: var(--corBg);
+    }
+}
+
+
+.btn-link {
+    text-decoration: none;
+    color: var(--corPrincipal);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        color: var(--corHover);
+    }
+
+    &:active {
+        color: var(--corActive);
+    }
+}
+
+.btn-cadastro {
+    margin-bottom: 20px;
+}
+
+.campotxt {
+    width: 100%;
+    border: 1px solid var(--corPrincipal);
+    background: white;
+}
+
+.div-redef {
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+
+@media screen and (max-800px) {
+    .box-area {
+        margin: 0 10px;
+    }
+    .left-box {
+        height: 100px;
+        overflow: hidden;
+    }
+    .right-box {
+        padding: 20px;
+    }
+}
+
+
+/* ------- CONFIGURANDO O POPUP DE REDEFINIÇÃO DE SENHA ------ */
+.container-redef-senha .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1100;
+    display: none;
+}
+
+.container-redef-senha .formulario {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%) scale(0);
+    background: var(--corBg);
+    width: 540px;
+    height: 300px;
+    z-index: 1200;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid var(--corPrincipal);
+    border-radius: 15px;
+}
+
+.formulario p {
+    margin-bottom: 20px;
+}
+
+.container-redef-senha .btn-fechar {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 30px;
+    background: var(--corPrincipal);
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--corHover);
+    }
+
+    &:active {
+        background: var(--corActive);
+    }
+}
+
+.container-redef-senha.active .overlay {
+    display: block;
+}
+
+.container-redef-senha.active .formulario {
+    transition: all 250ms ease-in-out;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.container-redef-senha .formulario form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.container-redef-senha .formulario form h2 {
+    font-weight: 800;
+    color: var(--corPrincipal);
+    font-size: 30px;
+}
+
+.container-redef-senha .formulario form label {
+    font-weight: 800;
+    color: var(--corFonte);
+    font-size: 16px;
+    margin-top: 10px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.container-redef-senha .formulario .campotxt {
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    padding: 1%;
+    font-size: 16px;
+    border: 1px solid var(--corPrincipal);
+}
+
+
+#btnEnviar {
+    background: var(--corPrincipal);
+    margin-top: 5px;
+    font-weight: 800;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    &:hover {
+        background: var(--corHover)
+    }
+
+    &:active {
+        background: var(--corActive);
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .container-redef-senha .formulario {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        text-align: center;
+        transform: translate(-50%, -50%) scale(0);
+        background: var(--corBg);
+        width: 95%;
+        height: 370px;
+        z-index: 1200;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 2px solid var(--corPrincipal);
+        border-radius: 15px;
+    }
+
+    .container-redef-senha .formulario h1 {
+        font-size: 20px;
+        margin-top: -30px;
+    }
+}
+
+/* ------- CONFIGURANDO O POPUP DE MENSAGEM DE SUCESSO ------ */
+.container-sucesso .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1200;
+    display: none;
+}
+
+.container-sucesso .content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%) scale(0);
+    background: var(--corBg);
+    width: 450px;
+    height: 200px;
+    z-index: 1200;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid var(--corPrincipal);
+    border-radius: 15px;
+}
+
+.container-sucesso .btn-ok {
+    width: 70px;
+    background: var(--corPrincipal);
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: -10px;
+
+    &:hover {
+        background: var(--corHover);
+    }
+
+    &:active {
+        background: var(--corActive);
+    }
+}
+
+.container-sucesso.active .overlay {
+    display: block;
+}
+
+.container-sucesso.active .content {
+    transition: all 250ms ease-in-out;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+
+
+.container-sucesso h2 {
+    margin-top: 15px;
+    font-weight: 800;
+    color: var(--corPrincipal);
+    font-size: 30px;
+}
+
+.container-sucesso p {
+    font-size: 18px;
+    color: var(--corFonte);
+    font-weight: 400;
+}
+
+
+
+@media screen and (max-width: 800px) {
+    .container-sucesso .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        text-align: center;
+        transform: translate(-50%, -50%) scale(0);
+        background: var(--corBg);
+        width: 95%;
+        height: 230px;
+        z-index: 1200;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 2px solid var(--corPrincipal);
+        border-radius: 15px;
+    }
+
+    .container-sucesso .formulario h1 {
+        font-size: 20px;
+        margin-top: -30px;
+    }
+}

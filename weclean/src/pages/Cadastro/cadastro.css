@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --corPrincipal: #3F1651;
+    --corHover: #331241;
+    --corFonte: black;
+    --corBg: #ffff;
+    --corBg2: #EBE0F0;
+    --corActive: #230d2c;
+}
+
+* {
+    font-family: "DM Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.cadastro-container {
+    background: var(--corBg2);
+}
+
+.cadastro-content {
+    width: 100%;
+}
+
+.box-area{
+    width: 930px;
+}
+
+.container {
+    text-align: center;
+}
+
+.left-box p {
+    font-weight: 800;
+    font-size: 26px;
+    margin-top: -10px;
+    margin-bottom: 5px;
+}
+
+.left-box small {
+    width: 17rem;
+    margin-bottom: 20px;
+}
+
+
+.redefinir {
+    width: 100%;
+    text-align: end;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.right-box {
+    padding: 40px 30px 40px 40px;
+}
+
+.right-box h2 {
+    font-size: 26px;
+    color: var(--corPrincipal);
+    font-weight: 800;
+}
+
+.right-box input {
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.btn-cadastro {
+    width: 100%;
+    height: 35px;
+    border-radius: 5px;
+    background: var(--corPrincipal);
+    border: none;
+    letter-spacing: 1px;
+    font-weight: 800;
+    color: var(--corBg);
+    text-transform: uppercase;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+    &:hover {
+        background: var(--corHover);
+        color: var(--corBg);
+    }
+
+    &:active {
+        background: var(--corActive);
+        color: var(--corBg);
+    }
+}
+
+.btn-link {
+    text-decoration: none;
+    color: var(--corPrincipal);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        color: var(--corHover);
+    }
+
+    &:active {
+        color: var(--corActive);
+    }
+}
+
+.btn-login {
+    margin-bottom: 20px;
+}
+
+.campotxt {
+    width: 100%;
+    border: 1px solid var(--corPrincipal);
+    background: white;
+}
+
+@media screen and (max-800px) {
+    .box-area {
+        margin: 0 10px;
+    }
+    .left-box {
+        height: 100px;
+        overflow: hidden;
+    }
+    .right-box {
+        padding: 20px;
+    }
+}
+
+
