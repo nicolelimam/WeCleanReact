@@ -1,78 +1,216 @@
-// src/App.js
-import React from 'react';
-import { Navbar, Nav, Offcanvas, Container, Button } from 'react-bootstrap';
-import './index.css';
+import React from "react";
+import { Navbar, Nav, Offcanvas, Container, Button } from "react-bootstrap";
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  Autoplay,
+  Pagination,
+  EffectFade,
+  EffectCoverflow,
+} from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import "swiper/css/effect-coverflow";
+import "./index.css";
+import logoWeclean from "../../assets/images/logo-weclean.png";
+import { Link } from 'react-router-dom';
+
+// Importando imagens do slider
+import slide1 from "../../assets/images/slide1.jpg";
+import slide2 from "../../assets/images/slide2.jpg";
+import slide3 from "../../assets/images/slide3.jpg";
+import slide4 from "../../assets/images/slide4.jpg";
+import slide5 from "../../assets/images/slide5.jpg";
+
+//Importando ícones dos cards
+import iconCardLavadeira from '../../assets/images/lavadeira-card-icon.svg';
+import iconCardFaxineira from '../../assets/images/faxineira-card-icon.svg';
+import iconCardPassadeira from '../../assets/images/passadeira-card-icon.svg';
+import iconCardCozinheira from '../../assets/images/cozinheira-card-icon.svg';
 
 function Index() {
   return (
-    <div className="vh-100">
-      <header>
+    <div className="index-page-container">
+      <div className="vh-100">
         {/* Navbar */}
         <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
           <Container>
-            {/* Logo */}
-            <Navbar.Brand href="#" className="fs-4 logo">WeClean</Navbar.Brand>
-            {/* Toggler */}
+            <Navbar.Brand href="#" className="fs-4 logo">
+              <span>
+                <img
+                  src={logoWeclean}
+                  alt="Logo img"
+                  className="logo-weclean"
+                />
+              </span>
+              WeClean
+            </Navbar.Brand>
             <Navbar.Toggle aria-controls="offcanvasNavbar" />
-            {/* Offcanvas Menu */}
             <Navbar.Offcanvas
               id="offcanvasNavbar"
               aria-labelledby="offcanvasNavbarLabel"
               placement="start"
             >
               <Offcanvas.Header closeButton className="border-bottom">
-                <Offcanvas.Title id="offcanvasNavbarLabel">WeClean</Offcanvas.Title>
+                <Offcanvas.Title id="offcanvasNavbarLabel">
+                  <span>
+                  <img
+                    src={logoWeclean}
+                    alt="Logo img"
+                    className="logo-weclean"
+                  />
+                </span>
+                <span className="mobile-logo-text">WeClean</span>
+                </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
-                {/* Nav Links */}
                 <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                  <Nav.Link href="#">Serviços</Nav.Link>
-                  <Nav.Link href="#">Avaliações</Nav.Link>
-                  <Nav.Link href="#">Contate-nos</Nav.Link>
+                  <Nav.Link href="#servicos-section">Serviços</Nav.Link>
+                  <Nav.Link href="#trabalhe-conosco-section">Trabalhe Conosco</Nav.Link>
+                  <Nav.Link href="#contato-section">Contate-nos</Nav.Link>
                 </Nav>
-                {/* Login / Cadastro */}
                 <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                  <a href="#" className="btn-login-link text-decoration-none">Fazer login</a>
-                  <a href="#" className="btn-cadastro-link text-decoration-none">Cadastre-se</a>
+                  <a href="#" className="btn-login-link text-decoration-none">
+                    Fazer login
+                  </a>
+                  <a
+                    href="#"
+                    className="btn-cadastro-link text-decoration-none"
+                  >
+                    Cadastre-se
+                  </a>
                 </div>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
           </Container>
         </Navbar>
 
-        {/* Banner */}
+        {/* Banner com Slider */}
         <div className="banner-header">
-          <div className="filtro"></div>
-          <h1>Agende já a faxina de sua casa conosco!</h1>
-          <p>Os profissionais mais capacitados estão a alguns cliques de você.</p>
+          <Swiper
+            modules={[Autoplay, Pagination, EffectFade]} 
+            spaceBetween={0}
+            slidesPerView={1}
+            className="swiper-content"
+            autoplay={{ delay: 10000, disableOnInteraction: false }}
+            pagination={{ clickable: true }}
+            loop={true}
+            speed={1000}
+            effect="fade" 
+            fadeEffect={{ crossFade: true }} 
+          >
+            <SwiperSlide>
+              <img src={slide1} alt="Slide 1" className="slide-image" />
+            </SwiperSlide>
+            <SwiperSlide>
+              <img src={slide2} alt="Slide 2" className="slide-image" />
+            </SwiperSlide>
+            <SwiperSlide>
+              <img src={slide3} alt="Slide 3" className="slide-image" />
+            </SwiperSlide>
+            <SwiperSlide>
+              <img src={slide4} alt="Slide 4" className="slide-image" />
+            </SwiperSlide>
+            <SwiperSlide>
+              <img src={slide5} alt="Slide 5" className="slide-image" />
+            </SwiperSlide>
+          </Swiper>
+          <div className="banner-header-text-container">
+            <h1 className="banner-header-title">
+              Agende já a faxina de sua casa conosco!
+            </h1>
+            <p>
+              Os profissionais mais capacitados estão a alguns cliques de você.
+            </p>
+          </div>
         </div>
-      </header>
 
-      {/* Serviços Section */}
-      <section className="container-servicos">
-        <h2>SERVIÇOS</h2>
-        <div className="panel-cards-servicos">
-          <div className="lavadeira-card card-servicos">
-            <div className="img-card"></div>
-            <Button className="lavadeira-btn btn-card-servicos">LAVADEIRA</Button>
+        {/* Serviços Section */}
+        <section className="container-servicos" id="servicos-section">
+          <div className="container-servicos-title">
+            <h2>SERVIÇOS</h2>
           </div>
-
-          <div className="passadeira-card card-servicos">
-            <div className="img-card"></div>
-            <Button className="passadeira-btn btn-card-servicos">PASSADEIRA</Button>
+          <br />
+          <div className="panel-cards-servicos">
+            <div className="lavadeira-card card-servicos">
+                <div className="card-servicos-icon-div">
+                  <img src={iconCardLavadeira} alt="ìcone" className="lavadeira-card-icon" />
+                </div>
+                <div className="card-servicos-main-content">
+                  <h3>LAVAGEM DE ROUPA</h3>
+                  <p>Oferecemos o serviço de lavagem de roupas por meio de profissionais qualificados.</p>
+                </div>
+            </div>
+            <div className="passadeira-card card-servicos">
+              <div className="card-servicos-icon-div">
+                  <img src={iconCardPassadeira} alt="icone" className="card-servicos-icon passadeira-card-icon" />
+              </div>
+                <div className="card-servicos-main-content">
+                  <h3>PASSAGEM DE ROUPA</h3>
+                  <p>Aqui você encontra serviços de secagem e passagem de roupa de qualidade excelente!</p>
+                </div>
+            </div>
+            <div className="faxineira-card card-servicos">
+              <div className="card-servicos-icon-div">
+                  <img src={iconCardFaxineira} alt="icone" className="card-servicos-icon faxineira-card-icon" />
+              </div>
+              <div className="card-servicos-main-content">
+                <h3>FAXINA GERAL</h3>
+                <p>Também fornecemos serviços de limpeza geral para sua casa ou empresa.</p>
+              </div>
+            </div>
+            <div className="cozinheira-card card-servicos">
+              <div className="card-servicos-icon-div">
+                  <img src={iconCardCozinheira} alt="icone" className="card-servicos-icon" />
+              </div>
+              <div className="card-servicos-main-content">
+                <h3>COZINHEIRO</h3>
+                <p>Através da WeClean, você pode contratar cozinheiros de qualidade para sua casa ou estabelecimento.</p>
+              </div>
+            </div>
           </div>
-
-          <div className="faxineira-card card-servicos">
-            <div className="img-card"></div>
-            <Button className="faxineira-btn btn-card-servicos">FAXINEIRA</Button>
+          <br />
+          <h2 className="servicos-text">Aproveite já para deixar sua casa ou estabelecimento nos trinques!  <Link className="servicos-text-link" to="/cadastro">Crie uma conta!</Link></h2>
+        </section>
+        <section className="trabalhe-conosco-container" id="trabalhe-conosco-section">
+            <div className="left-tc">
+              <h2>TRABALHE CONOSCO</h2>
+              <p>
+                Interessado em trabalhar na área de prestação de serviços domésticos? Junte-se a WeClean!
+              </p>
+            </div>
+            <div className="right-tc">
+              <h5>Solicite uma entrevista e entraremos em contato com você!</h5>
+              <form action="" className="trabalhe-conosco-form">
+              <input type="text" name="candidatoNome" id="candidatoNome" className="tc-input" placeholder="Insira seu nome completo"/>
+              <input type="email" name="candidatoEmail" id="candidatoEmail" className="tc-input" placeholder="Insira seu email"/>
+              <input type="text" name="candidatoCidade" id="candidatoCidade" className="tc-input" placeholder="Informe o estado onde você mora"/> {/*Substituir por select futuramente com os nomes dos estados */}
+              <select name="candidatoCategoria" id="candidatoCategoria" className="tc-select" placeholder="Área de interesse">
+                <option value="faxineira">Faxina geral</option>
+                <option value="lavadeira">Lavagem de roupas</option>
+                <option value="passadora">Secagem de roupas</option>
+                <option value="cozinheira">Cozinheiro(a)</option>
+                <option value="">Qualquer uma das anteriores</option>
+              </select>
+              <div className="btn-group-tc">
+                <button type="submit" id="salvarCandidato" className="btn-tc">
+                  Enviar solicitação
+                </button>
+              </div>
+              </form>
+            </div>
+        </section>
+        <section className="contato-container" id="contato-section">
+          <div className="left-contato-content">
+            <h2>WeClean</h2>
+            <h5>Contate-nos</h5>
           </div>
-
-          <div className="cozinheira-card card-servicos">
-            <div className="img-card"></div>
-            <Button className="cozinheira-btn btn-card-servicos">COZINHEIRA</Button>
+          <div className="right-contato-content">
+            <span><i class="bi bi-envelope"></i> wecleansupport@gmail.com</span>
+            <span><i class="bi bi-whatsapp"></i> (12)00000-0000</span>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
