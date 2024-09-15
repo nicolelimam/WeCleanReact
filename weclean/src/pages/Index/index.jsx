@@ -14,6 +14,9 @@ import "swiper/css/effect-coverflow";
 import "./index.css";
 import logoWeclean from "../../assets/images/logo-weclean.png";
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // Importando imagens do slider
 import slide1 from "../../assets/images/slide1.jpg";
@@ -28,9 +31,22 @@ import iconCardFaxineira from '../../assets/images/faxineira-card-icon.svg';
 import iconCardPassadeira from '../../assets/images/passadeira-card-icon.svg';
 import iconCardCozinheira from '../../assets/images/cozinheira-card-icon.svg';
 
+//Função para exibir mensagem de sucesso na solicitação de entrevista
+const handleSubmit = (event) => {
+  event.preventDefault();
+
+  // Exibe notificação de sucesso
+  toast.success("Solicitação enviada com sucesso! Entraremos em contato com você em breve.");
+
+  // Limpa os campos do form
+  event.target.reset();
+};
+
 function Index() {
   return (
+
     <div className="index-page-container">
+    <ToastContainer />
       <div className="vh-100">
         {/* Navbar */}
         <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
@@ -70,15 +86,12 @@ function Index() {
                   <Nav.Link href="#contato-section">Contate-nos</Nav.Link>
                 </Nav>
                 <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                  <a href="#" className="btn-login-link text-decoration-none">
+                  <Link to='/login' className="btn-login-link text-decoration-none">
                     Fazer login
-                  </a>
-                  <a
-                    href="#"
-                    className="btn-cadastro-link text-decoration-none"
-                  >
+                  </Link>
+                  <Link to='/cadastro' className="btn-cadastro-link text-decoration-none">
                     Cadastre-se
-                  </a>
+                  </Link>
                 </div>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
@@ -181,7 +194,7 @@ function Index() {
             </div>
             <div className="right-tc">
               <h5>Solicite uma entrevista e entraremos em contato com você!</h5>
-              <form action="" className="trabalhe-conosco-form">
+              <form action="" onSubmit={handleSubmit} className="trabalhe-conosco-form">
               <input type="text" name="candidatoNome" id="candidatoNome" className="tc-input" placeholder="Insira seu nome completo"/>
               <input type="email" name="candidatoEmail" id="candidatoEmail" className="tc-input" placeholder="Insira seu email"/>
               <input type="text" name="candidatoCidade" id="candidatoCidade" className="tc-input" placeholder="Informe o estado onde você mora"/> {/*Substituir por select futuramente com os nomes dos estados */}
@@ -206,8 +219,8 @@ function Index() {
             <h5>Contate-nos</h5>
           </div>
           <div className="right-contato-content">
-            <span><i class="bi bi-envelope"></i> wecleansupport@gmail.com</span>
-            <span><i class="bi bi-whatsapp"></i> (12)00000-0000</span>
+            <span><i className="bi bi-envelope"></i> wecleansupport@gmail.com</span>
+            <span><i className="bi bi-whatsapp"></i> (12)00000-0000</span>
           </div>
         </section>
       </div>
