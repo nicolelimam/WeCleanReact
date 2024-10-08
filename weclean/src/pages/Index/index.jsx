@@ -51,7 +51,7 @@ function Index() {
         {/* Navbar */}
         <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
           <Container>
-            <Navbar.Brand href="#" className="fs-4 logo">
+            <Navbar.Brand href="#bannerHeader" className="fs-4 logo">
               <span>
                 <img
                   src={logoWeclean}
@@ -99,7 +99,7 @@ function Index() {
         </Navbar>
 
         {/* Banner com Slider */}
-        <div className="banner-header">
+        <div className="banner-header" id="bannerHeader">
           <Swiper
             modules={[Autoplay, Pagination, EffectFade]} 
             spaceBetween={0}
