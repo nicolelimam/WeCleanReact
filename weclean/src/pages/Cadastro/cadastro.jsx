@@ -29,6 +29,9 @@ const Cadastro = () => {
               <Form.Control type="text" className="form-control-lg bg-light fs-6 campotxt" autoComplete="off" maxLength="14" id="campoCPF" placeholder="CPF ou CNPJ" />
             </Form.Group>
             <Form.Group className="mb-3">
+              <Form.Control type="date" className="form-control-lg bg-light fs-6 campotxt" autoComplete="off" maxLength="14" id="dataNascimento" placeholder="Data de nascimento" />
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Control type="email" className="form-control-lg bg-light fs-6 campotxt" placeholder="Email" />
             </Form.Group>
             <Form.Group className="mb-3">

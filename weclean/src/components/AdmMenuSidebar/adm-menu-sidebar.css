@@ -116,6 +116,26 @@
     background: var(--corBg);
 }
 
+.ams-sub-menu .ams-menu-item-link {
+    color: white;
+    background: var(--corPrincipal); 
+}
+
+.ams-menu-item-link.active {
+    color: var(--corPrincipal);
+    background: white; /* Define o fundo quando está ativo */
+}
+
+.ams-menu-item-link:hover {
+    color: var(--corPrincipal);
+    background: var(--corBgHover);
+}
+
+
+.react-tooltip {
+    z-index: 9999 !important;
+}
+
 .ams-menu-item-icon {
     font-size: 20px;
 }

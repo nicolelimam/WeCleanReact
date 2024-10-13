@@ -108,7 +108,7 @@ function Index() {
             autoplay={{ delay: 10000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             loop={true}
-            speed={1000}
+            speed={500}
             effect="fade" 
             fadeEffect={{ crossFade: true }} 
           >

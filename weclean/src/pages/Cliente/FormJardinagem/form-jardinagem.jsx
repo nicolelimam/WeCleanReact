@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import '../../../css/globalForm.css';
-
+import { Autocomplete, TextField } from "@mui/material";
 
 function FormularioJardinagem() {
 
@@ -28,6 +28,17 @@ function FormularioJardinagem() {
     navigate('/form-endereco'); 
   };
 
+  const tipoServico = [
+    { label: "Manutenção", value: "manutencao" },
+    { label: "Paisagismo", value: "paisagismo" },
+    { label: "Corte de grama", value: "corte-grama" },
+    { label: "Poda de árvores e arbustos", value: "poda" },
+  ];
+
+  const locais = [
+    { label: "Jardim residencial", value: "residencia" },
+    { label: "Jardim empresarial", value: "estabelecimento" },
+  ];
   return (
     <div className="form-page-container">
       <ToastContainer />
@@ -91,21 +102,72 @@ function FormularioJardinagem() {
               <label htmlFor="" className="f-label">
                 Tipo de serviço:
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Manutenção</option>
-                <option value="">Paisagismo</option>
-                <option value="">Corte de grama</option>
-                <option value="">Poda de árvores e arbustos</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={tipoServico}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
+
             </div>
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Tipo de local:
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Jardim residencial</option>
-                <option value="">Jardim empresarial</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={locais}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
             
           </div>
@@ -114,32 +176,22 @@ function FormularioJardinagem() {
               <label htmlFor="" className="f-label">
                 Tamanho da área verda (em m²):
               </label>
-              <input type="text" className="f-input" placeholder="Ex: 4"/>
+              <input type="number" className="f-input" placeholder="Ex: 4"/>
             </div>
-            <div className="form-default-item">
-                <label htmlFor="" className="f-label">
-                    Frequência de serviço:
-                </label>
-                <select name="" id="" className="form-select">
-                    <option value="">Único</option>
-                    <option value="">Semanal</option>
-                    <option value="">Mensal</option>
-                </select>
-            </div>
-            
-          </div>
-          <div className="form-default-row">
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Data para realização do serviço:
               </label>
               <input type="datetime-local" name="" className="f-input f-date" />
             </div>
+          </div>
+          <div className="form-default-row">
+           
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Observações adicionais sobre o jardim:
               </label>
-              <textarea name=""  className="f-txtarea">
+              <textarea name=""  className="f-txtarea2">
 
               </textarea>
             </div>

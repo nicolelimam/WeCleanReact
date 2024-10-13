@@ -3,6 +3,7 @@ import userImgSidebar from '../../assets/images/pfp.jpeg';
 import '../../css/globalVar.css';
 import './adm-menu-sidebar.css';
 import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip'
 
 function MenuSidebarAdministrador() {
 
@@ -41,10 +42,11 @@ function MenuSidebarAdministrador() {
             <p className="ams-menu-title">PRINCIPAL</p>
             <ul className='ams-menu-list'>
               <li className={`ams-menu-item ${activeMenu === 0 ? 'active' : ''}`}>
-                <Link className='ams-menu-item-link' onClick={() => handleMenuClick(0)}>
+                <Link className='ams-menu-item-link' onClick={() => handleMenuClick(0)} data-tip="Dashboard" data-for="menu-tooltip">
                   <i className="bi bi-bar-chart-line-fill ams-menu-item-icon"></i>
                   <span className="ams-menu-item-text">Dashboard</span>
                 </Link>
+                <Tooltip id="menu-tooltip" place="right" type="dark" effect="solid" />
               </li>
               <li className={`ams-menu-item ${activeMenu === 1 ? 'active' : ''}`}>
                 <Link className='ams-menu-item-link' onClick={() => handleMenuClick(1)}>
@@ -59,14 +61,14 @@ function MenuSidebarAdministrador() {
                   <i className={`bi bi-chevron-down ${activeMenu === 2 ? 'rotate' : ''}`}></i>
                 </Link>
                 {activeMenu === 2 && (
-                  <ul className="ams-sub-menu" style={{ display: activeMenu === 2 ? 'block' : 'none' }}>
+                  <ul className="ams-sub-menu">
                     <li>
-                      <Link className='ams-menu-item-link'>
+                      <Link className={`ams-menu-item-link ${activeMenu === 'sub-2-0' ? 'active' : ''}`} onClick={() => setActiveMenu('sub-2-0')}>
                         <span className="ams-menu-item-text sub-menu-text">Usuários</span>
                       </Link>
                     </li>
                     <li>
-                      <Link className='ams-menu-item-link'>
+                      <Link className={`ams-menu-item-link ${activeMenu === 'sub-2-1' ? 'active' : ''}`} onClick={() => setActiveMenu('sub-2-1')}>
                         <span className="ams-menu-item-text sub-menu-text">Entrevistas</span>
                       </Link>
                     </li>

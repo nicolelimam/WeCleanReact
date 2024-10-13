@@ -6,12 +6,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import '../../../css/globalForm.css';
+import { Autocomplete, TextField } from "@mui/material";
 
 
 function FormularioLavanderia() {
 
   // Estado para armazenar o valor do botão selecionado
   const [selectedRoupaTipos, setSelectedRoupaTipos] = useState([]);
+  const [selectedTecidos, setSelectedTecidos] = useState([]);
   const navigate = useNavigate();
   // Função para alterar o botão selecionado
   const handleButtonClick = (roupaTipo) => {
@@ -24,9 +26,44 @@ function FormularioLavanderia() {
     }
   };
 
+  const handleTecidoClick = (tecido) => {
+    if (selectedTecidos.includes(tecido)) {
+      // Remove se já estiver selecionado
+      setSelectedTecidos(selectedTecidos.filter(item => item !== tecido));
+    } else {
+      // Adiciona se não estiver selecionado
+      setSelectedTecidos([...selectedTecidos, tecido]);
+    }
+  };
+
   const handleConfirmClick = () => {
     navigate('/form-endereco'); 
   };
+
+  const tipoServico = [
+    {label: "Lavagem, secagem e passagem", value: "1"},
+    {label: "Apenas lavagem e secagem", value: "2"},
+    {label: "Apenas lavagem", value: "3"},
+  ];
+
+  const qtdPecas = [
+    {label: "De 10 - 20", value: "10a20"},
+    {label: "De 20 - 40", value: "20a40"},
+    {label: "De 40 - 80", value: "40a80"},
+    {label: "Até 150 peças de roupa", value: "150"},
+  ];
+
+  const preferencias = [
+    {label: "Nenhuma", value: "nenhuma"},
+    {label: "Uso de produtos hipoalergênicos", value: "hipoalergenicos"},
+    {label: "Lavagem a seco (taxa adicional)", value: "lavagem-a-seco"},
+  ];
+
+  const produtos = [
+    {label: "Por mim", value: "cliente"},
+    {label: "Pela WeClean (+ taxa adicional)", value: "empresa"},
+  ];
+
   return (
     <div className="form-page-container">
       <ToastContainer />
@@ -90,31 +127,80 @@ function FormularioLavanderia() {
               <label htmlFor="" className="f-label">
                 Tipo de serviço:
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Lavagem, secagem e passagem</option>
-                <option value="">Apenas lavagem e secagem</option>
-                <option value="">Apenas lavagem</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={tipoServico}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Quantidade de peças (de roupa):
               </label>
-              <select name="" id="" className="form-select">
-                  <option value="">De 10 - 20</option>
-                  <option value="">De 20 - 40</option>
-                  <option value="">De 40 - 80</option>
-                  <option value="">De 80 - 100</option>
-                  <option value="">Até 150 peças de roupa</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={qtdPecas}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
-          <div className="form-default-row2">
-              <label htmlFor="" className="f-label">
+          <div className="form-default-row">
+            <div className="form-default-item">
+            <label htmlFor="" className="f-label">
                 Tipos de roupas:
               </label>
               <div className="f-multiple-buttons">
-              {["Roupas comuns", "Roupas delicadas", "Roupas de cama", "Toalhas", "Tecidos escuros", "Tecidos claros", "Tecidos coloridos"].map((roupaTipo) => (
+              {["Roupas comuns", "Roupas delicadas", "Roupas de cama", "Toalhas"].map((roupaTipo) => (
                   <button
                     key={roupaTipo}
                     type="button"
@@ -133,17 +219,69 @@ function FormularioLavanderia() {
                   </button>
                 ))}
             </div>
+            </div>
+              <div className="form-default-item">
+                <label htmlFor="" className="f-label">
+                  Tipos de tecidos:
+                </label>
+                <div className="f-multiple-buttons">
+                  {["Tecidos escuros", "Tecidos claros", "Tecidos coloridos"].map((tecido) => (
+                    <button
+                      key={tecido}
+                      type="button"
+                      className="f-check-btn"
+                      onClick={() => handleTecidoClick(tecido)}
+                      style={{
+                        background: selectedTecidos.includes(tecido)
+                          ? "var(--corPrincipal)"
+                          : "var(--corBg)",
+                        color: selectedTecidos.includes(tecido)
+                          ? "white"
+                          : "var(--corPrincipal)",
+                      }}
+                    >
+                      {tecido}
+                    </button>
+                  ))}
+                  </div>
+              </div>
+            
           </div>
           <div className="form-default-row">
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Preferências de lavagem:
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Nenhuma</option>
-                <option value="">Uso de produtos hipoalergênicos</option>
-                <option value="">Lavagem a seco (taxa adicional)</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={preferencias}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
@@ -152,25 +290,54 @@ function FormularioLavanderia() {
               <input type="datetime-local" name="" className="f-input f-date" />
             </div>
           </div>
-          <div className="form-default-row">
-          <div className="form-default-item fd2">
+          <div className="form-default-row" >
+          <div className="form-default-item3">
                <label htmlFor="" className="f-label">
                   Os produtos necessários para a lavagem serão fornecidos:
                </label>
-               <select name="" id="" className="form-select">
-                <option value="">Por mim</option>
-                <option value="">Pela WeClean (+ taxa adicional)</option>
-               </select>
+               <Autocomplete
+                fullWidth
+                options={produtos}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
+           
+            
+          </div>
+          <div className="form-default-row">
             <div className="form-default-item">
-              <label htmlFor="" className="f-label">
+            <label htmlFor="" className="f-label">
                 Observações (opcional):
               </label>
-              <textarea name=""  className="f-txtarea">
+              <textarea name=""  className="f-txtarea" style={{width: "100% !important"}}>
 
               </textarea>
             </div>
-            
           </div>
           <br />
           <div className="form-default-row">

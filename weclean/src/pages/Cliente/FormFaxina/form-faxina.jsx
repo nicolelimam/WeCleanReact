@@ -6,16 +6,37 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import "./form-faxina.css";
+import { Autocomplete, TextField, InputAdornment, IconButton } from "@mui/material";
 
 function FormularioFaxina() {
-
-    // Estado para armazenar o valor do botão selecionado
+  // Estado para armazenar o valor do botão selecionado
   const [selectedDuration, setSelectedDuration] = useState(null);
+  const handleButtonClick = (duration) => setSelectedDuration(duration);
+  const [quantidadeComodos, setQuantidadeComodos] = useState(1);
 
-  // Função para alterar o botão selecionado
-  const handleButtonClick = (duration) => {
-    setSelectedDuration(duration);
+  const locais = [
+    { label: "Minha residência", value: "residencia" },
+    { label: "Meu estabelecimento", value: "estabelecimento" },
+  ];
+
+  const produtos = [
+    { label: "Por mim", value: "cliente" },
+    { label: "Pela empresa (+ custo adicional)", value: "empresa" },
+  ];
+
+  const tiposFaxina = [
+    { label: "Faxina geral (padrão)", value: "geral" },
+    { label: "Pré mudança", value: "pre_mudanca" },
+    { label: "Pós obra", value: "pos_obra" },
+  ];
+
+  const handleIncrement = () => {
+    if (quantidadeComodos < 12) setQuantidadeComodos(quantidadeComodos + 1);
   };
+  
+  const handleDecrement = () => {
+    if (quantidadeComodos > 1) setQuantidadeComodos(quantidadeComodos - 1);
+  };  
 
   return (
     <div className="form-faxina-container">
@@ -76,13 +97,41 @@ function FormularioFaxina() {
             </div>
           </div>
           <div className="form-faxina-row">
-            <div className="form-faxina-item">
+            <div className="form-faxina-item" style={{ width: "100%" }}>
+              {" "}
               <label className="ff-label">Para onde é o serviço?</label>
-              <select name="" id="localFaxina" className="form-select">
-                <option value="">Minha residência</option>
-                <option value="">Meu estabelecimento</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={locais}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
+
             <div className="form-faxina-item">
               <label className="ff-label">
                 Quantidade de cômodos a serem limpos:
@@ -103,20 +152,71 @@ function FormularioFaxina() {
               <label htmlFor="" className="ff-label">
                 Os produtos de limpeza serão fornecidos...
               </label>
-              <select name="" id="fornecedorProdutosFaxina" className="form-select">
-                <option value="">Por mim</option>
-                <option value="">Pela empresa (+ custo adicional)</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={produtos}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
             <div className="form-faxina-item">
               <label htmlFor="" className="ff-label">
                 Tipo de faxina:
               </label>
-              <select name="" id="tipoFaxina" className="form-select">
-                <option value="">Faxina geral (padrão)</option>
-                <option value="">Pré mudança</option>
-                <option value="">Pós obra</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={tiposFaxina}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
           <div className="form-faxina-row">
@@ -124,7 +224,12 @@ function FormularioFaxina() {
               <label htmlFor="" className="ff-label">
                 Data para realização do serviço:
               </label>
-              <input type="datetime-local" name="" id="dataFaxina" className="ff-input" />
+              <input
+                type="datetime-local"
+                name=""
+                id="dataFaxina"
+                className="ff-input"
+              />
             </div>
             <div className="form-faxina-item">
               <label htmlFor="" className="ff-label">
@@ -132,23 +237,28 @@ function FormularioFaxina() {
               </label>
               <div className="ff-multiple-buttons">
                 {/* Botões com controle de estado para seleção */}
-                {["3 horas", "4 horas", "5 horas", "6 horas"].map((duration) => (
-                  <button
-                    key={duration}
-                    type="button"
-                    className="ff-duracao-btn"
-                    onClick={() => handleButtonClick(duration)}
-                    style={{
-                      background:
-                        selectedDuration === duration
-                          ? "var(--corPrincipal)"
-                          : "var(--corBg)",
-                      color: selectedDuration === duration ? "white" : "var(--corPrincipal)",
-                    }}
-                  >
-                    {duration}
-                  </button>
-                ))}
+                {["3 horas", "4 horas", "5 horas", "6 horas"].map(
+                  (duration) => (
+                    <button
+                      key={duration}
+                      type="button"
+                      className="ff-duracao-btn"
+                      onClick={() => handleButtonClick(duration)}
+                      style={{
+                        background:
+                          selectedDuration === duration
+                            ? "var(--corPrincipal)"
+                            : "var(--corBg)",
+                        color:
+                          selectedDuration === duration
+                            ? "white"
+                            : "var(--corPrincipal)",
+                      }}
+                    >
+                      {duration}
+                    </button>
+                  )
+                )}
               </div>
             </div>
           </div>
@@ -157,9 +267,11 @@ function FormularioFaxina() {
               <label htmlFor="" className="ff-label">
                 Observações (opcional):
               </label>
-              <textarea name="" id="observacoesFaxina" className="ff-txtarea">
-
-              </textarea>
+              <textarea
+                name=""
+                id="observacoesFaxina"
+                className="ff-txtarea"
+              ></textarea>
             </div>
           </div>
           <div className="ff-btn-div">

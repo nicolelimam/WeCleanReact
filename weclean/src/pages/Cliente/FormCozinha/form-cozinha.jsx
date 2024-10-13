@@ -6,6 +6,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import '../../../css/globalForm.css';
+import Select from 'react-select';
+import { Autocomplete, TextField, InputAdornment, IconButton } from "@mui/material";
 
 
 function FormularioCozinha() {
@@ -13,6 +15,7 @@ function FormularioCozinha() {
   // Estado para armazenar o valor do botão selecionado
   const [selectedDiasSemanaCozinha, setSelectedDiasSemanaCozinha] = useState([]);
   const navigate = useNavigate();
+  
   // Função para alterar o botão selecionado
   const handleButtonClick = (diasSemanaCozinha) => {
     if (selectedDiasSemanaCozinha.includes(diasSemanaCozinha)) {
@@ -27,6 +30,35 @@ function FormularioCozinha() {
   const handleConfirmClick = () => {
     navigate('/form-endereco'); 
   };
+
+  const locais = [
+    { label: "Minha residência", value: "residencia" },
+    { label: "Meu estabelecimento", value: "estabelecimento" },
+  ];
+
+  const refeicoes = [
+    {label: "Apenas 1", value: "1" },
+    {label: "De 1 a 3", value: "1a3"},
+    {label: "De 1 a 4", value: "1a4"},
+    {label: "De 1 a 6", value: "1a6"},
+  ];
+
+  const preferencias = [
+    {label: "Comum", value: "comum"},
+    {label: "Sem glúten", value: "sem-gluten"},
+    {label: "Vegetariana", value: "vegetariana"},
+    {label: "Vegana", value: "vegana"},
+  ];
+
+  const numPessoas = [
+    {label: "Até 3 pessoas", value: "3"},
+    {label: "3 - 10 pessoas", value: "3a10"},
+    {label: "10 - 30 pessoas", value: "10a30"},
+    {label: "30 - 60 pessoas", value: "30a60"},
+    {label: "60 - 100 pessoas", value: "60a100" },
+    {label: "Mais de 150 pessoas", value: "mais150"},
+  ];
+
   return (
     <div className="form-page-container">
       <ToastContainer />
@@ -88,23 +120,73 @@ function FormularioCozinha() {
           <div className="form-default-row">
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
-                Tipo de serviço:
+                Para onde é o serviço?
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Residencial</option>
-                <option value="">Empresarial</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={locais}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Quantidade de refeições por dia:
               </label>
-              <select name="" id="" className="form-select">
-                  <option value="">Apenas 1</option>
-                  <option value="">De 1 a 3</option>
-                  <option value="">De 1 a 4</option>
-                  <option value="">De 1 a 6</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={refeicoes}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
           </div>
           <div className="form-default-row">
@@ -112,25 +194,72 @@ function FormularioCozinha() {
                 <label htmlFor="" className="f-label">
                     Preferência alimentar:
                 </label>
-                <select name="" id="" className="form-select">
-                    <option value="">Comum</option>
-                    <option value="">Sem glúten</option>
-                    <option value="">Vegetariana</option>
-                    <option value="">Vegana</option>
-                </select>
+                <Autocomplete
+                fullWidth
+                options={preferencias}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
             </div>
               <div className="form-default-item">
               <label htmlFor="" className="f-label">
                 Número de pessoas a serem atendidas:
               </label>
-              <select name="" id="" className="form-select">
-                <option value="">Até 3 pessoas</option>
-                <option value="">3 - 10 pessoas</option>
-                <option value="">10 - 30 pessoas</option>
-                <option value="">30 - 60 pessoas</option>
-                <option value="">60 - 100 pessoas</option>
-                <option value="">Mais de 150 pessoas</option>
-              </select>
+              <Autocomplete
+                fullWidth
+                options={numPessoas}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Selecione uma opção"
+                    sx={{
+                      height: "35px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "35px",
+                        borderColor: "var(--corPrincipal)",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: "35px",
+                    border: "0.5px solid var(--corPrincipal)",
+                  },
+                  "& .MuiAutocomplete-option": {
+                    "&:hover": {
+                      backgroundColor: "var(--corPrincipal)",
+                      color: "white",
+                    },
+                  },
+                }}
+              />
+              
             </div>
           </div>
           <div className="form-default-row">
