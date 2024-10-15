@@ -126,7 +126,6 @@ function CadastroFuncionario() {
                     placeholder="Modalidade de atuação"
                     sx={{
                       height: "35px",
-                      width: "100%",
                       fontFamily: "'DM Sans', sans-serif",
                       background: "var(--corBg)",
                       "& .MuiOutlinedInput-root": {
