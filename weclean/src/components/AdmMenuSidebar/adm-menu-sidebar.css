@@ -270,3 +270,9 @@
     border: 1px solid var(--corPrincipal);
     background: var(--corHover);
 }
+
+@media (max-width: 1299px) {
+    .menu-sidebar-administrador {
+        display: none;  /* Ocultar sidebar quando a tela for menor que 1299px */
+    }
+}

@@ -10,6 +10,7 @@ import FormularioCozinha from '../pages/Cliente/FormCozinha/form-cozinha';
 import FormularioJardinagem from '../pages/Cliente/FormJardinagem/form-jardinagem';
 import FormularioEndereco from '../pages/Cliente/FormEndereco/form-endereco';
 import CadastroFuncionario from '../pages/Administrador/CadastroFuncionario/cadastro-funcionario';
+import ListaServicos from '../pages/Administrador/Servicos/lista-servicos';
 
 function RoutesIndex() {
   return (
@@ -25,6 +26,7 @@ function RoutesIndex() {
         <Route path='/form-jardinagem' element={<FormularioJardinagem />} />
         <Route path='/form-endereco' element={<FormularioEndereco />} />
         <Route path='/cadastro-funcionario' element={<CadastroFuncionario />} />
+        <Route path='/lista-servicos' element={<ListaServicos />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
