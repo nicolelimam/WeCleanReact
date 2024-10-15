@@ -136,13 +136,13 @@ function MenuSidebarAdministrador() {
                 <ul className='ams-menu-list'>
                     <li className={`ams-menu-item ${activeMenu === 6 ? 'active' : ''}`}>
                             <Link className='ams-menu-item-link' onClick={() => handleMenuClick(6)}>
-                                <i class="bi bi-gear-fill ams-menu-item-icon"></i>
+                                <i className="bi bi-gear-fill ams-menu-item-icon"></i>
                                 <span className="ams-menu-item-text">Configurações</span>
                             </Link>
                         </li>
                         <li className={`ams-menu-item ${activeMenu === 7 ? 'active' : ''}`}>
                             <Link className='ams-menu-item-link' onClick={() => handleMenuClick(6)}>
-                                <i class="bi bi-door-open-fill ams-menu-item-icon"></i>
+                                <i className="bi bi-door-open-fill ams-menu-item-icon"></i>
                                 <span className="ams-menu-item-text">Sair (Log Out)</span>
                             </Link>
                         </li>
