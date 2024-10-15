@@ -44,7 +44,7 @@ const Cadastro = () => {
               <Button className="btn-cadastro">CRIAR CONTA</Button>
             </div>
             <Row>
-              <small>Já é cadastrado? <Link to="/" className="btn-link">Entre em sua conta!</Link></small>
+              <small>Já é cadastrado? <Link to="/login" className="btn-link">Entre em sua conta!</Link></small>
             </Row>
           </Row>
         </Col>
