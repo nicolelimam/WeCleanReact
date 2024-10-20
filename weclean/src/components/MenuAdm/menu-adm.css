@@ -1,0 +1,168 @@
+.logo {
+    color: var(--corPrincipal);
+    font-weight: 1000;
+    font-size: 32px;
+
+    &:hover {
+        color: var(--corPrincipal);
+    }
+}
+
+.logo-weclean-txt {
+    margin-top: 3px;
+    font-size: 28px;
+}
+
+.logo-weclean {
+    position: relative;
+    bottom: 2px;
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    max-width: 45px;
+    min-height: 45px;
+    max-height: 45px;
+}
+
+
+.navbar-nav {
+    gap: 15px;
+    height: 70px !important;
+}
+
+.nav-link {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--corActive);
+
+    &:hover {
+        color: var(--corPrincipal);
+    }
+}
+
+.btn-logout-ff {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    background: var(--corPrincipal);
+    height: 35px;
+    font-size: 16px;
+    gap: 5px;
+    color: white;
+    font-weight: 500;
+    border-radius: 30px;
+    border: 2px solid var(--corPrincipal);
+    transition: all 0.3s;
+
+    &:hover {
+        background: var(--corHover);
+        transform: translateX(2px);
+    }
+
+    &:active {
+        background: var(--corActive);
+    }
+
+}
+
+.mobile-logo-text {
+    color: var(--corPrincipal);
+    font-weight: 700;
+}
+
+.menu-adm-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100%;
+    border-radius: 10px;
+
+    &:hover {
+        background: var(--corBg2);
+    }
+}
+
+
+.menu-adm-link-txt {
+    font-size: 0; 
+    transition: font-size 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px); 
+    color: var(--corFonte);
+}
+
+
+.menu-adm-link-icon {
+    font-size: 30px; 
+    transition: font-size 0.3s ease, transform 0.3s ease;
+    color: var(--corPrincipal);
+}
+
+.link-icon2, .link-icon3 {
+    font-size: 28px;
+}
+
+.menu-adm-link:hover .menu-adm-link-txt {
+    font-size: 13px; 
+    transform: translateY(0); 
+    color: var(--corPrincipal);
+}
+
+.menu-adm-link:hover .menu-adm-link-icon {
+    font-size: 26px; 
+}
+
+.menu-adm-link:hover .link-icon2  {
+    font-size: 22px; 
+    margin-bottom: 3px;
+}
+
+.menu-adm-link.active {
+    background-color: var(--corBg2);
+}
+
+.menu-adm-link.active .menu-adm-link-txt {
+    font-size: 13px;
+    transform: translateY(0); 
+    color: var(--corPrincipal);
+}
+
+.menu-adm-link.active .menu-adm-link-icon {
+    font-size: 26px; 
+}
+
+.btn-notificacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--corPrincipal);
+    background:transparent;
+    color: var(--corPrincipal);
+    font-size: 20px;
+}
+
+.btn-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--corPrincipal);
+    background: transparent;
+    color: var(--corPrincipal);
+    font-size: 20px;
+}
+
+.menu-adm-btn-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}

@@ -8,6 +8,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import InputMask from "react-input-mask"; 
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
+import MenuAdm from "../../../components/MenuAdm/menu-adm";
 
 function CadastroFuncionario() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -97,61 +98,9 @@ function CadastroFuncionario() {
 
   return (
     <div className="cadastro-funcionario-container">
-      {showSidebar && <MenuSidebarAdministrador />}
-
+      <MenuAdm activePage = 'funcionarios'/>
+      
       <div className="cf-content">
-        <div className="cf-header">
-          <div className="cf-header-txt">
-            <h5>Olá, Ana!</h5>
-          </div>
-          <div className="cf-header-btn-group">
-            <button
-              className="btn-notificacao"
-              onClick={handleMenuOpen} 
-              data-tooltip-id="tooltip-notificacao"
-              data-tooltip-content="Notificações"
-            >
-              <i className="bi bi-bell-fill"></i>
-            </button>
-            <Tooltip
-              id="tooltip-notificacao"
-              place="bottom"
-              style={{ backgroundColor: "var(--corPrincipal)", color: "#fff" }} // Personalizando o estilo
-            />
-
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <MenuItem onClick={handleMenuClose}>Notificação 1</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Notificação 2</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Notificação 3</MenuItem>
-            </Menu>
-
-            <button
-              className="btn-logout"
-              data-tooltip-id="tooltip-logout"
-              data-tooltip-content="Sair"
-            >
-              <i className="bi bi-box-arrow-right"></i>
-            </button>
-
-            <Tooltip
-              id="tooltip-logout"
-              place="bottom"
-              style={{ backgroundColor: "var(--corPrincipal)", color: "#fff" }} // Personalizando o estilo
-            />
-          </div>
-        </div>
         <div className="cf-main">
           <div className="cf-main-top">
             <h2>Cadastrar novo funcionário</h2>
