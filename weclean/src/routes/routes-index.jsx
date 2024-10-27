@@ -11,6 +11,8 @@ import FormularioJardinagem from '../pages/Cliente/FormJardinagem/form-jardinage
 import FormularioEndereco from '../pages/Cliente/FormEndereco/form-endereco';
 import CadastroFuncionario from '../pages/Administrador/CadastroFuncionario/cadastro-funcionario';
 import ListaServicos from '../pages/Administrador/Servicos/lista-servicos';
+import ListaFinanceiro from '../pages/Administrador/Financeiro/lista-financeiro';
+import RedefinirSenha from '../pages/RedefSenha/redefinir-senha';
 
 function RoutesIndex() {
   return (
@@ -27,6 +29,8 @@ function RoutesIndex() {
         <Route path='/form-endereco' element={<FormularioEndereco />} />
         <Route path='/cadastro-funcionario' element={<CadastroFuncionario />} />
         <Route path='/lista-servicos' element={<ListaServicos />} />
+        <Route path='/lista-financeiro' element={<ListaFinanceiro />} />
+        <Route path='/redefinir-senha' element={<RedefinirSenha />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

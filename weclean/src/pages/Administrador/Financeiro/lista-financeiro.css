@@ -1,4 +1,4 @@
-.lista-servicos-container {
+.lista-financeiro-container {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -34,7 +34,7 @@
     100%{background-position:0% 50%}
 }
 
-.ls-content {
+.lf-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,72 +44,8 @@
     margin-top: 7rem;
 }
 
-.ls-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
-    padding: 2%;
-    height: 80px;
-    background: transparent;
-    gap: 20px;
-}
 
-.ls-header-txt {
-    height: 100%;
-    margin-right: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 5px;
-    color: var(--corPrincipal);
-}
-
-.ls-header-btn-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
-    gap: 5px;
-}
-
-.btn-notificacao {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    max-width: 45px;
-    min-height: 45px;
-    max-height: 45px;
-    border-radius: 50%;
-    border: 2px solid var(--corPrincipal);
-    background:transparent;
-    color: var(--corPrincipal);
-    font-size: 20px;
-}
-
-.btn-logout {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    min-width: 45px;
-    max-width: 45px;
-    min-height: 45px;
-    max-height: 45px;
-    border-radius: 50%;
-    border: 2px solid var(--corPrincipal);
-    background: transparent;
-    color: var(--corPrincipal);
-    font-size: 20px;
-}
-
-.ls-main {
+.lf-main {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -120,7 +56,7 @@
 }
 
 @media screen and (max-width: 1599px) {
-    .ls-main {
+    .lf-main {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -131,7 +67,7 @@
     }
 }
 
-.ls-main-top {
+.lf-main-top {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -139,13 +75,13 @@
     width: 100%;
 }
 
-.ls-main-top h2 {
+.lf-main-top h2 {
     font-size: 32px;
     font-weight: 600;
     color: var(--corPrincipal);
 }
 
-.ls-main-content {
+.lf-main-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -159,7 +95,7 @@
     box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
-.servicos-lista {
+.pagamentos-lista {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -167,7 +103,7 @@
     width: 100%;
 }
 
-.ls-card {
+.lf-card {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -176,30 +112,10 @@
     border-radius: 10px;
 }
 
-.css-113d811-MuiFormLabel-root-MuiInputLabel-root, 
-.css-1s4jv0j-MuiFormControl-root,
-.css-13ow76e-MuiFormControl-root-MuiTextField-root,
-.css-huskxe {
-    color: var(--corPrincipal) !important;
-}
-
-.ls-top-filters {
+.lf-top-filters {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
 }
-
-
-
-/* .css-stp9o6-MuiTabs-flexContainer .MuiTab-root .MuiTab-textColorPrimary .Mui-selected .MuiButtonBase-root .css-1usuzwp-MuiButtonBase-root-MuiTab-root 
-.MuiTabs-flexContainer .MuiButtonBase-root {
-    color: var(--corPrincipal) !important;
-    background: var(--corPrincipal);
-}
-
-.MuiTabs-flexContainer .MuiTabs-centered .css-stp9o6-MuiTabs-flexContainer {
-    color: var(--corPrincipal) !important;
-    background: var(--corPrincipal);
-} */

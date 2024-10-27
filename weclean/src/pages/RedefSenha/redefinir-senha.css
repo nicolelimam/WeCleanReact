@@ -1,0 +1,96 @@
+.redef-senha-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(270deg, #f3d8ff, #ffffff);
+    background-size: 400% 400%;
+
+    -webkit-animation: AnimationName 30s ease infinite;
+    -moz-animation: AnimationName 30s ease infinite;
+    animation: AnimationName 30s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.redef-senha-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 500px;
+    width: auto;
+    background: var(--corBg);
+    padding: 3%;
+    border-radius: 10px;
+    box-shadow: var(--corPrincipal) 0px 1px 2px 0px;
+}
+
+.top-row-rs {
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.top-row-rs h2 {
+    font-size: 32px;
+    color: var(--corPrincipal);
+    font-weight: 700;
+}
+
+.rs-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+#btnConfirmarNovaSenha {
+    width: 100%;
+    height: 40px;
+    background: var(--corPrincipal);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    border: none;
+
+    &:hover {
+        background: var(--corHover);
+    }
+    &:active {
+        background: var(--corActive);
+    }
+}
+
+.img-top-rs .rs-icon {
+    max-width: 100px;
+    min-width: 100px;
+    max-height: 100px;
+    min-height: 100px;
+    width: 100px;
+    height: 100px;
+    font-size: 90px;
+    color: var(--corPrincipal);
+}

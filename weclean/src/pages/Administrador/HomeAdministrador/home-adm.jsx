@@ -54,13 +54,13 @@ const HomeAdministrador = () => {
         </div>
         <Grid container spacing={3} className="home-administrador-content">
 
-          <Grid item xs={12} md={6} >
+          <Grid item xs={12} md={6} className='ha-dashboard-content'>
             <Card className='dashboard-item servicos-chart'>
-              <CardContent>
-                <Typography variant="h6">Serviços mais solicitados esse mês</Typography>
+              <CardContent className='servicos-chart-content'>
+                <Typography variant="h3" className='title-dashboard-item'>Serviços mais solicitados esse mês</Typography>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#82ca9d" />
+                    <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#d6b5e4" />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
@@ -68,11 +68,11 @@ const HomeAdministrador = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={6} >
-            <Card className='dashboard-item'>
+            <Card className='dashboard-item tipocliente-chart'>
               <CardContent>
-                <Typography variant="h6">Tipo de Cliente</Typography>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={lineData}>
+                <Typography variant="h6" className='title-dashboard'>Tipo de Cliente (maiores solicitações)</Typography>
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={lineData} className='linechart-chart'>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
@@ -88,11 +88,11 @@ const HomeAdministrador = () => {
           
           {/* Gráfico de Barras */}
           <Grid item xs={12} >
-            <Card className='dashboard-item'>
+            <Card className='dashboard-item cidades-chart'>
               <CardContent>
-                <Typography variant="h6">As cidades que mais solicitaram serviços</Typography>
+                <Typography variant="h6" className='title-dashboard' style={{color: 'var(--corPrincipal'}}>As cidades que mais solicitaram serviços</Typography>
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={barData}>
+                  <BarChart data={barData} className='barchart-chart'>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />

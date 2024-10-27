@@ -10,6 +10,9 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { MdOutlineWork } from "react-icons/md";
+import { PiCashRegisterFill } from "react-icons/pi";
+import { LuLogOut } from "react-icons/lu";
 
 function MenuAdm({ activePage = 'dashboard' }) {  
     const [anchorEl, setAnchorEl] = useState(null);
@@ -70,7 +73,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                                 className={`menu-adm-link ${activeLink === 'servicos' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('servicos')}
                             >
-                                <FaListUl className='menu-adm-link-icon'/>
+                                <MdOutlineWork className='menu-adm-link-icon'/>
                                 <span className="menu-adm-link-txt">Serviços</span>
                             </Nav.Link>
                             <Nav.Link 
@@ -86,7 +89,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                                 className={`menu-adm-link ${activeLink === 'financeiro' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('financeiro')}
                             >
-                                <FaMoneyBill className='menu-adm-link-icon'/>
+                                <PiCashRegisterFill  className='menu-adm-link-icon'/>
                                 <span className="menu-adm-link-txt">Financeiro</span>
                             </Nav.Link>
                             <Nav.Link 
@@ -131,7 +134,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                             <button className="btn-logout"
                                 data-tooltip-id="tooltip-logout"
                                 data-tooltip-content="Sair">
-                                <RiLogoutCircleRLine />
+                                <LuLogOut />
                             </button>
                             <Tooltip
                             id="tooltip-logout"
