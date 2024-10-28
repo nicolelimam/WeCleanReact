@@ -30,7 +30,7 @@ import iconCardLavadeira from '../../assets/images/lavadeira-card-icon.svg';
 import iconCardFaxineira from '../../assets/images/faxineira-card-icon.svg';
 import iconCardPassadeira from '../../assets/images/passadeira-card-icon.svg';
 import iconCardCozinheira from '../../assets/images/cozinheira-card-icon.svg';
-
+import iconCardJardinagem from '../../assets/images/jardinagem-card-icon.png';
 //Função para exibir mensagem de sucesso na solicitação de entrevista
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -150,35 +150,35 @@ function Index() {
                   <img src={iconCardLavadeira} alt="ìcone" className="lavadeira-card-icon" />
                 </div>
                 <div className="card-servicos-main-content">
-                  <h3>LAVAGEM DE ROUPA</h3>
-                  <p>Oferecemos o serviço de lavagem de roupas por meio de profissionais qualificados.</p>
+                  <h3>LAVANDERIA</h3>
+                  <p>Oferecemos serviços de lavanderia por meio de profissionais qualificados.</p>
                 </div>
             </div>
             <div className="passadeira-card card-servicos">
               <div className="card-servicos-icon-div">
-                  <img src={iconCardPassadeira} alt="icone" className="card-servicos-icon passadeira-card-icon" />
+                  <img src={iconCardFaxineira} alt="icone" className="card-servicos-icon passadeira-card-icon" />
               </div>
                 <div className="card-servicos-main-content">
-                  <h3>PASSAGEM DE ROUPA</h3>
-                  <p>Aqui você encontra serviços de secagem e passagem de roupa de qualidade excelente!</p>
+                <h3>FAXINA GERAL</h3>
+                <p>Também fornecemos serviços de limpeza geral para sua casa ou empresa.</p>
                 </div>
             </div>
             <div className="faxineira-card card-servicos">
               <div className="card-servicos-icon-div">
-                  <img src={iconCardFaxineira} alt="icone" className="card-servicos-icon faxineira-card-icon" />
-              </div>
-              <div className="card-servicos-main-content">
-                <h3>FAXINA GERAL</h3>
-                <p>Também fornecemos serviços de limpeza geral para sua casa ou empresa.</p>
-              </div>
-            </div>
-            <div className="cozinheira-card card-servicos">
-              <div className="card-servicos-icon-div">
-                  <img src={iconCardCozinheira} alt="icone" className="card-servicos-icon" />
+                  <img src={iconCardCozinheira} alt="icone" className="card-servicos-icon faxineira-card-icon" />
               </div>
               <div className="card-servicos-main-content">
                 <h3>COZINHEIRO</h3>
                 <p>Através da WeClean, você pode contratar cozinheiros de qualidade para sua casa ou estabelecimento.</p>
+              </div>
+            </div>
+            <div className="cozinheira-card card-servicos">
+              <div className="card-servicos-icon-div">
+                  <img src={iconCardJardinagem} alt="icone" className="card-servicos-icon" />
+              </div>
+              <div className="card-servicos-main-content">
+                <h3>JARDINAGEM</h3>
+                <p>Mantenha seu jardim bonito e bem cuidado com a WeClean!</p>
               </div>
             </div>
           </div>
