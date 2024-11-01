@@ -91,6 +91,31 @@
     }
 }
 
+.btn-cadastro-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    background: var(--corBg);
+    border: 2px solid var(--corPrincipal);
+    color: var(--corPrincipal);
+    text-transform: uppercase;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    letter-spacing: 1px;
+    font-weight: 800;
+
+    &:hover {
+        background: var(--corBg2);
+    }
+}
+
+.btn-cad-google-icon {
+    margin-top: -2px;
+    margin-right: 10px;
+}
+
 .btn-link {
     text-decoration: none;
     color: var(--corPrincipal);
@@ -130,4 +155,6 @@
     }
 }
 
-
+.cad-date {
+    width: 100% !important;
+}

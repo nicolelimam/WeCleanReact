@@ -188,7 +188,7 @@ function HomeFuncionario() {
                   style={{
                     backgroundColor: "var(--corPrincipal)",
                     color: "#fff",
-                  }} // Personalizando o estilo
+                  }} 
                 />
               </div>
             </Offcanvas.Body>

@@ -61,7 +61,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                         {/* Alinha os links no centro */}
                         <Nav className="flex-grow-1 d-flex justify-content-center align-items-center pe-3 menu-adm-li">
                             <Nav.Link 
-                                href="#dashboard" 
+                                href="/home-adm" 
                                 className={`menu-adm-link ${activeLink === 'dashboard' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('dashboard')}
                             >
@@ -69,15 +69,16 @@ function MenuAdm({ activePage = 'dashboard' }) {
                                 <span className="menu-adm-link-txt">Dashboard</span>
                             </Nav.Link>
                             <Nav.Link 
-                                href="#servicos" 
+                                href="/lista-servicos" 
                                 className={`menu-adm-link ${activeLink === 'servicos' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('servicos')}
+                                
                             >
                                 <MdOutlineWork className='menu-adm-link-icon'/>
                                 <span className="menu-adm-link-txt">Serviços</span>
                             </Nav.Link>
                             <Nav.Link 
-                                href="#funcionarios" 
+                                href="/cadastro-funcionario" 
                                 className={`menu-adm-link ${activeLink === 'funcionarios' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('funcionarios')}
                             >
@@ -85,7 +86,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                                 <span className="menu-adm-link-txt">Funcionários</span>
                             </Nav.Link>
                             <Nav.Link 
-                                href="#financeiro" 
+                                href="/lista-financeiro" 
                                 className={`menu-adm-link ${activeLink === 'financeiro' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('financeiro')}
                             >

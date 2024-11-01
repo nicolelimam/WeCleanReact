@@ -5,10 +5,22 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './login.css'; 
 import imgLogin from '../../assets/images/prodlimpeza.svg';
 import { Link } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { query, where, getDocs, collection } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { signInWithPopup } from 'firebase/auth';
+import { db, auth, provider } from '../../backend/firebase';
+import { FaGoogle } from "react-icons/fa6";
+import bcrypt from 'bcryptjs';
 
 function Login() {
   const [showRedef, setShowRedef] = useState(false);
   const [showSucesso, setShowSucesso] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleRedefClose = () => setShowRedef(false);
   const handleRedefShow = () => setShowRedef(true);
@@ -18,7 +30,84 @@ function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     handleRedefClose();
-    handleSucessoShow();
+    navigate('/redefinir-senha');
+  };
+  
+
+  const handleLogin = async () => {
+    try {
+
+      const usersQuery = query(collection(db, 'users'), where('email', '==', email));
+      const querySnapshot = await getDocs(usersQuery);
+  
+      if (querySnapshot.empty) {
+        throw new Error('Usuário não encontrado.');
+      }
+  
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+  
+
+      const passwordMatch = await bcrypt.compare(password, userData.password);
+      if (!passwordMatch) {
+        throw new Error('Senha incorreta.');
+      }
+  
+
+      switch (userData.role) {
+        case 'client':
+          navigate('/home-cliente');
+          break;
+        case 'admin':
+          navigate('/home-adm');
+          break;
+        case 'employee':
+          navigate('/home-funcionario');
+          break;
+        default:
+          console.error("Role de usuário inválido.");
+      }
+    } catch (error) {
+      console.error("Erro no login: ", error);
+      toast.error("Erro ao fazer login. Verifique suas credenciais.");
+    }
+  };
+  
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+  
+
+      const usersQuery = query(collection(db, 'users'), where('email', '==', user.email));
+      const querySnapshot = await getDocs(usersQuery);
+  
+      if (querySnapshot.empty) {
+        console.error("Usuário não encontrado no banco de dados.");
+        toast.error("Conta Google não registrada. Faça o cadastro primeiro.");
+        return;
+      }
+  
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+  
+      switch (userData.role) {
+        case 'client':
+          navigate('/home-cliente');
+          break;
+        case 'admin':
+          navigate('/home-administrador');
+          break;
+        case 'employee':
+          navigate('/home-funcionario');
+          break;
+        default:
+          console.error("Role de usuário inválido.");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login com Google: ", error);
+      toast.error("Erro ao fazer login com Google.");
+    }
   };
 
   return (
@@ -38,11 +127,27 @@ function Login() {
             <div className="header-text mb-4">
               <h2>Bem vindo(a) de volta!</h2>
             </div>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Control type="email" className="form-control-lg fs-6 campotxt" placeholder="Email" />
-            </Form.Group>
-            <Form.Group className="mb-1">
+            </Form.Group> */}
+              <Form.Group className="mb-3">
+                <Form.Control 
+                  type="email" 
+                  name="email" 
+                  className="form-control-lg bg-light fs-6 campotxt" 
+                  placeholder="Email"
+                />
+              </Form.Group>
+            {/* <Form.Group className="mb-1">
               <Form.Control type="password" className="form-control-lg fs-6 campotxt" placeholder="Senha" />
+            </Form.Group> */}
+            <Form.Group className="mb-3">
+              <Form.Control 
+                type="password" 
+                name="password" 
+                className="form-control-lg bg-light fs-6 campotxt" 
+                placeholder="Senha"
+              />
             </Form.Group>
             <div className="input-group mb-5 d-flex redefinir">
               <small>
@@ -52,9 +157,12 @@ function Login() {
               </small>
             </div>
             <Form.Group className="mb-3">
-              <Button className="btn-login" onClick={() => window.location.href = 'home-cliente.html'}>
+              <Button className="btn-login" onClick={handleLogin}>
                 Login
               </Button>
+              <button className="btn-login-google" onClick={handleGoogleLogin}>
+                <FaGoogle className="btn-login-google-icon" /> Login com Google
+              </button>
             </Form.Group>
             <Row className="div-redef">
             <small>Ainda não tem uma conta? <Link to="/cadastro" className="btn-link">Cadastre-se!</Link></small>
