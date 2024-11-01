@@ -96,7 +96,7 @@ function Login() {
           navigate('/home-cliente');
           break;
         case 'admin':
-          navigate('/home-administrador');
+          navigate('/home-adm');
           break;
         case 'employee':
           navigate('/home-funcionario');
