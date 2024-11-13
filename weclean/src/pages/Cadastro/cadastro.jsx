@@ -8,94 +8,116 @@ import { FaGoogle } from "react-icons/fa6";
 import bcrypt from 'bcryptjs';
 import { db, auth, provider } from '../../backend/firebase';
 import { toast } from 'react-toastify';
-import { createUserWithEmailAndPassword, signInWithPopup,  } from 'firebase/auth';
-import { addDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { addDoc, doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 const Cadastro = () => {
   const [tipoUsuario, setTipoUsuario] = useState('Pessoa Física');
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    name: '',
-    cpfCnpj: '',
-    dateOfBirth: '',
-    phone: ''
+    senha: '',
+    nome: '',
+    cpf: '', // Campo específico para Pessoa Física
+    cnpj: '', // Campo específico para Pessoa Jurídica
+    data_de_nascimento: '',
+    telefone: ''
   });
 
   const navigate = useNavigate();
-  const handleInputChange = (e) => setFormData({...formData, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleRegister = async () => {
-    if (!formData.email || !formData.password) {
+    if (!formData.email || !formData.senha) {
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
     
     try {
-      const hashedPassword = bcrypt.hashSync(formData.password, 10);
-
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const hashedPassword = bcrypt.hashSync(formData.senha, 10);
+  
+      // Cria o usuário na autenticação
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
       const user = userCredential.user;
-
-      const userDoc = await addDoc(collection(db, 'users'), {
+  
+      // Cria o documento do usuário na coleção 'usuarios'
+      const userRef = doc(collection(db, 'usuarios'), user.uid);
+      await setDoc(userRef, {
         email: formData.email,
-        password: hashedPassword,
-        role: 'client',
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
+        senha: hashedPassword,
+        funcao: 'cliente',
+        criado_em: serverTimestamp(),
+        atualizado_em: serverTimestamp()
       });
-
-      await addDoc(collection(db, 'individuals'), {
-        name: formData.name,
-        cpf_cnpj: formData.cpfCnpj,
-        date_of_birth: formData.dateOfBirth,
-        phone: formData.phone,
-        status: 'active',
-        user_id: userDoc.id,
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
-      });
-
+  
+      // Define os dados do cliente para a sub-coleção 'clientes'
+      const clientData = {
+        telefone: formData.telefone || '', // Evita valor undefined
+        endereco: '',                      // Campo vazio como padrão
+        criado_em: serverTimestamp(),
+        atualizado_em: serverTimestamp(),
+        status: 'ativo'
+      };
+  
+      // Campos adicionais específicos para cada tipo de cliente
+      if (tipoUsuario === 'Pessoa Física') {
+        await addDoc(collection(userRef, 'clientes'), {
+          ...clientData,
+          nome: formData.nome || '',           // Evita valor undefined
+          cpf: formData.cpf || '',             // Apenas Pessoa Física usa CPF
+          data_de_nascimento: formData.data_de_nascimento || ''
+        });
+      } else {
+        await addDoc(collection(userRef, 'clientes'), {
+          ...clientData,
+          nome_da_empresa: formData.nome || '', // Evita valor undefined
+          cnpj: formData.cnpj || '',            // Apenas Pessoa Jurídica usa CNPJ
+          pessoa_de_contato: formData.nome || ''
+        });
+      }
+  
       toast.success('Cadastro realizado com sucesso!');
-      navigate('/home-cliente'); 
+      navigate('/home-cliente');
     } catch (error) {
       console.error("Erro ao cadastrar: ", error);
       toast.error("Erro ao cadastrar, verifique o email ou tente novamente.");
     }
   };
+  
 
   const handleGoogleRegister = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-  
-      const userDoc = await addDoc(collection(db, 'users'), {
+
+      // Cria o documento do usuário na coleção 'usuarios'
+      const userRef = doc(collection(db, 'usuarios'), user.uid);
+      await setDoc(userRef, {
         email: user.email,
-        role: 'client',
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
+        funcao: 'cliente',
+        criado_em: serverTimestamp(),
+        atualizado_em: serverTimestamp()
       });
-  
-      await addDoc(collection(db, 'individuals'), {
-        name: user.displayName,
-        cpf_cnpj: '',
-        date_of_birth: '',
-        phone: user.phoneNumber || '',
-        status: 'active',
-        user_id: userDoc.id,
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
+
+      // Adiciona dados do cliente com Google na subcoleção 'clientes'
+      await addDoc(collection(userRef, 'clientes'), {
+        nome: user.displayName || '',
+        cpf: '',
+        data_de_nascimento: '',
+        telefone: user.phoneNumber || '',
+        endereco: '',
+        status: 'ativo',
+        criado_em: serverTimestamp(),
+        atualizado_em: serverTimestamp()
       });
-  
+
       toast.success('Cadastro com Google realizado com sucesso!');
-      navigate('/home-cliente'); 
+      navigate('/home-cliente');
     } catch (error) {
       console.error("Erro ao cadastrar com Google: ", error);
       toast.error("Erro ao cadastrar com Google, tente novamente.");
     }
   };
-  
 
   return (
     <div className="cadastro-container">
@@ -115,38 +137,51 @@ const Cadastro = () => {
               <p>Cadastre suas informações abaixo.</p>
             </div>
               <Form.Group className="mb-3">
-                <Form.Select 
-                  className='form-control-lg bg-light fs-6' 
-                  style={{borderRadius: "10px"}}
+              <Form.Select 
+                  className="form-control-lg bg-light fs-6" 
+                  style={{ borderRadius: "10px" }}
                   onChange={(e) => setTipoUsuario(e.target.value)} 
+                  aria-expanded={tipoUsuario ? 'true' : 'false'} // Ajuste para booleano
                 >
-                  <option key='blankChoice' hidden value>Tipo de usuário</option>
+                  <option key="blankChoice" hidden value>Tipo de usuário</option>
                   <option>Pessoa Física</option>
                   <option>Pessoa Jurídica</option>
                 </Form.Select>
               </Form.Group>
               <Form.Group className="mb-3">
-              <Form.Control 
-                type="text" 
-                name="name" 
-                className="form-control-lg bg-light fs-6 campotxt" 
-                placeholder={tipoUsuario === 'Pessoa Jurídica' ? "Nome da empresa" : "Nome completo"}
-                value={formData.name} 
-                onChange={handleInputChange} 
-              />
-            </Form.Group>
-            {tipoUsuario === 'Pessoa Física' && (
-                <Form.Group className="mb-3">
-                  <InputMask 
-                    mask="999.999.999-99" 
-                    name="cpfCnpj" 
-                    className="form-control-lg bg-light fs-6 campotxt" 
-                    placeholder="CPF"
-                    value={formData.cpfCnpj} 
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              )}
+                <Form.Control 
+                  type="text" 
+                  name="nome" 
+                  className="form-control-lg bg-light fs-6 campotxt" 
+                  placeholder={tipoUsuario === 'Pessoa Jurídica' ? "Nome da empresa" : "Nome completo"}
+                  value={formData.nome} 
+                  onChange={handleInputChange} 
+                />
+              </Form.Group>
+              {tipoUsuario === 'Pessoa Física' && (
+                  <Form.Group className="mb-3">
+                    <InputMask 
+                      mask="999.999.999-99" 
+                      name="cpf" // Altere para 'cpf'
+                      className="form-control-lg bg-light fs-6 campotxt" 
+                      placeholder="CPF"
+                      value={formData.cpf} // Atualizado para `cpf`
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                )}
+                {tipoUsuario === 'Pessoa Jurídica' && (
+                  <Form.Group className="mb-3">
+                    <InputMask 
+                      mask="99.999.999/9999-99" 
+                      name="cnpj" // Altere para 'cnpj'
+                      className="form-control-lg bg-light fs-6 campotxt" 
+                      placeholder="CNPJ"
+                      value={formData.cnpj} // Atualizado para `cnpj`
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                )}
               {tipoUsuario === 'Pessoa Jurídica' && (
                 <Form.Group className="mb-3">
                   <InputMask 
@@ -200,16 +235,17 @@ const Cadastro = () => {
                   onChange={handleInputChange} 
                 />
               </Form.Group>
+
               <Form.Group className="mb-3">
-              <Form.Control 
-                type="password" 
-                name="password" 
-                className="form-control-lg bg-light fs-6 campotxt" 
-                placeholder="Senha"
-                value={formData.password} 
-                onChange={handleInputChange}
-              />
-            </Form.Group>
+                  <Form.Control 
+                    type="password" 
+                    name="senha" 
+                    className="form-control-lg bg-light fs-6 campotxt" 
+                    placeholder="Senha"
+                    value={formData.senha} 
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
             <Form.Group className="mb-3">
               <Form.Control type="password" className="form-control-lg bg-light fs-6 campotxt" placeholder="Confirme sua senha" />
             </Form.Group>

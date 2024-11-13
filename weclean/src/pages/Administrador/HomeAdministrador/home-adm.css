@@ -137,6 +137,15 @@
     
 }
 
+@media screen and (max-width: 1024px) {
+    .title-dashboard-item {
+        font-size: 26px !important;
+        text-transform: uppercase;
+        width: 50%;
+        font-weight: 700 !important;
+    }
+}
+
 .tipocliente-chart {
     display: flex;
     align-items: center;
@@ -187,4 +196,30 @@
 
 .barchart-chart {
     margin-top: 30px;
+}
+
+.func-list-dashboard {
+    border-radius: 20px !important;
+    background: transparent !important;
+    width: 1040px !important;
+    margin-left: 2.5rem;
+}
+
+.funcionarios-list-dashboard {
+    background: white !important;
+    border-radius: 20px;
+    width: 1040px !important;
+}
+
+.entradas-recentes-list {
+    border-radius: 20px !important;
+    background: transparent !important;
+    width: 1025px !important;
+    margin-right: 3rem !important;
+}
+
+.entradas-recentes-dashboard {
+    background: white !important;
+    border-radius: 20px;
+    width: 1025px !important;
 }

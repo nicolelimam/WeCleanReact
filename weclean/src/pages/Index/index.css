@@ -262,7 +262,7 @@
     border-radius: 10px;
     animation: appear linear;
     animation-timeline: view();
-    animation-range: entry 0% cover 40%;
+    animation-range: entry 0% cover 20%;
     box-shadow: var(--corHover) 0px 1px 3px, var(--corPrincipal) 0px 1px 2px;
 }
 

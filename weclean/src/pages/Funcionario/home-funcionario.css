@@ -57,18 +57,19 @@
     margin-top: 8rem;
 }
 
-@media screen and (min-width: 1899px) {
+@media screen and (max-width: 999px){
     .home-funcionario-main-content {
-        width: 70%;
-        max-width: 70%;
+        margin-top: 5rem;
     }
 }
 
+
+
 .home-funcionario-header {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* Alinha os itens em linha em telas maiores */
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between; /* Mantém o filtro à direita */
     width: 100%;
     padding: 3.5%;
     padding-left: 3.8%;
@@ -77,6 +78,19 @@
     height: 70px;
     background: transparent;
 }
+
+@media screen and (max-width: 999px) {
+    .home-funcionario-header {
+        flex-direction: column; /* Reverte para coluna em telas menores */
+        align-items: flex-start;
+    }
+}
+.hf-header-item {
+    display: flex;
+    justify-content: flex-end; /* Alinha o filtro à direita */
+    width: 100%;
+}
+
 
 .hf-header-txt{
     height: 100%;
@@ -101,8 +115,15 @@
     background: var(--corBg);
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-    margin-top: 0;
+    margin-top: 2rem;
     margin-bottom: 3rem;
+}
+
+@media screen and (max-width: 999px) {
+    .home-funcionario-content{  
+        min-height: 75vh;
+    }
+    
 }
 
 .hf-agenda-content {
@@ -153,4 +174,41 @@
     font-size: 22px;
     color: var(--corPrincipal);
     font-weight: 700;
+}
+
+@media screen and (min-width: 1899px) {
+    .home-funcionario-main-content {
+        width: 70%;
+        max-width: 70%;
+    }
+
+
+
+    .data-filter-hf {
+        position: relative;
+        margin-left: 3rem !important;
+    }
+
+}
+
+@media screen and (min-width: 999px){
+    
+    .hf-header-item {
+        display: none !important;
+    }
+}
+
+.hf-card-list{
+    width: 100%;
+    padding: 10px;
+}
+
+.hf-card {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.hf-card-title {
+    font-weight: 700;
+    color: var(--corPrincipal);
 }

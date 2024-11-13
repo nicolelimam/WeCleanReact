@@ -56,6 +56,24 @@ function ListaFinanceiro() {
       tipo: "Faxina",
       valor: 100.0,
     },
+    {
+      id: 2,
+      numeroServico: 2342,
+      cliente: "Mariana",
+      funcionario: "Fernanda",
+      data: "2024-05-12",
+      tipo: "Lavanderia",
+      valor: 140.0,
+    },
+    {
+      id: 3,
+      numeroServico: 6543,
+      cliente: "Patrícia",
+      funcionario: "Paulo",
+      data: "2024-07-03",
+      tipo: "Jardinagem",
+      valor: 300.0,
+    },
   ];
   const saidaPagamentos = [
     {
@@ -186,7 +204,7 @@ function ListaFinanceiro() {
                       <Typography>
                         Data do Pagamento: {pagamento.data}
                       </Typography>
-                      <Typography variant="h6" color="primary">
+                      <Typography variant="h6" color="green">
                         Valor: R$ {pagamento.valor.toFixed(2)}
                       </Typography>
                     </CardContent>

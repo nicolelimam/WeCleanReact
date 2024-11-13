@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import "./form-faxina.css";
 import { Autocomplete, TextField, InputAdornment, IconButton } from "@mui/material";
+import Chatbot from "../../../components/ChatBot/chatbot";
 
 function FormularioFaxina() {
   // Estado para armazenar o valor do botão selecionado
@@ -41,6 +42,7 @@ function FormularioFaxina() {
   return (
     <div className="form-faxina-container">
       <ToastContainer />
+      <Chatbot />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">

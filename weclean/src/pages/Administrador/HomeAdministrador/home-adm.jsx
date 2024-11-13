@@ -1,6 +1,8 @@
 import React from 'react';
 import { Grid, Card, CardContent, Typography, List, ListItem, ListItemText, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { PieChart, Pie, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Bar, BarChart, Line, YAxis, XAxis, CartesianGrid, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart } from 'recharts';
+import { LuLineChart } from 'react-icons/lu';
 import MenuSidebarAdministrador from '../../../components/AdmMenuSidebar/adm-menu-sidebar';
 import MenuAdm from '../../../components/MenuAdm/menu-adm';
 import './home-adm.css';
@@ -12,6 +14,26 @@ const HomeAdministrador = () => {
     { name: 'Cozinha', value: 200 },
     { name: 'Jardinagem', value: 100 },
   ];
+
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        fontSize={14}
+        fontFamily="Poppins"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
 
   const lineData = [
     { name: 'Janeiro', Residencial: 40, Empresa: 24 },
@@ -60,8 +82,32 @@ const HomeAdministrador = () => {
                 <Typography variant="h3" className='title-dashboard-item'>Serviços mais solicitados esse mês</Typography>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} fill="#d6b5e4" />
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#d6b5e4"
+                      label={renderCustomizedLabel}
+                      labelLine={false}
+                    >
+                      {pieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d'][index % 4]} />
+                      ))}
+                    </Pie>
                     <Tooltip />
+                    <Legend
+                      layout="vertical"
+                      align="right"
+                      verticalAlign="middle"
+                      formatter={(value, entry) => (
+                        <span style={{ color: 'white', fontFamily: 'Poppins' }}>
+                          {value}: {entry.payload.value}
+                        </span>
+                      )}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -107,9 +153,9 @@ const HomeAdministrador = () => {
 
        
           <Grid item xs={12} md={6} >
-            <Card className='dashboard-item'>
-              <CardContent>
-                <Typography variant="h6">Funcionários com base em serviços realizados</Typography>
+            <Card className='dashboard-item func-list-dashboard'>
+              <CardContent className='funcionarios-list-dashboard'>
+                <Typography variant="h6" style={{color: "var(--corPrincipal)"}}>Funcionários com base em serviços realizados</Typography>
                 <List>
                   {funcionarios.map((funcionario, index) => (
                     <ListItem key={index}>
@@ -121,8 +167,8 @@ const HomeAdministrador = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={6} >
-            <Card className='dashboard-item'>
-              <CardContent>
+            <Card className='dashboard-item entradas-recentes-list'>
+              <CardContent className='entradas-recentes-dashboard'>
                 <Typography variant="h6">Entradas Recentes</Typography>
                 <Table>
                   <TableHead>
