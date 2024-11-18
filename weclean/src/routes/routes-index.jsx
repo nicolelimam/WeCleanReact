@@ -15,6 +15,7 @@ import ListaFinanceiro from '../pages/Administrador/Financeiro/lista-financeiro'
 import RedefinirSenha from '../pages/RedefSenha/redefinir-senha';
 import HomeFuncionario from '../pages/Funcionario/home-funcionario';
 import HomeCliente from '../pages/Cliente/HomeCliente/home-cliente';
+import ListaServicosCliente from '../pages/Cliente/ListaServicos/lista-servicos-cliente';
 
 function RoutesIndex() {
   return (
@@ -34,6 +35,7 @@ function RoutesIndex() {
         <Route path='/lista-financeiro' element={<ListaFinanceiro />} />
         <Route path='/home-funcionario' element={<HomeFuncionario />} />
         <Route path='/home-cliente' element={<HomeCliente/>} />
+        <Route path='/lista-servicos-cliente' element={<ListaServicosCliente/>} />
         <Route path='/redefinir-senha' element={<RedefinirSenha />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

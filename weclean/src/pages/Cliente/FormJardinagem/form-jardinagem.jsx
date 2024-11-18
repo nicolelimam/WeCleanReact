@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Offcanvas, Container, Button } from "react-bootstrap";
 import logoWeclean from "../../../assets/images/logo-weclean.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,12 +7,30 @@ import "react-toastify/dist/ReactToastify.css";
 import "../../../css/globalVar.css";
 import '../../../css/globalForm.css';
 import { Autocomplete, TextField } from "@mui/material";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db } from "../../../backend/firebase";
+import { getUserSession } from "../../../utils/session";
 
 function FormularioJardinagem() {
+  const [areaVerde, setAreaVerde] = useState(0);
+  const [tipoServico, setTipoServico] = useState('');
+  const [tipoLocal, setTipoLocal] = useState('');
+  const [observacoes, setObservacoes] = useState('');
+  const [preco, setPreco] = useState(0);
+  const navigate = useNavigate();
 
   // Estado para armazenar o valor do botão selecionado
   const [selectedDiasSemanaCozinha, setSelectedDiasSemanaCozinha] = useState([]);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (areaVerde > 5) {
+      const precoCalculado = 50 + (areaVerde - 5) * 5; // R$50 base + R$5 por metro quadrado a partir de 5m²
+      setPreco(precoCalculado);
+    } else {
+      setPreco(50); // Valor base de R$50 para até 5m²
+    }
+  }, [areaVerde]);
+
   // Função para alterar o botão selecionado
   const handleButtonClick = (diasSemanaCozinha) => {
     if (selectedDiasSemanaCozinha.includes(diasSemanaCozinha)) {
@@ -24,11 +42,43 @@ function FormularioJardinagem() {
     }
   };
 
-  const handleConfirmClick = () => {
-    navigate('/form-endereco'); 
+  const handleSaveData = async () => {
+    const userSession = getUserSession();
+    if (!userSession) {
+      toast.error("Usuário não logado!");
+      return;
+    }
+  
+    try {
+      // Adiciona o documento na coleção "servicos"
+      const servicoRef = await addDoc(collection(db, "servicos"), {
+        cliente_id: userSession.userId, // Pega o ID do usuário da sessão
+        data_realizacao: Timestamp.fromDate(new Date()), // Define a data de realização como a data atual
+        modalidade_servico: "jardinagem", // Modalidade fixa
+        observacoes,
+        pagamento: "", // Deixar vazio conforme solicitado
+        pagamento_status: "pendente", // Status fixo
+        pagamento_tipo: "", // Deixar vazio conforme solicitado
+        valor: preco.toString(), // Converte o valor para string
+        status: "pendente", // Status fixo
+      });
+  
+      // Adiciona os dados de jardinagem na subcoleção "jardinagem"
+      await addDoc(collection(servicoRef, "jardinagem"), {
+        area_verde: areaVerde,
+        tipo_local: tipoLocal,
+        tipo_servico: tipoServico,
+      });
+  
+      toast.success("Serviço agendado com sucesso!");
+      navigate("/form-endereco"); // Redireciona após salvar os dados
+    } catch (e) {
+      toast.error("Erro ao salvar dados no banco!");
+      console.error("Erro ao salvar no Firestore", e);
+    }
   };
-
-  const tipoServico = [
+  
+  const tipoServicoValue = [
     { label: "Manutenção", value: "manutencao" },
     { label: "Paisagismo", value: "paisagismo" },
     { label: "Corte de grama", value: "corte-grama" },
@@ -86,7 +136,13 @@ function FormularioJardinagem() {
         <div className="f-title-div">
           <h2>Agendamento</h2>
         </div>
-        <form action="" className="form-default">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault(); 
+            handleSaveData(); 
+          }} 
+          className="form-default"
+        >
           <div className="form-default-row ">
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
@@ -104,7 +160,8 @@ function FormularioJardinagem() {
               </label>
               <Autocomplete
                 fullWidth
-                options={tipoServico}
+                options={tipoServicoValue}
+                onChange={(e, value) => setTipoServico(value?.value || '')}
                 getOptionLabel={(option) => option.label}
                 renderInput={(params) => (
                   <TextField
@@ -141,6 +198,7 @@ function FormularioJardinagem() {
               <Autocomplete
                 fullWidth
                 options={locais}
+                onChange={(e, value) => setTipoLocal(value?.value || '')}
                 getOptionLabel={(option) => option.label}
                 renderInput={(params) => (
                   <TextField
@@ -176,7 +234,7 @@ function FormularioJardinagem() {
               <label htmlFor="" className="f-label">
                 Tamanho da área verda (em m²):
               </label>
-              <input type="number" className="f-input" placeholder="Ex: 4"/>
+              <input type="number" className="f-input" placeholder="Ex: 4" onChange={(e) => setAreaVerde(Number(e.target.value))}/>
             </div>
             <div className="form-default-item">
               <label htmlFor="" className="f-label">
@@ -191,11 +249,19 @@ function FormularioJardinagem() {
               <label htmlFor="" className="f-label">
                 Observações adicionais sobre o jardim:
               </label>
-              <textarea name=""  className="f-txtarea2">
+              <textarea name=""  className="f-txtarea2"  onChange={(e) => setObservacoes(e.target.value)}>
 
               </textarea>
             </div>
-            
+            <div className="form-default-item preco-panel" 
+            style={{display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end"
+            }}>
+              <p>Valor total:</p>
+              <h3 className="preco">R$ {preco}</h3>
+            </div>
           </div>
           <br />
           <div className="form-default-row">
@@ -209,7 +275,7 @@ function FormularioJardinagem() {
           </div>
           <div className="ff-btn-div">
             <button className="cancel-button">Cancelar e voltar</button>
-            <button className="confirm-button" onClick={handleConfirmClick}>Confirmar</button>
+            <button type="submit" className="confirm-button">Confirmar</button>
           </div>
         </form>
       </div>

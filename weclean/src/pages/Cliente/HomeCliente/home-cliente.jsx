@@ -37,8 +37,9 @@ function HomeCliente() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="#">Serviços</Nav.Link>
-                <Nav.Link href="#">Suporte</Nav.Link>
+                <Nav.Link href="#" className='active'>Início</Nav.Link>
+                <Nav.Link href="/lista-servicos-cliente">Serviços</Nav.Link>
+                
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
                 <button

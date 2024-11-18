@@ -288,7 +288,7 @@
 }
 
 .f-txtarea {
-    width: 50%;
+    width: 100%;
     height: 120px;
     border: 1px solid var(--corPrincipal);
     border-radius: 10px;
@@ -297,7 +297,7 @@
 
 
 .f-txtarea2 {
-    width: 49%;
+    width: 100%;
     height: 120px;
     border: 1px solid var(--corPrincipal);
     border-radius: 10px;
@@ -553,5 +553,19 @@
         &:active {
             background: var(--corActive);
         }
+    }
+}
+
+.btn-baixar-pix {
+    background: var(--corPrincipal);
+    color: white;
+    cursor: pointer;
+    border: var(--corPrincipal);
+
+    &:hover {
+        background: var(--corHover);
+    }
+    &:active {
+        background: var(--corActive);
     }
 }

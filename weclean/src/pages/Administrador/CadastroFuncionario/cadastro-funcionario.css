@@ -118,10 +118,10 @@
     .cf-main {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
         width: 100%;
-        padding: 2%;
+        padding: 4%;
         padding-top: 5px;
     }
 }
@@ -192,9 +192,10 @@
 }
 
 .cf-select {
-    width: 49% !important;
+    width: 47% !important;
     font-family: "DM Sans", sans-serif;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
 .cf-buton-div {
@@ -285,3 +286,82 @@
 }
 
 
+.modal-overlay-cf {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+  }
+  
+  .modal-content-cf {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    overflow-y: auto;
+    height: auto;
+    max-height: 90vh;
+    max-width: 600px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+  }
+
+  @media screen and (max-width: 999px) {
+    .modal-content-cf {
+        width: 90vw;
+    }
+  }
+
+  
+  .modal-header-cf {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .modal-header-cf h2 {
+    color: var(--corPrincipal);
+    font-weight: 700;
+  }
+  
+  .modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    margin-top: -20px;
+  }
+  
+  .modal-body-cf {
+    margin-top: 10px;
+  }
+
+  .modal-title-cf {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+
+  .modal-title-cf  h3 {
+    color: var(--corPrincipal);
+    font-weight: 600;
+  }
+  
+  .cf-btn-add {
+    background: var(--corPrincipal);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+  }

@@ -18,10 +18,11 @@ const Cadastro = () => {
     email: '',
     senha: '',
     nome: '',
-    cpf: '', // Campo específico para Pessoa Física
-    cnpj: '', // Campo específico para Pessoa Jurídica
+    cpf: '', 
+    cnpj: '', 
     data_de_nascimento: '',
-    telefone: ''
+    telefone: '',
+    tipo_de_usuario: ''
   });
 
   const navigate = useNavigate();
@@ -46,10 +47,11 @@ const Cadastro = () => {
         email: formData.email,
         senha: hashedPassword,
         funcao: 'cliente',
+        tipo_de_usuario: tipoUsuario === 'Pessoa Física' ? 'fisico' : 'juridico', // Adiciona o tipo de usuário
         criado_em: serverTimestamp(),
         atualizado_em: serverTimestamp()
       });
-  
+
       // Define os dados do cliente para a sub-coleção 'clientes'
       const clientData = {
         telefone: formData.telefone || '', // Evita valor undefined
@@ -91,14 +93,15 @@ const Cadastro = () => {
       const user = result.user;
 
       // Cria o documento do usuário na coleção 'usuarios'
-      const userRef = doc(collection(db, 'usuarios'), user.uid);
+     const userRef = doc(collection(db, 'usuarios'), user.uid);
       await setDoc(userRef, {
         email: user.email,
         funcao: 'cliente',
+        tipo_de_usuario: 'fisico', // Valor padrão para usuários Google
         criado_em: serverTimestamp(),
         atualizado_em: serverTimestamp()
       });
-
+      
       // Adiciona dados do cliente com Google na subcoleção 'clientes'
       await addDoc(collection(userRef, 'clientes'), {
         nome: user.displayName || '',
@@ -174,34 +177,22 @@ const Cadastro = () => {
                   <Form.Group className="mb-3">
                     <InputMask 
                       mask="99.999.999/9999-99" 
-                      name="cnpj" // Altere para 'cnpj'
+                      name="cnpj" 
                       className="form-control-lg bg-light fs-6 campotxt" 
                       placeholder="CNPJ"
-                      value={formData.cnpj} // Atualizado para `cnpj`
+                      value={formData.cnpj} 
                       onChange={handleInputChange}
                     />
                   </Form.Group>
                 )}
-              {tipoUsuario === 'Pessoa Jurídica' && (
-                <Form.Group className="mb-3">
-                  <InputMask 
-                    mask="99.999.999/9999-99" 
-                    name="cpfCnpj" 
-                    className="form-control-lg bg-light fs-6 campotxt" 
-                    placeholder="CNPJ"
-                    value={formData.cpfCnpj} 
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              )}
               {tipoUsuario === 'Pessoa Física' && (
                 <Form.Group className="mb-3">
                   <InputMask
                     mask="99/99/9999"
-                    name="dateOfBirth" 
+                    name="data_de_nascimento" 
                     className="form-control-lg bg-light fs-6 campotxt"
                     placeholder="Data de nascimento"
-                    value={formData.dateOfBirth} 
+                    value={formData.data_de_nascimento} 
                     onChange={handleInputChange}
                   />
                 </Form.Group>
