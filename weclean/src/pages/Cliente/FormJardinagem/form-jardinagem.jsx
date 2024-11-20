@@ -10,6 +10,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../../backend/firebase";
 import { getUserSession } from "../../../utils/session";
+import { useClearSessionAndRedirect } from "../../../utils/session";
 
 function FormularioJardinagem() {
   const [areaVerde, setAreaVerde] = useState(0);
@@ -21,6 +22,8 @@ function FormularioJardinagem() {
 
   // Estado para armazenar o valor do botão selecionado
   const [selectedDiasSemanaCozinha, setSelectedDiasSemanaCozinha] = useState([]);
+
+  const handleLogout = useClearSessionAndRedirect();
 
   useEffect(() => {
     if (areaVerde > 5) {
@@ -123,7 +126,7 @@ function FormularioJardinagem() {
                 <Nav.Link href="#">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff">
+                <button className="btn-logout-ff" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right"></i> Sair
                 </button>
               </div>

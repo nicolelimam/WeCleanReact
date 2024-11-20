@@ -4,6 +4,7 @@ import '../../css/globalVar.css';
 import './adm-menu-sidebar.css';
 import { Link } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip'
+import { useClearSessionAndRedirect } from '../../utils/session';
 
 function MenuSidebarAdministrador() {
 
@@ -22,6 +23,8 @@ function MenuSidebarAdministrador() {
     }
   };
 
+  const handleLogout = useClearSessionAndRedirect();
+  
   return (
     <div className={`adm-menu-sidebar-container ${sidebarActive ? 'active' : ''}`}>
       <div className="adm-menu-sidebar">
@@ -141,10 +144,16 @@ function MenuSidebarAdministrador() {
                             </Link>
                         </li>
                         <li className={`ams-menu-item ${activeMenu === 7 ? 'active' : ''}`}>
-                            <Link className='ams-menu-item-link' onClick={() => handleMenuClick(6)}>
-                                <i className="bi bi-door-open-fill ams-menu-item-icon"></i>
-                                <span className="ams-menu-item-text">Sair (Log Out)</span>
-                            </Link>
+                        <Link 
+                            className='ams-menu-item-link' 
+                            onClick={() => {
+                              handleMenuClick(6);
+                              handleLogout();
+                            }}
+                          >
+                            <i className="bi bi-door-open-fill ams-menu-item-icon"></i>
+                            <span className="ams-menu-item-text">Sair (Log Out)</span>
+                          </Link>
                         </li>
                 </ul>
         </div>

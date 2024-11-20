@@ -9,6 +9,7 @@ import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./home-funcionario.css";
 import Chatbot from "../../components/ChatBot/chatbot";
+import { useClearSessionAndRedirect } from "../../utils/session";
 moment.locale("pt-br");
 
 const localizer = momentLocalizer(moment);
@@ -62,6 +63,8 @@ function HomeFuncionario() {
     return eventDate === filterDate;
   });
 
+  const handleLogout = useClearSessionAndRedirect();
+
   return (
     <div className="home-funcionario-container">
       <Chatbot />
@@ -77,7 +80,7 @@ function HomeFuncionario() {
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
                 <Nav.Link href="#">Suporte</Nav.Link>
               </Nav>
-              <button className="btn-logout" data-tooltip-id="tooltip-logout" data-tooltip-content="Sair">
+              <button className="btn-logout" onClick={handleLogout} data-tooltip-id="tooltip-logout" data-tooltip-content="Sair">
                 <LuLogOut />
               </button>
             </Offcanvas.Body>

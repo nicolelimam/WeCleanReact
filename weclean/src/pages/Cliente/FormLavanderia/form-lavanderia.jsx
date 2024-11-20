@@ -9,6 +9,7 @@ import '../../../css/globalForm.css';
 import { Autocomplete, TextField } from "@mui/material";
 import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { getUserSession } from "../../../utils/session";
+import { useClearSessionAndRedirect } from "../../../utils/session";
 
 
 function FormularioLavanderia() {
@@ -18,6 +19,7 @@ function FormularioLavanderia() {
   const [preco, setPreco] = useState(200); // Estado para o preço total inicial
   const [tipoServicoSelecionado, setTipoServicoSelecionado] = useState("1"); // Estado para tipo de serviço
 
+  const handleLogout = useClearSessionAndRedirect();
 
   useEffect(() => {
     const novoPreco = calcularPrecoLavanderia(quantidadePecas, preferenciaLavagem, produtosFornecidos, tipoServicoSelecionado);
@@ -179,7 +181,7 @@ function FormularioLavanderia() {
                 <Nav.Link href="#">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff">
+                <button className="btn-logout-ff" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right"></i> Sair
                 </button>
               </div>

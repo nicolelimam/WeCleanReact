@@ -11,6 +11,7 @@ import { Autocomplete, TextField, InputAdornment, IconButton } from "@mui/materi
 import { db } from "../../../backend/firebase";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getUserSession } from "../../../utils/session";
+import { useClearSessionAndRedirect } from "../../../utils/session";
 
 function FormularioCozinha() {
   const [selectedDiasSemanaCozinha, setSelectedDiasSemanaCozinha] = useState([]);
@@ -19,6 +20,8 @@ function FormularioCozinha() {
   const [basePrice, setBasePrice] = useState(100);
   // Estado para armazenar o valor do botão selecionado
   const navigate = useNavigate();
+
+  const handleLogout = useClearSessionAndRedirect();
   
   // Função para alterar o botão selecionado
   const handleButtonClick = (diasSemanaCozinha) => {
@@ -202,7 +205,7 @@ function FormularioCozinha() {
                 <Nav.Link href="#">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff">
+                <button className="btn-logout-ff" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right"></i> Sair
                 </button>
               </div>

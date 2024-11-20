@@ -5,8 +5,14 @@ import { Tooltip } from "react-tooltip";
 import { LuLogOut } from "react-icons/lu";
 import logoWeclean from "../../../assets/images/logo-weclean.png";
 import { Link } from 'react-router-dom';
+import { useClearSessionAndRedirect } from '../../../utils/session';
+
+
 
 function HomeCliente() {
+
+  const handleLogout = useClearSessionAndRedirect();
+
   return (
     <div className='home-cliente-container'>
          <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
@@ -46,6 +52,7 @@ function HomeCliente() {
                   className="btn-logout"
                   data-tooltip-id="tooltip-logout"
                   data-tooltip-content="Sair"
+                  onClick={handleLogout}
                 >
                   <LuLogOut />
                 </button>

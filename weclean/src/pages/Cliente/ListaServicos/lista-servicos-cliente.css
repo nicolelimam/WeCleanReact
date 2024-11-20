@@ -74,7 +74,7 @@
     padding-left: 3.8%;
     padding-top: 0;
     padding-bottom: 2%;
-    height: 70px;
+    height: 50px;
     margin-top: -2rem;
 
 }
@@ -88,6 +88,7 @@
     padding-top: 5px;
     color: var(--corPrincipal);
     font-weight: 700;
+
 }
 
 .lsc-content{
@@ -99,34 +100,95 @@
     gap: 0;
     padding: 5px;
     min-height: 600px;
-    height: 800px;
-    margin-top: 1rem;
+    height: 820px;
+    margin-top: -20px;
     /* margin-bottom: 3rem; */
-
 }
 
+.lsc-abas-servicos {
+    margin-bottom: 20px;
+}
 
-.lsc-list {
+.lsc-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 10px;
-    margin-top: 10px;
+    align-items: center;
+    justify-content: flex-start !important;
+    text-align: left;
     width: 100%;
+    height: 110px;
+    background: var(--corBg);
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-family: "DM Sans", sans-serif !important;
 }
 
-.lsc-list-abas {
-    margin-top: 3rem;
+.lsc-card-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--corPrincipal);
 }
 
-.lsc-list-card,
-.css-1lt5qva-MuiCardContent-root {
+.lsc-valor {
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    color: rgb(5, 39, 5);
+}
+
+.lsc-card-data {
+    font-size: 18px !important;
+}
+
+.css-1wxkzlj-MuiTabs-flexContainer {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    width: 100% !important;
-    margin-top:0;
-    padding: 10px;
+    width: 100%;
+    color: var(--corPrincipal) !important;
 }
+
+.css-1usuzwp-MuiButtonBase-root-MuiTab-root, 
+.css-r3djoj-MuiTouchRipple-root{
+    color: var(--corPrincipal) !important;
+}
+
+.css-1usuzwp-MuiButtonBase-root-MuiTab-root.Mui-selected,
+.css-1wxkzlj-MuiTabs-flexContainer {
+    color: var(--corPrincipal) !important;
+}
+
+.css-1bug3cd-MuiButtonBase-root-MuiPaginationItem-root,
+.MuiPaginationItem-page, .MuiPaginationItem-circular {
+    background: var(--corPrincipal) !important;
+    color: #ffffff !important;
+}
+
+.lsc-modal-title {
+    font-weight: 700;
+    color: var(--corPrincipal);
+}
+
+.lsc-modal-body p {
+    font-size: 18px !important;
+}
+
+.lsc-modal-button {
+    color: var(--corPrincipal) !important; 
+    cursor: pointer;
+
+    &:hover {
+        color: var(--corHover) !important;
+    }
+    &:active {
+        color: var(--corActive) !important;
+    }
+}
+
+
+.custom-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Fundo escurecido */
+    z-index: 1040; 
+}
+
+
+  

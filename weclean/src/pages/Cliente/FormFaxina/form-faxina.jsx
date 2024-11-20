@@ -12,6 +12,7 @@ import Chatbot from "../../../components/ChatBot/chatbot";
 import { db } from "../../../backend/firebase";
 import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getUserSession } from "../../../utils/session";
+import { useClearSessionAndRedirect } from "../../../utils/session";
 
 function FormularioFaxina() {
   const [selectedDuration, setSelectedDuration] = useState(null);
@@ -37,6 +38,8 @@ function FormularioFaxina() {
     { label: "Pré mudança", value: "pre_mudanca" },
     { label: "Pós obra", value: "pos_obra" },
   ];
+
+  const handleLogout = useClearSessionAndRedirect();
 
   useEffect(() => {
     const novoPreco = calcularPrecoFaxina(selectedDuration, produtosFornecidos, tipoFaxina, quantidadeComodos);
@@ -177,7 +180,7 @@ const handleSubmit = async (e) => {
                 <Nav.Link href="#">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff">
+                <button className="btn-logout-ff" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right"></i> Sair
                 </button>
               </div>

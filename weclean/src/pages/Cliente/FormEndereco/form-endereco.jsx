@@ -15,6 +15,7 @@ import JsBarcode from "jsbarcode";
 import jsPDF from "jspdf";
 import { QRCodeCanvas } from "qrcode.react";
 import { Modal } from "react-bootstrap";
+import { useClearSessionAndRedirect } from "../../../utils/session";
 
 function FormularioEndereco() {
   const [rua, setRua] = useState("");
@@ -114,6 +115,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
     }
   };
   
+  const handleLogout = useClearSessionAndRedirect();
 
   
   const fetchValorServico = async (servicoId) => {
@@ -403,7 +405,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
                 <Nav.Link href="#">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff">
+                <button className="btn-logout-ff" onClick={handleLogout}>
                   <i className="bi bi-box-arrow-right"></i> Sair
                 </button>
               </div>
