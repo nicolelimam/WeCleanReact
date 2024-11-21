@@ -3,6 +3,20 @@ import MenuSidebarAdministrador from "../../../components/AdmMenuSidebar/adm-men
 import { Tabs, Tab, Box, Card, CardContent, Typography, Pagination, Tooltip, Menu, MenuItem, TextField, Select, InputLabel, FormControl } from "@mui/material";
 import './lista-servicos.css';
 import MenuAdm from "../../../components/MenuAdm/menu-adm";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc, // Adicionado aqui
+} from "firebase/firestore";
+// import { Modal, Button } from "@mui/material";
+import { Modal, Button } from "react-bootstrap";
+import { toast, ToastContainer } from "react-toastify";
+import { db } from "../../../backend/firebase";
 
 function ListaServicos() {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -12,7 +26,121 @@ function ListaServicos() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [serviceType, setServiceType] = useState('');
-  const servicesPerPage = 12;
+  const servicesPerPage = 7;
+  const [servicos, setServicos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [detalhesServico, setDetalhesServico] = useState(null); // Estado para os detalhes do serviço
+
+  const handleAbrirModal = (servico) => {
+    setDetalhesServico(servico);
+  };
+
+
+  useEffect(() => {
+    const carregarServicos = async () => {
+      setLoading(true);
+      try {
+        const servicosRef = collection(db, "servicos");
+        const servicosSnapshot = await getDocs(servicosRef);
+  
+        const servicosData = [];
+  
+        for (const servicoDoc of servicosSnapshot.docs) {
+          const servico = servicoDoc.data();
+          const servicoId = servicoDoc.id;
+  
+          // Obter informações do funcionário
+          let funcionarioNome = "Não atribuído";
+          if (servico.funcionario_id) {
+            const usuariosQuery = query(
+              collection(db, "usuarios"),
+              where("funcao", "==", "funcionario")
+            );
+            const usuariosSnapshot = await getDocs(usuariosQuery);
+  
+            for (const usuarioDoc of usuariosSnapshot.docs) {
+              const funcionariosRef = collection(
+                db,
+                `usuarios/${usuarioDoc.id}/funcionarios`
+              );
+              const funcionariosSnapshot = await getDocs(funcionariosRef);
+  
+              funcionariosSnapshot.forEach((funcDoc) => {
+                if (funcDoc.id === servico.funcionario_id) {
+                  funcionarioNome = funcDoc.data().nome;
+                }
+              });
+            }
+          }
+  
+          // Obter informações do cliente
+          let clienteNome = "Não identificado";
+          if (servico.cliente_id) {
+            const clienteRef = collection(
+              db,
+              `usuarios/${servico.cliente_id}/clientes`
+            );
+            const clienteSnapshot = await getDocs(clienteRef);
+  
+            clienteSnapshot.forEach((clienteDoc) => {
+              clienteNome = clienteDoc.data().nome;
+            });
+          }
+  
+          // Subcoleções e campos detalhados
+          const modalidades = ["faxina", "lavanderia", "cozinha", "jardinagem"];
+          const detalhes = [];
+          for (const modalidade of modalidades) {
+            const subcolecaoRef = collection(
+              db,
+              `servicos/${servicoId}/${modalidade}`
+            );
+            const subcolecaoSnapshot = await getDocs(subcolecaoRef);
+  
+            subcolecaoSnapshot.forEach((doc) => {
+              detalhes.push({ modalidade, ...doc.data() });
+            });
+          }
+  
+          servicosData.push({
+            id: servicoId,
+            ...servico,
+            funcionarioNome,
+            clienteNome,
+            detalhes,
+          });
+        }
+  
+        setServicos(servicosData);
+      } catch (error) {
+        console.error("Erro ao carregar serviços:", error);
+        toast.error("Erro ao carregar serviços.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    carregarServicos();
+  }, []);
+
+  const categorias = ["pendente", "finalizado", "cancelado", "em analise"];
+
+  const cancelarServico = async (id) => {
+    try {
+      const servicoRef = doc(db, "servicos", id);
+      await updateDoc(servicoRef, { status: "cancelado" });
+      toast.success("Serviço cancelado com sucesso!");
+  
+      // Atualizar o estado local
+      setServicos((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status: "cancelado" } : s))
+      );
+    } catch (error) {
+      console.error("Erro ao cancelar serviço:", error);
+      toast.error("Erro ao cancelar serviço.");
+    }
+  };
+  
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -43,60 +171,27 @@ function ListaServicos() {
     setServiceType(event.target.value);
   };
 
-  // Gerando serviços aleatórios
-  const tiposServicos = ["Faxina", "Lavanderia", "Jardinagem", "Cozinha"];
-  const nomesClientes = ["João", "Maria", "Lucas", "Ana", "Pedro"];
-  const nomesFuncionarios = ["Carlos", "Patrícia", "Fernanda", "Roberto", "Bruna"];
-
-  const gerarServico = () => {
-    const tipo = tiposServicos[Math.floor(Math.random() * tiposServicos.length)];
-    const cliente = nomesClientes[Math.floor(Math.random() * nomesClientes.length)];
-    const funcionario = nomesFuncionarios[Math.floor(Math.random() * nomesFuncionarios.length)];
-    const data = new Date().toLocaleDateString();
-    return { tipo, cliente, funcionario, data };
-  };
-
-  const gerarServicos = (quantidade) => {
-    return Array.from({ length: quantidade }, (_, index) => ({
-      id: index + 1,
-      ...gerarServico(),
-    }));
-  };
-
-  const getServicos = () => {
-    switch (activeTab) {
-      case 0:
-        return servicosPendentes;
-      case 1:
-        return servicosFinalizados;
-      case 2:
-        return servicosCancelados;
-      case 3:
-        return servicosAnalise;
-      default:
-        return [];
-    }
-  };
-
-  const servicosPendentes = gerarServicos(45); 
-  const servicosFinalizados = gerarServicos(30);
-  const servicosCancelados = gerarServicos(20);
-  const servicosAnalise = gerarServicos(10);
 
   
+  const filteredServicos = servicos
+  .filter((servico) => {
+    const statusAtual = categorias[activeTab];
+    return servico.status === statusAtual;
+  })
+  .slice((page - 1) * servicesPerPage, page * servicesPerPage);  
 
-  const filteredServicos = getServicos()
-  .filter((servico) =>
-    servico.id.toString().includes(searchTerm) ||
-    servico.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    servico.funcionario.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  .filter((servico) => 
-    selectedDate ? servico.data === selectedDate : true
-  )
-  .filter((servico) => 
-    serviceType ? servico.tipo === serviceType : true
-  );
+  // const filteredServicos = getServicos()
+  // .filter((servico) =>
+  //   servico.id.toString().includes(searchTerm) ||
+  //   servico.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   servico.funcionario.toLowerCase().includes(searchTerm.toLowerCase())
+  // )
+  // .filter((servico) => 
+  //   selectedDate ? servico.data === selectedDate : true
+  // )
+  // .filter((servico) => 
+  //   serviceType ? servico.tipo === serviceType : true
+  // );
 
 
   
@@ -123,6 +218,8 @@ function ListaServicos() {
     (page - 1) * servicesPerPage,
     page * servicesPerPage
   );
+
+  
   
 
   return (
@@ -196,24 +293,35 @@ function ListaServicos() {
 
 
             <Box className="servicos-lista" sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2 }}>
-              {servicosExibidos.length > 0 ? (
-                servicosExibidos.map((servico) => (
-                  <Card key={servico.id} sx={{ width: "80%", mb: 2 }} className="ls-card">
-                    <CardContent>
-                      <Typography variant="h6">Serviço #{servico.id}</Typography>
-                      <Typography>Tipo: {servico.tipo}</Typography>
-                      <Typography>Cliente: {servico.cliente}</Typography>
-                      <Typography>Funcionário: {servico.funcionario}</Typography>
-                      <Typography>Data Agendada: {servico.data}</Typography>
-                    </CardContent>
-                  </Card>
-                ))
-              ) : (
-                <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
-                  Nenhum serviço corresponde à sua busca :(
-                </Typography>
-              )}
-            </Box>
+  {loading ? (
+    <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
+      Carregando serviços...
+    </Typography>
+  ) : filteredServicos.length > 0 ? (
+    filteredServicos.map((servico) => (
+      <Card
+        key={servico.id}
+        sx={{ width: "80%", mb: 2 }}
+        className="ls-card"
+        onClick={() => handleAbrirModal(servico)}
+      >
+        <CardContent>
+          <Typography variant="h6">
+            Serviço - {servico.modalidade_servico} ({servico.tipo_servico || "Desconhecido"})
+          </Typography>
+          <Typography>Cliente: {servico.clienteNome}</Typography>
+          <Typography>Funcionário: {servico.funcionarioNome}</Typography>
+          <Typography>Data Agendada: {new Date(servico.data_realizacao.seconds * 1000).toLocaleDateString()}</Typography>
+        </CardContent>
+      </Card>
+    ))
+  ) : (
+    <Typography variant="body1" color="textSecondary" sx={{ mt: 2 }}>
+      Nenhum serviço corresponde à sua busca :(
+    </Typography>
+  )}
+</Box>
+
 
 
             <Pagination
@@ -226,6 +334,41 @@ function ListaServicos() {
          
         </div>
       </div>
+      <Modal open={!!detalhesServico} onClose={() => setDetalhesServico(null)}>
+  <Box sx={{ p: 3, backgroundColor: "white", borderRadius: "8px", maxWidth: "500px", margin: "auto" }}>
+    <Typography variant="h6" sx={{ mb: 2 }}>Detalhes do Serviço</Typography>
+    {detalhesServico && (
+      <>
+        <Typography>Cliente: {detalhesServico.clienteNome}</Typography>
+        <Typography>Funcionário: {detalhesServico.funcionarioNome}</Typography>
+        <Typography>Status: {detalhesServico.status}</Typography>
+        <Typography>Valor: R$ {detalhesServico.valor || "Não informado"}</Typography>
+        {detalhesServico.detalhes.map((detalhe, idx) => (
+          <Typography key={idx}>{JSON.stringify(detalhe)}</Typography>
+        ))}
+        {(detalhesServico.status === "pendente" || detalhesServico.status === "em análise") && (
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ mt: 2 }}
+            onClick={() => cancelarServico(detalhesServico.id)}
+          >
+            Cancelar Serviço
+          </Button>
+        )}
+      </>
+    )}
+    <Button
+      variant="outlined"
+      sx={{ mt: 2 }}
+      onClick={() => setDetalhesServico(null)}
+    >
+      Fechar
+    </Button>
+  </Box>
+</Modal>
+
+
     </div>
   );
 }

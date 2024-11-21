@@ -407,3 +407,17 @@
     margin-top: -2px;
     margin-right: 10px;
 }
+
+.btn-enviar {
+    background: var(--corPrincipal);
+    color: #ffff;
+    cursor: pointer;
+    border: none;
+
+    &:hover {
+        background: var(--corHover);
+    }
+    &:active {
+        background: var(--corActive);
+    }
+}

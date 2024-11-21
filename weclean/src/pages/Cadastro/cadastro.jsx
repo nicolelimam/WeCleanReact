@@ -7,7 +7,7 @@ import InputMask from "react-input-mask";
 import { FaGoogle } from "react-icons/fa6";
 import bcrypt from 'bcryptjs';
 import { db, auth, provider } from '../../backend/firebase';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { addDoc, doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -26,14 +26,91 @@ const Cadastro = () => {
   });
 
   const navigate = useNavigate();
-  const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value || '', // Fallback para string vazia
+    }));
+  };
+  // const handleRegister = async () => {
+  //   if (!formData.email || !formData.senha) {
+  //     toast.error("Preencha todos os campos obrigatórios.");
+  //     return;
+  //   }
+    
+  //   try {
+  //     const hashedPassword = bcrypt.hashSync(formData.senha, 10);
+  
+  //     // Cria o usuário na autenticação
+  //     const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
+  //     const user = userCredential.user;
+  
+  //     // Cria o documento do usuário na coleção 'usuarios'
+  //     const userRef = doc(collection(db, 'usuarios'), user.uid);
+  //     await setDoc(userRef, {
+  //       email: formData.email,
+  //       senha: hashedPassword,
+  //       funcao: 'cliente',
+  //       tipo_de_usuario: tipoUsuario === 'Pessoa Física' ? 'fisico' : 'juridico', // Adiciona o tipo de usuário
+  //       criado_em: serverTimestamp(),
+  //       atualizado_em: serverTimestamp()
+  //     });
+
+  //     // Define os dados do cliente para a sub-coleção 'clientes'
+  //     const clientData = {
+  //       telefone: formData.telefone || '', // Evita valor undefined
+  //       endereco: '',                      // Campo vazio como padrão
+  //       criado_em: serverTimestamp(),
+  //       atualizado_em: serverTimestamp(),
+  //       status: 'ativo'
+  //     };
+  
+  //     // Campos adicionais específicos para cada tipo de cliente
+  //     if (tipoUsuario === 'Pessoa Física') {
+  //       await addDoc(collection(userRef, 'clientes'), {
+  //         ...clientData,
+  //         nome: formData.nome || '',           // Evita valor undefined
+  //         cpf: formData.cpf || '',             // Apenas Pessoa Física usa CPF
+  //         data_de_nascimento: formData.data_de_nascimento || ''
+  //       });
+  //     } else {
+  //       await addDoc(collection(userRef, 'clientes'), {
+  //         ...clientData,
+  //         nome_da_empresa: formData.nome || '', // Evita valor undefined
+  //         cnpj: formData.cnpj || '',            // Apenas Pessoa Jurídica usa CNPJ
+  //         pessoa_de_contato: formData.nome || ''
+  //       });
+  //     }
+  
+  //     toast.success('Cadastro realizado com sucesso!');
+  //     navigate('/home-cliente');
+  //   } catch (error) {
+  //     console.error("Erro ao cadastrar: ", error);
+    
+  //     // Verifica o tipo de erro retornado pelo Firebase
+  //     switch (error.code) {
+  //       case 'auth/email-already-in-use':
+  //         toast.error('Este e-mail já está em uso. Tente outro e-mail.');
+  //         break;
+  //       case 'auth/invalid-email':
+  //         toast.error('O formato do e-mail é inválido. Verifique e tente novamente.');
+  //         break;
+  //       case 'auth/weak-password':
+  //         toast.error('A senha deve ter pelo menos 6 caracteres.');
+  //         break;
+  //       default:
+  //         toast.error('Erro ao cadastrar. Tente novamente mais tarde.');
+  //     }
+  //   }    
+  // };
 
   const handleRegister = async () => {
     if (!formData.email || !formData.senha) {
       toast.error("Preencha todos os campos obrigatórios.");
       return;
     }
-    
+  
     try {
       const hashedPassword = bcrypt.hashSync(formData.senha, 10);
   
@@ -46,45 +123,61 @@ const Cadastro = () => {
       await setDoc(userRef, {
         email: formData.email,
         senha: hashedPassword,
-        funcao: 'cliente',
-        tipo_de_usuario: tipoUsuario === 'Pessoa Física' ? 'fisico' : 'juridico', // Adiciona o tipo de usuário
+        funcao: 'cliente', // Por padrão, é cliente
+        tipo_de_usuario: tipoUsuario === 'Pessoa Física' ? 'fisico' : 'juridico',
         criado_em: serverTimestamp(),
         atualizado_em: serverTimestamp()
       });
-
+  
       // Define os dados do cliente para a sub-coleção 'clientes'
       const clientData = {
-        telefone: formData.telefone || '', // Evita valor undefined
-        endereco: '',                      // Campo vazio como padrão
+        telefone: formData.telefone || '',
+        endereco: '',
         criado_em: serverTimestamp(),
         atualizado_em: serverTimestamp(),
         status: 'ativo'
       };
   
-      // Campos adicionais específicos para cada tipo de cliente
       if (tipoUsuario === 'Pessoa Física') {
         await addDoc(collection(userRef, 'clientes'), {
           ...clientData,
-          nome: formData.nome || '',           // Evita valor undefined
-          cpf: formData.cpf || '',             // Apenas Pessoa Física usa CPF
+          nome: formData.nome || '',
+          cpf: formData.cpf || '',
           data_de_nascimento: formData.data_de_nascimento || ''
         });
       } else {
         await addDoc(collection(userRef, 'clientes'), {
           ...clientData,
-          nome_da_empresa: formData.nome || '', // Evita valor undefined
-          cnpj: formData.cnpj || '',            // Apenas Pessoa Jurídica usa CNPJ
+          nome_da_empresa: formData.nome || '',
+          cnpj: formData.cnpj || '',
           pessoa_de_contato: formData.nome || ''
         });
       }
   
       toast.success('Cadastro realizado com sucesso!');
+      
+      // Redireciona diretamente para a página do cliente
       navigate('/home-cliente');
     } catch (error) {
       console.error("Erro ao cadastrar: ", error);
-      toast.error("Erro ao cadastrar, verifique o email ou tente novamente.");
+  
+      // Trata os erros de autenticação do Firebase
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          toast.error('Este e-mail já está em uso. Tente outro e-mail.');
+          break;
+        case 'auth/invalid-email':
+          toast.error('O formato do e-mail é inválido. Verifique e tente novamente.');
+          break;
+        case 'auth/weak-password':
+          toast.error('A senha deve ter pelo menos 6 caracteres.');
+          break;
+        default:
+          toast.error('Erro ao cadastrar. Tente novamente mais tarde.');
+      }
     }
   };
+  
   
 
   const handleGoogleRegister = async () => {
@@ -124,6 +217,7 @@ const Cadastro = () => {
 
   return (
     <div className="cadastro-container">
+      <ToastContainer />
         <Container className="d-flex justify-content-center align-items-center min-vh-100 cadastro-content">
       <Row className="border rounded-5 p-3 bg-white shadow box-area">
         <Col md={6} className="rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style={{ background: '#3F1651' }}>
@@ -145,6 +239,7 @@ const Cadastro = () => {
                   style={{ borderRadius: "10px" }}
                   onChange={(e) => setTipoUsuario(e.target.value)} 
                   aria-expanded={tipoUsuario ? 'true' : 'false'} // Ajuste para booleano
+                  value={tipoUsuario}
                 >
                   <option key="blankChoice" hidden value>Tipo de usuário</option>
                   <option>Pessoa Física</option>

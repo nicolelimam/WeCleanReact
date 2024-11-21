@@ -5,18 +5,18 @@ import ReactDOM from 'react-dom/client';
 
 function App() {
 
-  if (typeof window !== "undefined") {
-    const resizeObserverErrFix = () => {
-      const resizeObserverError = (e) => {
-        if (e.message === 'ResizeObserver loop completed with undelivered notifications.') {
-          e.stopImmediatePropagation();
-        }
-      };
-      window.addEventListener('error', resizeObserverError);
-      return () => window.removeEventListener('error', resizeObserverError);
-    };
-    resizeObserverErrFix();
-  }
+  const observerErrorHandler = () => {
+    // Suprime apenas o erro "ResizeObserver loop limit exceeded"
+    if (arguments[0].message && arguments[0].message.includes('ResizeObserver')) {
+      return;
+    }
+    // Caso contrário, exibe normalmente no console
+    console.error(...arguments);
+  };
+  
+  window.addEventListener('error', observerErrorHandler);
+  window.addEventListener('unhandledrejection', observerErrorHandler);
+  
 
   return (
    <div className="App">

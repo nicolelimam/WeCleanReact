@@ -9,13 +9,14 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { query, where, getDocs, collection } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { signInWithPopup } from 'firebase/auth';
 import { db, auth, provider } from '../../backend/firebase';
 import { FaGoogle } from "react-icons/fa6";
 import bcrypt from 'bcryptjs';
 import { saveUserSession } from '../../utils/session';
 import { setDoc, serverTimestamp, addDoc } from 'firebase/firestore';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 function Login() {
   const [showRedef, setShowRedef] = useState(false);
@@ -64,7 +65,8 @@ function Login() {
             default:
               toast.error('Função de usuário inválida ou não definida.');
           }
-
+        } else {
+          // Mensagem de senha incorreta dentro do escopo correto
           toast.error('Senha incorreta.');
         }
       } else {
@@ -75,6 +77,7 @@ function Login() {
       toast.error('Erro ao fazer login. Tente novamente.');
     }
   };
+  
 
   const handleGoogleLogin = async () => {
     try {
@@ -100,10 +103,32 @@ function Login() {
       toast.error('Erro ao fazer login com o Google. Tente novamente.');
     }
   };
+
+  const handleRedefSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const q = query(collection(db, 'usuarios'), where('email', '==', email));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const auth = getAuth(); // Certifique-se de inicializar corretamente o objeto auth
+        await sendPasswordResetEmail(auth, email); // Envia o email de redefinição de senha
+        toast.success('Um email de redefinição foi enviado! Verifique sua caixa de entrada.');
+        handleRedefClose(); // Fechar modal após sucesso
+      } else {
+        toast.error('E-mail não encontrado no sistema.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar email de redefinição:', error);
+      toast.error('Erro ao processar sua solicitação. Tente novamente.');
+    }
+  };
+  
   
   
   return (
    <div className="login-page-container">
+    <ToastContainer />
      <Container fluid className="d-flex justify-content-center align-items-center min-vh-100 login-page-content">
       <Row className="border rounded-5 p-3 bg-white shadow box-area">
         <Col md={6} className="rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style={{ background: '#3F1651' }}>
@@ -173,12 +198,23 @@ function Login() {
         </Modal.Header>
         <Modal.Body>
           <p>Se você esqueceu sua senha, insira seu email e enviaremos uma mensagem de confirmação para a redefinição do seu acesso.</p>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group>
-              <Form.Control type="email" className="form-control-lg bg-light fs-6 campotxt" placeholder="Email da conta" />
-            </Form.Group>
-            <Button type="submit" className="btn btn-primary w-100 fs-6 btn-enviar mt-3">Enviar email</Button>
-          </Form>
+          <Form onSubmit={handleRedefSubmit}>
+          <Form.Group>
+            <Form.Control 
+              type="email" 
+              className="form-control-lg bg-light fs-6 campotxt" 
+              placeholder="Email da conta"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Button 
+            type="submit" 
+            className="btn btn-primary w-100 fs-6 btn-enviar mt-3">
+            Enviar email
+          </Button>
+        </Form>
         </Modal.Body>
       </Modal>
 

@@ -132,6 +132,81 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
   };
   
 
+  // const handleSaveEndereco = async (event) => {
+  //   event.preventDefault();
+  //   const userSession = getUserSession();
+  //   if (!userSession) {
+  //     toast.error("Usuário não logado.");
+  //     return;
+  //   }
+  
+  //   const userId = userSession.userId;
+  //   const servicoId = localStorage.getItem("servicoId");
+  //   let pixString = null;
+
+  //   try {
+  //     const valorServico = await fetchValorServico(servicoId);
+  //     let linhaDigitavel = null; 
+
+  //     if (selectedPayment === "Boleto") {
+  //       linhaDigitavel = await gerarBoleto(valorServico);
+  //       await updateDoc(doc(db, "servicos", servicoId), { pagamento: linhaDigitavel });
+  //     } else if (selectedPayment === "PIX") {
+  //       const pixString = await gerarQRCodePix(valorServico);
+  //       await updateDoc(doc(db, "servicos", servicoId), { pagamento: pixString });
+  //     }      
+
+  //    const servicoRef = doc(db, "servicos", servicoId);
+  //     await updateDoc(servicoRef, {
+  //       pagamento_tipo: selectedPayment.toLowerCase(),
+  //       pagamento: selectedPayment === "Boleto" ? linhaDigitavel : pixString,
+  //     });
+  
+  //     // Restante do código de salvar endereço e alocar funcionário
+  //   } catch (error) {
+  //     console.error("Erro ao salvar endereço ou gerar boleto:", error);
+  //     toast.error("Erro ao processar sua solicitação.");
+  //   }
+  
+  //   try {
+  //     const enderecoData = { rua, bairro, numero, cep, cidade, estado };
+  
+  //     // Atualizar endereço no Firestore
+  //     const clientesRef = collection(db, "usuarios", userId, "clientes");
+  //     const clientesSnapshot = await getDocs(clientesRef);
+  
+  //     if (!clientesSnapshot.empty) {
+  //       const clienteDoc = clientesSnapshot.docs[0];
+  //       await setDoc(clienteDoc.ref, { endereco: enderecoData }, { merge: true });
+  //     } else {
+  //       const newDocRef = doc(collection(db, "usuarios", userId, "clientes"));
+  //       await setDoc(newDocRef, { endereco: enderecoData });
+  //     }
+  
+  //     if (!rua || !bairro || !numero || !cep || !cidade || !estado) {
+  //       toast.error("Preencha todos os campos obrigatórios do endereço.");
+  //       return;
+  //     }
+  
+  //     if (isNaN(parseInt(numero, 10)) || !numero.trim()) {
+  //       toast.error("O número informado é inválido.");
+  //       return;
+  //     }
+
+  
+  //     const sucesso = await assignFuncionario(userId, cidade);
+  //     if (sucesso) {
+  //       toast.success("Solicitação finalizada com sucesso!");
+  //       navigate("/home-cliente");
+  //     } else {
+  //       toast.error("Nenhum funcionário disponível no momento.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao salvar endereço:", error);
+  //     toast.error("Erro ao salvar endereço.");
+  //   }
+  // };
+  
   const handleSaveEndereco = async (event) => {
     event.preventDefault();
     const userSession = getUserSession();
@@ -144,24 +219,25 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
     const servicoId = localStorage.getItem("servicoId");
   
     try {
-      const valorServico = await fetchValorServico(servicoId); 
-      
+      const valorServico = await fetchValorServico(servicoId);
+      let linhaDigitavel = null; 
+      let pixString = null;
+  
       if (selectedPayment === "Boleto") {
-        await gerarBoleto(valorServico);
+        linhaDigitavel = await gerarBoleto(valorServico);
       } else if (selectedPayment === "PIX") {
-        await gerarQRCodePix(valorServico);
+        pixString = await gerarQRCodePix(valorServico);
       }
   
-      // Restante do código de salvar endereço e alocar funcionário
-    } catch (error) {
-      console.error("Erro ao salvar endereço ou gerar boleto:", error);
-      toast.error("Erro ao processar sua solicitação.");
-    }
-  
-    try {
-      const enderecoData = { rua, bairro, numero, cep, cidade, estado };
+      const servicoRef = doc(db, "servicos", servicoId);
+      await updateDoc(servicoRef, {
+        pagamento_tipo: selectedPayment.toLowerCase(),
+        pagamento: selectedPayment === "Boleto" ? linhaDigitavel : pixString,
+      });
   
       // Atualizar endereço no Firestore
+      const enderecoData = { rua, bairro, numero, cep, cidade, estado };
+  
       const clientesRef = collection(db, "usuarios", userId, "clientes");
       const clientesSnapshot = await getDocs(clientesRef);
   
@@ -191,12 +267,111 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
         toast.error("Nenhum funcionário disponível no momento.");
       }
     } catch (error) {
-      console.error("Erro ao salvar endereço:", error);
-      toast.error("Erro ao salvar endereço.");
+      console.error("Erro ao salvar endereço ou gerar boleto:", error);
+      toast.error("Erro ao processar sua solicitação.");
     }
   };
   
   
+  
+  // const assignFuncionario = async (userId, cidadeCliente) => {
+  //   try {
+  //     const servicoId = localStorage.getItem("servicoId");
+  //     const modalidade = localStorage.getItem("modalidadeServico");
+  
+  //     if (!servicoId || !modalidade) {
+  //       toast.error("Erro: Serviço não encontrado.");
+  //       return false;
+  //     }
+  
+  //     // Buscar todos os usuários com a subcoleção 'funcionarios'
+  //     const usuariosRef = collection(db, "usuarios");
+  //     const usuariosSnapshot = await getDocs(usuariosRef);
+  
+  //     const funcionariosDisponiveis = [];
+  
+  //     for (const usuarioDoc of usuariosSnapshot.docs) {
+  //       const usuarioId = usuarioDoc.id;
+  //       const funcionariosRef = collection(db, "usuarios", usuarioId, "funcionarios");
+  //       const funcionariosSnapshot = await getDocs(funcionariosRef);
+  
+  //       for (const funcionarioDoc of funcionariosSnapshot.docs) {
+  //         const funcionarioData = funcionarioDoc.data();
+  //         const enderecoFuncionario = funcionarioData.endereco || {};
+  
+  //         if (
+  //           funcionarioData.tipo_de_servico === modalidade &&
+  //           enderecoFuncionario.cidade === cidadeCliente
+  //         ) {
+  //           const hoje = new Date();
+  //           let compromissosSemana = parseInt(funcionarioData.compromissos_semana || "0", 10);
+  //           let semana = funcionarioData.semana ? new Date(funcionarioData.semana) : null;
+  
+  //           // Resetar contador semanal se for uma nova semana
+  //           if (semana && (hoje - semana) / (1000 * 60 * 60 * 24 * 7) >= 1) {
+  //             compromissosSemana = 0; // Resetar compromissos da semana
+  //             semana = hoje; // Atualizar data para a semana atual
+  //           }
+  
+  //           // Adicionar funcionário se ainda pode assumir serviços
+  //           if (compromissosSemana < 7) {
+  //             funcionariosDisponiveis.push({
+  //               id: funcionarioDoc.id,
+  //               compromissos_semana: compromissosSemana,
+  //               semana: semana || hoje,
+  //               ref: funcionarioDoc.ref,
+  //               ...funcionarioData,
+  //             });
+  //           }
+
+  //           if (!funcionarioData.compromissos_semana || !funcionarioData.semana) {
+  //             compromissosSemana = 0;
+  //             semana = hoje;
+  //           } else {
+  //             compromissosSemana = parseInt(funcionarioData.compromissos_semana, 10);
+  //             semana = new Date(funcionarioData.semana);
+  //           }
+
+  //           await updateDoc(funcionarioSelecionado.ref, {
+  //             compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
+  //             semana: funcionarioSelecionado.semana || hoje,
+  //           });
+            
+            
+  //         }
+  //       }
+  //     }
+  
+  //     if (funcionariosDisponiveis.length === 0) {
+  //       toast.error("Nenhum funcionário disponível para esta modalidade na sua cidade.");
+  //       return false;
+  //     }
+  
+  //     // Selecionar o funcionário com menos compromissos
+  //     const funcionarioSelecionado = funcionariosDisponiveis.sort(
+  //       (a, b) => a.compromissos_semana - b.compromissos_semana
+  //     )[0];
+  
+  //     // Atualizar contador semanal e data no Firestore
+  //     await updateDoc(funcionarioSelecionado.ref, {
+  //       compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
+  //       semana: funcionarioSelecionado.semana || new Date(),
+  //     });
+  
+  //     // Atualizar o ID do funcionário no serviço
+  //     await updateDoc(doc(db, "servicos", servicoId), {
+  //       funcionario_id: funcionarioSelecionado.id,
+  //     });
+
+  
+  //     toast.success(`Funcionário ${funcionarioSelecionado.nome} foi atribuído ao serviço!`);
+  //     return true;
+  //   } catch (error) {
+  //     console.error("Erro ao atribuir funcionário:", error);
+  //     toast.error("Erro ao atribuir funcionário.");
+  //     return false;
+  //   }
+  // };
   
   const assignFuncionario = async (userId, cidadeCliente) => {
     try {
@@ -223,6 +398,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
           const funcionarioData = funcionarioDoc.data();
           const enderecoFuncionario = funcionarioData.endereco || {};
   
+          // Verificar requisitos iniciais (modalidade e cidade)
           if (
             funcionarioData.tipo_de_servico === modalidade &&
             enderecoFuncionario.cidade === cidadeCliente
@@ -232,12 +408,12 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
             let semana = funcionarioData.semana ? new Date(funcionarioData.semana) : null;
   
             // Resetar contador semanal se for uma nova semana
-            if (semana && (hoje - semana) / (1000 * 60 * 60 * 24) >= 7) {
+            if (!semana || (hoje - semana) / (1000 * 60 * 60 * 24) >= 7) {
               compromissosSemana = 0;
-              semana = hoje;
+              semana = hoje; // Atualizar data para a semana atual
             }
   
-            // Adicionar funcionário se ainda pode assumir serviços
+            // Adicionar funcionário à lista se tiver disponibilidade
             if (compromissosSemana < 7) {
               funcionariosDisponiveis.push({
                 id: funcionarioDoc.id,
@@ -264,7 +440,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
       // Atualizar contador semanal e data no Firestore
       await updateDoc(funcionarioSelecionado.ref, {
         compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
-        semana: funcionarioSelecionado.semana || new Date(),
+        semana: funcionarioSelecionado.semana,
       });
   
       // Atualizar o ID do funcionário no serviço
@@ -316,6 +492,8 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
     pdf.addImage(barcodeDataURL, "PNG", 10, 90, 190, 20);
   
     pdf.save("boleto_weclean.pdf");
+
+    return linhaDigitavel;
   };
   
   // Função para alterar a seleção do radiobutton
@@ -325,11 +503,11 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
 
   const gerarQRCodePix = async (valorServico) => {
     const pixData = {
-      chave: "suporte@weclean.com.br", // Chave Pix fixa da empresa
+      chave: "suporte@weclean.com.br",
       nome: "WeClean Serviços LTDA",
       valor: parseFloat(valorServico).toFixed(2),
       cidade: "São Paulo",
-      descricao: "Pagamento WeClean"
+      descricao: "Pagamento WeClean",
     };
   
     const pixString = `
@@ -339,9 +517,12 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
       62170503***6304
     `.replace(/\s/g, ""); // Remove espaços
   
-    setPixQrCodeData(pixString);
-    setShowPixModal(true); // Exibe o modal
+    setPixQrCodeData(pixString); // Ainda define o estado para o modal, se necessário
+    setShowPixModal(true);
+  
+    return pixString; // Retorna o valor para uso imediato
   };
+  
 
   const baixarQRCodePix = (pixData) => {
     const canvas = document.createElement("canvas");

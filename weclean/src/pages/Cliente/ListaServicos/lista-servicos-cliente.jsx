@@ -134,7 +134,7 @@ function ListaServicosCliente() {
           });
         }
 
-        console.log("Serviços carregados:", servicosData); // Depuração
+        // console.log("Serviços carregados:", servicosData); // Depuração
         setServicos(servicosData);
       } catch (error) {
         console.error("Erro ao carregar os serviços:", error);
@@ -169,7 +169,7 @@ function ListaServicosCliente() {
 
 
   const handleAbrirModal = async (servico) => {
-    console.log("Abrindo modal com serviço:", servico); // Depuração
+    // console.log("Abrindo modal com serviço:", servico); // Depuração
     setDetalhesServico(servico);
 
     // Buscar nome do funcionário
@@ -295,32 +295,54 @@ function ListaServicosCliente() {
   };
 
   const handleAbrirAvaliacaoModal = () => {
-    handleFecharModal(); // Fecha o modal de informações
+    if (!detalhesServico || !detalhesServico.id) {
+      console.error("Detalhes do serviço ou ID não encontrados ao abrir o modal de avaliação.");
+      toast.error("Erro ao abrir o modal de avaliação. Tente novamente.");
+      return;
+    }
+  
+    setModalAberto(false);
     setAvaliacaoModalAberto(true); // Abre o modal de avaliação
   };
+  
   
   const handleFecharAvaliacaoModal = () => {
     setAvaliacaoModalAberto(false);
     setAvaliacaoServico({ qualidade: 0, profissionalismo: 0, comentario: "" });
   };
 
+  
+
   const handleSalvarAvaliacao = async () => {
-    if (!detalhesServico) return;
-
+    if (!detalhesServico || !detalhesServico.id) {
+      console.error("Detalhes do serviço ou ID não encontrados ao salvar a avaliação:", detalhesServico);
+      toast.error("Erro ao salvar a avaliação. Tente novamente.");
+      return;
+    }
+  
     const db = getFirestore();
+    if (!db) {
+      console.error("Erro ao conectar ao Firestore.");
+      toast.error("Erro ao conectar ao Firestore.");
+      return;
+    }
+  
     const servicoRef = doc(db, "servicos", detalhesServico.id);
-
+  
     const novaAvaliacao = {
       qualidade: avaliacaoServico.qualidade,
       profissionalismo: avaliacaoServico.profissionalismo,
       comentario: avaliacaoServico.comentario,
       data: new Date().toISOString(),
     };
-
+  
     try {
+      console.log("Salvando avaliação no Firestore para o serviço:", detalhesServico.id);
       await updateDoc(servicoRef, { avaliacao: JSON.stringify(novaAvaliacao) });
+      console.log("Avaliação salva com sucesso no Firestore!");
       toast.success("Avaliação salva com sucesso!");
-
+  
+      // Atualizar estado local
       setServicos((prev) =>
         prev.map((servico) =>
           servico.id === detalhesServico.id
@@ -328,14 +350,15 @@ function ListaServicosCliente() {
             : servico
         )
       );
-
+  
       handleFecharAvaliacaoModal();
       handleFecharModal();
     } catch (error) {
+      console.error("Erro ao salvar avaliação no Firestore:", error);
       toast.error("Erro ao salvar a avaliação.");
-      console.error("Erro ao salvar avaliação:", error);
     }
   };
+  
 
   return (
     <div className="lista-servicos-cliente-container">

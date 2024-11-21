@@ -6,6 +6,7 @@ import { LuLineChart } from 'react-icons/lu';
 import MenuSidebarAdministrador from '../../../components/AdmMenuSidebar/adm-menu-sidebar';
 import MenuAdm from '../../../components/MenuAdm/menu-adm';
 import './home-adm.css';
+import { useClearSessionAndRedirect } from '../../../utils/session';
 
 const HomeAdministrador = () => {
   const pieData = [
@@ -14,6 +15,8 @@ const HomeAdministrador = () => {
     { name: 'Cozinha', value: 200 },
     { name: 'Jardinagem', value: 100 },
   ];
+
+  const handleLogout = useClearSessionAndRedirect();
 
   const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;

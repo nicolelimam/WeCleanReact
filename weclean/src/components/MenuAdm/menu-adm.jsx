@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { MdOutlineWork } from "react-icons/md";
 import { PiCashRegisterFill } from "react-icons/pi";
 import { LuLogOut } from "react-icons/lu";
+import { useClearSessionAndRedirect } from '../../utils/session';
 
 function MenuAdm({ activePage = 'dashboard' }) {  
     const [anchorEl, setAnchorEl] = useState(null);
@@ -26,6 +27,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
         setActiveLink(linkName);  
     };
 
+    const handleLogout = useClearSessionAndRedirect();
     
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -134,7 +136,8 @@ function MenuAdm({ activePage = 'dashboard' }) {
                             </Menu>
                             <button className="btn-logout"
                                 data-tooltip-id="tooltip-logout"
-                                data-tooltip-content="Sair">
+                                data-tooltip-content="Sair"
+                                onClick={handleLogout}>
                                 <LuLogOut />
                             </button>
                             <Tooltip
