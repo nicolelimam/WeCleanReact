@@ -8,7 +8,6 @@ import moment from "moment";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./home-funcionario.css";
-import Chatbot from "../../components/ChatBot/chatbot";
 import { useClearSessionAndRedirect } from "../../utils/session";
 moment.locale("pt-br");
 
@@ -67,7 +66,6 @@ function HomeFuncionario() {
 
   return (
     <div className="home-funcionario-container">
-      <Chatbot />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#bannerHeader" className="fs-4 logo">WeClean</Navbar.Brand>

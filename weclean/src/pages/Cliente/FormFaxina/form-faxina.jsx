@@ -8,7 +8,6 @@ import "../../../css/globalVar.css";
 import "./form-faxina.css";
 import { useNavigate } from "react-router-dom";
 import { Autocomplete, TextField, InputAdornment, IconButton } from "@mui/material";
-import Chatbot from "../../../components/ChatBot/chatbot";
 import { db } from "../../../backend/firebase";
 import { doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getUserSession } from "../../../utils/session";
@@ -148,7 +147,6 @@ const handleSubmit = async (e) => {
   return (
     <div className="form-faxina-container">
       <ToastContainer />
-      <Chatbot />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">

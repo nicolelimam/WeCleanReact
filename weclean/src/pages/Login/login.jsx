@@ -50,9 +50,30 @@ function Login() {
         // Verifica a senha
         const passwordMatch = await bcrypt.compare(password, userData.senha);
         if (passwordMatch) {
-          saveUserSession(userDoc.id);
+          if (userData.funcao === 'funcionario') {
+            // Obtém o documento da subcoleção 'funcionarios'
+            const funcionariosRef = collection(db, `usuarios/${userDoc.id}/funcionarios`);
+            const funcionariosSnapshot = await getDocs(funcionariosRef);
   
-          switch (userData.funcao || 'cliente') { // Se não houver função definida, assume 'cliente'
+            if (!funcionariosSnapshot.empty) {
+              const funcionarioData = funcionariosSnapshot.docs[0].data();
+  
+              // Verifica o status
+              if (funcionarioData.status !== 'ativo') {
+                toast.error(
+                  'Acesso não autorizado: Sua conta foi desativada. Contate o suporte da WeClean para mais informações.'
+                );
+                return;
+              }
+            } else {
+              toast.error('Funcionário não encontrado na subcoleção.');
+              return;
+            }
+          }
+  
+          // Salva a sessão e redireciona com base na função
+          saveUserSession(userDoc.id);
+          switch (userData.funcao || 'cliente') {
             case 'cliente':
               navigate('/home-cliente');
               break;
@@ -66,7 +87,6 @@ function Login() {
               toast.error('Função de usuário inválida ou não definida.');
           }
         } else {
-          // Mensagem de senha incorreta dentro do escopo correto
           toast.error('Senha incorreta.');
         }
       } else {
@@ -77,6 +97,7 @@ function Login() {
       toast.error('Erro ao fazer login. Tente novamente.');
     }
   };
+  
   
 
   const handleGoogleLogin = async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Tabs,
   Tab,
@@ -15,6 +15,9 @@ import {
 } from "@mui/material";
 import MenuAdm from "../../../components/MenuAdm/menu-adm";
 import "./lista-financeiro.css";
+import { Modal } from "bootstrap";
+import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { db } from "../../../backend/firebase";
 
 function ListaFinanceiro() {
   const [activeTab, setActiveTab] = useState(0);
@@ -22,7 +25,56 @@ function ListaFinanceiro() {
   const [selectedDate, setSelectedDate] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [page, setPage] = useState(1);
-  const paymentsPerPage = 10;
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [payments, setPayments] = useState([]);
+  const paymentsPerPage = 7;
+
+
+  // Função para buscar os dados do Firestore
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "servicos"));
+        const fetchedPayments = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setPayments(fetchedPayments);
+      } catch (error) {
+        console.error("Erro ao buscar pagamentos: ", error);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+  const handleOpenModal = (pagamento) => {
+    setSelectedPayment(pagamento);
+    setOpenModal(true);
+  };
+
+  const handleConfirmarPagamento = async (id) => {
+    try {
+      const paymentDoc = doc(db, "servicos", id);
+      await updateDoc(paymentDoc, { pagamento_status: "finalizado" });
+      setPayments((prevPayments) =>
+        prevPayments.map((pagamento) =>
+          pagamento.id === id
+            ? { ...pagamento, pagamento_status: "finalizado" }
+            : pagamento
+        )
+      );
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Erro ao confirmar pagamento: ", error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedPayment(null);
+  };
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -46,65 +98,30 @@ function ListaFinanceiro() {
   };
 
   const tiposServicos = ["Faxina", "Lavanderia", "Jardinagem", "Cozinha"];
-  const entradaPagamentos = [
-    {
-      id: 1,
-      numeroServico: 1234,
-      cliente: "João",
-      funcionario: "Carlos",
-      data: "2024-01-01",
-      tipo: "Faxina",
-      valor: 100.0,
-    },
-    {
-      id: 2,
-      numeroServico: 2342,
-      cliente: "Mariana",
-      funcionario: "Fernanda",
-      data: "2024-05-12",
-      tipo: "Lavanderia",
-      valor: 140.0,
-    },
-    {
-      id: 3,
-      numeroServico: 6543,
-      cliente: "Patrícia",
-      funcionario: "Paulo",
-      data: "2024-07-03",
-      tipo: "Jardinagem",
-      valor: 300.0,
-    },
-  ];
-  const saidaPagamentos = [
-    {
-      id: 1,
-      numeroServico: 5678,
-      cliente: "Maria",
-      funcionario: "Patrícia",
-      data: "2024-01-02",
-      tipo: "Lavanderia",
-      valor: 80.0,
-    },
-  ];
 
-  const getFilteredPayments = (pagamentos) =>
-    pagamentos
+  const getFilteredPayments = () => {
+    const filteredPayments = payments
+      .filter((pagamento) =>
+        activeTab === 0
+          ? pagamento.pagamento_status === "pendente"
+          : activeTab === 1
+          ? pagamento.pagamento_status === "cancelado"
+          : pagamento.pagamento_status === "finalizado"
+      )
       .filter(
         (pagamento) =>
-          pagamento.numeroServico.toString().includes(searchTerm) ||
-          pagamento.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          pagamento.funcionario.toLowerCase().includes(searchTerm.toLowerCase())
+          pagamento.modalidade_servico.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          pagamento.cliente_id.includes(searchTerm)
       )
       .filter((pagamento) =>
-        selectedDate ? pagamento.data === selectedDate : true
+        selectedDate ? pagamento.data_realizacao === selectedDate : true
       )
       .filter((pagamento) =>
-        serviceType ? pagamento.tipo === serviceType : true
+        serviceType ? pagamento.modalidade_servico === serviceType : true
       );
-
-  const pagamentosExibidos = getFilteredPayments(
-    activeTab === 0 ? entradaPagamentos : saidaPagamentos
-  ).slice((page - 1) * paymentsPerPage, page * paymentsPerPage);
+    return filteredPayments;
+  };
+  
 
   return (
     <div className="lista-financeiro-container">
@@ -157,76 +174,41 @@ function ListaFinanceiro() {
           </div>
 
           <div className="lf-main-content">
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              centered
-              sx={{
-                "& .MuiTab-root": { color: "var(--corPrincipal)" },
-                "& .Mui-selected": {
-                  color: "var(--corPrincipal)",
-                  fontWeight: "bold",
-                },
-                "& .MuiTabs-indicator": {
-                  backgroundColor: "var(--corPrincipal)",
-                },
-              }}
-            >
+            <Tabs value={activeTab} onChange={handleTabChange} centered>
               <Tab label="Entrada" />
               <Tab label="Saída/Estornos" />
+              <Tab label="Histórico" />
             </Tabs>
 
-            <Box
-              className="pagamentos-lista"
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mt: 2,
-              }}
-            >
-              {pagamentosExibidos.length > 0 ? (
-                pagamentosExibidos.map((pagamento) => (
-                  <Card
-                    key={pagamento.id}
-                    sx={{ width: "80%", mb: 2 }}
-                    className="lf-card"
-                  >
-                    <CardContent>
-                      <Typography variant="h6">
-                        Serviço #{pagamento.numeroServico}
-                      </Typography>
-                      <Typography>Tipo: {pagamento.tipo}</Typography>
-                      <Typography>Cliente: {pagamento.cliente}</Typography>
-                      <Typography>
-                        Funcionário: {pagamento.funcionario}
-                      </Typography>
-                      <Typography>
-                        Data do Pagamento: {pagamento.data}
-                      </Typography>
-                      <Typography variant="h6" color="green">
-                        Valor: R$ {pagamento.valor.toFixed(2)}
-                      </Typography>
+            <Box className="pagamentos-lista" sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 2 }}>
+              {getFilteredPayments()
+                .slice((page - 1) * paymentsPerPage, page * paymentsPerPage)
+                .map((pagamento) => (
+                  <Card key={pagamento.id} sx={{ width: "80%", mb: 2 }} className="lf-card">
+                    <CardContent className="lf-card-content">
+                      <div className="lf-card-info-dif">
+                        <Typography variant="h6" style={{color: "var(--corPrincipal)", fontWeight: 700}}>Serviço - {pagamento.modalidade_servico}</Typography>
+                        <Typography>Cliente ID: {pagamento.cliente_id}</Typography>
+                        <Typography>Valor: R$ {parseFloat(pagamento.valor).toFixed(2)}</Typography>
+                        <Typography>Status do Pagamento: {pagamento.pagamento_status}</Typography>
+                      </div>
+                      <div className="lf-card-btn-div">
+                        {pagamento.pagamento_status === "pendente" && (
+                          <button
+                            onClick={() => handleConfirmarPagamento(pagamento.id)}
+                            style={{ backgroundColor: "green", color: "white", padding: "10px", border: "none", borderRadius: "5px", cursor: "pointer" }}
+                          >
+                            Confirmar pagamento
+                          </button>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
-                ))
-              ) : (
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  sx={{ mt: 2 }}
-                >
-                  Nenhum registro corresponde à sua busca :(
-                </Typography>
-              )}
+                ))}
             </Box>
 
             <Pagination
-              count={Math.ceil(
-                getFilteredPayments(
-                  activeTab === 0 ? entradaPagamentos : saidaPagamentos
-                ).length / paymentsPerPage
-              )}
+              count={Math.ceil(getFilteredPayments().length / paymentsPerPage)}
               page={page}
               onChange={handlePageChange}
               sx={{ mt: 3 }}
@@ -234,6 +216,37 @@ function ListaFinanceiro() {
           </div>
         </div>
       </div>
+
+      {selectedPayment && (
+  <Modal open={openModal} onClose={handleCloseModal}>
+    <div style={{ padding: "20px", background: "white", borderRadius: "10px" }}>
+      <Typography variant="h6">Detalhes do Serviço</Typography>
+      <Typography>Cliente: {selectedPayment.cliente}</Typography>
+      <Typography>Modalidade: {selectedPayment.tipo}</Typography>
+      <Typography>Valor: R$ {selectedPayment.valor.toFixed(2)}</Typography>
+      <Typography>Status do Pagamento: {selectedPayment.pagamento_status}</Typography>
+      <Typography>Pagamento: {selectedPayment.pagamento}</Typography>
+      <Typography>Tipo de Pagamento: {selectedPayment.pagamento_tipo}</Typography>
+      <Typography>Data da Realização: {selectedPayment.data_realizacao}</Typography>
+      {selectedPayment.pagamento_status === "pendente" && (
+        <button
+          onClick={() => handleConfirmarPagamento(selectedPayment.id)}
+          style={{
+            backgroundColor: "green",
+            color: "white",
+            padding: "10px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Confirmar pagamento
+        </button>
+      )}
+    </div>
+  </Modal>
+)}
+
     </div>
   );
 }

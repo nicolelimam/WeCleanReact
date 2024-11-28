@@ -35,7 +35,6 @@ function ListaServicos() {
     setDetalhesServico(servico);
   };
 
-
   useEffect(() => {
     const carregarServicos = async () => {
       setLoading(true);
@@ -86,6 +85,7 @@ function ListaServicos() {
               clienteNome = clienteDoc.data().nome;
             });
           }
+
   
           // Subcoleções e campos detalhados
           const modalidades = ["faxina", "lavanderia", "cozinha", "jardinagem"];
@@ -122,6 +122,8 @@ function ListaServicos() {
   
     carregarServicos();
   }, []);
+
+  
 
   const categorias = ["pendente", "finalizado", "cancelado", "em analise"];
 
@@ -179,22 +181,6 @@ function ListaServicos() {
     return servico.status === statusAtual;
   })
   .slice((page - 1) * servicesPerPage, page * servicesPerPage);  
-
-  // const filteredServicos = getServicos()
-  // .filter((servico) =>
-  //   servico.id.toString().includes(searchTerm) ||
-  //   servico.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   servico.funcionario.toLowerCase().includes(searchTerm.toLowerCase())
-  // )
-  // .filter((servico) => 
-  //   selectedDate ? servico.data === selectedDate : true
-  // )
-  // .filter((servico) => 
-  //   serviceType ? servico.tipo === serviceType : true
-  // );
-
-
-  
 
   useEffect(() => {
     const handleResize = () => {
@@ -307,7 +293,7 @@ function ListaServicos() {
       >
         <CardContent>
           <Typography variant="h6">
-            Serviço - {servico.modalidade_servico} ({servico.tipo_servico || "Desconhecido"})
+            Serviço - {servico.modalidade_servico} 
           </Typography>
           <Typography>Cliente: {servico.clienteNome}</Typography>
           <Typography>Funcionário: {servico.funcionarioNome}</Typography>
@@ -334,23 +320,40 @@ function ListaServicos() {
          
         </div>
       </div>
-      <Modal open={!!detalhesServico} onClose={() => setDetalhesServico(null)}>
-  <Box sx={{ p: 3, backgroundColor: "white", borderRadius: "8px", maxWidth: "500px", margin: "auto" }}>
-    <Typography variant="h6" sx={{ mb: 2 }}>Detalhes do Serviço</Typography>
+      <Modal show={!!detalhesServico} onHide={() => setDetalhesServico(null)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Detalhes do Serviço</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
     {detalhesServico && (
       <>
-        <Typography>Cliente: {detalhesServico.clienteNome}</Typography>
-        <Typography>Funcionário: {detalhesServico.funcionarioNome}</Typography>
-        <Typography>Status: {detalhesServico.status}</Typography>
-        <Typography>Valor: R$ {detalhesServico.valor || "Não informado"}</Typography>
+        <Typography variant="body1">Cliente: {detalhesServico.clienteNome}</Typography>
+        <Typography variant="body1">Funcionário: {detalhesServico.funcionarioNome}</Typography>
+        <Typography variant="body1">Status: {detalhesServico.status}</Typography>
+        <Typography variant="body1">Valor: R$ {detalhesServico.valor || "Não informado"}</Typography>
+        <Typography variant="body1">Observações: {detalhesServico.observacoes || "Nenhuma"}</Typography>
+
         {detalhesServico.detalhes.map((detalhe, idx) => (
-          <Typography key={idx}>{JSON.stringify(detalhe)}</Typography>
+          <div key={idx} style={{ marginBottom: "10px" }}>
+            <Typography variant="body1" fontWeight="bold">
+              Modalidade: {detalhe.modalidade.charAt(0).toUpperCase() + detalhe.modalidade.slice(1)}
+            </Typography>
+            {Object.entries(detalhe).map(([chave, valor]) => {
+              if (chave !== "modalidade" && valor) {
+                return (
+                  <Typography key={chave} variant="body2">
+                    {chave}: {typeof valor === "boolean" ? (valor ? "Sim" : "Não") : valor}
+                  </Typography>
+                );
+              }
+              return null;
+            })}
+          </div>
         ))}
+
         {(detalhesServico.status === "pendente" || detalhesServico.status === "em análise") && (
           <Button
-            variant="contained"
-            color="error"
-            sx={{ mt: 2 }}
+            variant="danger"
             onClick={() => cancelarServico(detalhesServico.id)}
           >
             Cancelar Serviço
@@ -358,15 +361,14 @@ function ListaServicos() {
         )}
       </>
     )}
-    <Button
-      variant="outlined"
-      sx={{ mt: 2 }}
-      onClick={() => setDetalhesServico(null)}
-    >
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setDetalhesServico(null)}>
       Fechar
     </Button>
-  </Box>
+  </Modal.Footer>
 </Modal>
+
 
 
     </div>

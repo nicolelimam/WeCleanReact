@@ -16,7 +16,6 @@ import logoWeclean from "../../assets/images/logo-weclean.png";
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Chatbot from "../../components/ChatBot/chatbot";
 
 
 // Importando imagens do slider
@@ -48,7 +47,6 @@ function Index() {
 
     <div className="index-page-container">
     <ToastContainer />
-    <Chatbot />
       <div className="vh-100">
         {/* Navbar */}
         <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">

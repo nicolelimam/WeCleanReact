@@ -76,43 +76,57 @@ function CadastroFuncionario() {
     setAnchorEl(null);
   };
 
-  const toggleStatus = async () => {
-    if (!selectedFuncionario) return;
-    try {
-      const funcionarioRef = doc(db, `usuarios/${selectedFuncionario.userId}/funcionarios/${selectedFuncionario.id}`)
-      if (!selectedFuncionario?.userId || !selectedFuncionario?.id) {
-        console.error("Dados insuficientes para localizar o funcionário.");
-        return;
-      }      
-      const newStatus = selectedFuncionario.status === "ativo" ? "inativo" : "ativo";
+  const toggleStatusDirect = async (funcionario) => {
+    if (!funcionario) return;
   
+    try {
+      console.log("Iniciando alteração de status para:", funcionario);
+      const { userId, id, status } = funcionario;
+  
+      if (!userId || !id) {
+        console.error("Dados insuficientes para localizar o funcionário.");
+        toast.error("Erro ao localizar o funcionário.");
+        return;
+      }
+  
+      const funcionarioRef = doc(db, `usuarios/${userId}/funcionarios/${id}`);
+      const newStatus = status === "ativo" ? "inativo" : "ativo";
+  
+      console.log(`Atualizando status para: ${newStatus}`);
       await updateDoc(funcionarioRef, { status: newStatus });
   
       setRows((prevRows) =>
         prevRows.map((row) =>
-          row.id === selectedFuncionario.id ? { ...row, status: newStatus } : row
+          row.id === id ? { ...row, status: newStatus } : row
         )
-      );      
+      );
   
       toast.success(
         `Funcionário ${newStatus === "ativo" ? "ativado" : "desativado"} com sucesso!`
       );
-      closeConfirmModal(); // Fecha o modal após a confirmação
     } catch (error) {
       console.error("Erro ao alterar status: ", error);
       toast.error("Erro ao alterar o status do funcionário.");
     }
   };
   
+
+ 
   const openConfirmModal = (funcionario) => {
+    if (!funcionario) {
+      console.error("Funcionário não fornecido para o modal.");
+      return;
+    }
+  
+    console.log("Abrindo modal de confirmação para:", funcionario);
     setSelectedFuncionario(funcionario);
-    setIsConfirmModalOpen(true);
+    setIsConfirmModalOpen(true); // Atualiza o estado para abrir o modal
   };
   
-  
   const closeConfirmModal = () => {
-    setSelectedFuncionario(null);
-    setIsConfirmModalOpen(false);
+    console.log("Fechando modal de confirmação.");
+    setIsConfirmModalOpen(false); // Fecha o modal
+    setTimeout(() => setSelectedFuncionario(null), 300); // Limpa o funcionário após fechar o modal
   };
 
   useEffect(() => {
@@ -241,49 +255,53 @@ function CadastroFuncionario() {
   ];
 
   const columns = [
-    { field: "nome", headerName: "Nome", flex: 1, sortable: true },
-    { field: "email", headerName: "Email", flex: 1, sortable: true },
-    { field: "telefone", headerName: "Telefone", flex: 1, sortable: true },
-    {
-      field: "localizacao",
-      headerName: "Localização",
-      flex: 1,
-      sortable: true,
-    },
-    {
-      field: "modalidade",
-      headerName: "Modalidade de Serviço",
-      flex: 1,
-      sortable: true,
-    },
-    {
-      field: "actions",
-      headerName: "Ações",
-      flex: 1,
-      sortable: false,
-      renderCell: (params) => (
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            style={{ marginRight: 10 }}
-            onClick={() => openEditModal(params.row)}
-          >
-            Editar
-          </Button>
-          <Button
-            variant="contained"
-            color={params.row.status === "ativo" ? "secondary" : "success"}
-            size="small"
-            onClick={() => openConfirmModal(params.row)}
-          >
-            {params.row.status === "ativo" ? "Desativar" : "Ativar"}
-          </Button>
-        </div>
-      ),
-    },
-  ];
+  { field: "nome", headerName: "Nome", flex: 1, sortable: true },
+  { field: "email", headerName: "Email", flex: 1, sortable: true },
+  { field: "telefone", headerName: "Telefone", flex: 1, sortable: true },
+  {
+    field: "localizacao",
+    headerName: "Localização",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    field: "modalidade",
+    headerName: "Modalidade de Serviço",
+    flex: 1,
+    sortable: true,
+  },
+  {
+    field: "actions",
+    headerName: "Ações",
+    flex: 1,
+    sortable: false,
+    renderCell: (params) => (
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          style={{ marginRight: 10 }}
+          onClick={() => openEditModal(params.row)}
+        >
+          Editar
+        </Button>
+        <Button
+          variant="contained"
+          color={params.row.status === "ativo" ? "secondary" : "success"}
+          size="small"
+          onClick={() => {
+            console.log("Alterando status de:", params.row);
+            toggleStatusDirect(params.row); // Altera diretamente
+          }}
+        >
+          {params.row.status === "ativo" ? "Desativar" : "Ativar"}
+        </Button>
+      </div>
+    ),
+  }
+];
+
 
   const handleEdit = (id) => {
     console.log(`Editando funcionário com ID: ${id}`);
@@ -921,36 +939,34 @@ function CadastroFuncionario() {
           </div>
         </div>
       </div>
-      {isConfirmModalOpen && (
-      <Modal
-        open={isConfirmModalOpen}
-        onClose={closeConfirmModal}
-        aria-labelledby="confirm-modal-title"
-        aria-describedby="confirm-modal-description"
-      >
-        <div className="modal-content">
-          <h2 id="confirm-modal-title">Confirmação</h2>
-          <p id="confirm-modal-description">
-            Você realmente deseja {selectedFuncionario?.status === "ativo" ? "desativar" : "ativar"} o acesso desse funcionário?
-          </p>
-          <div className="modal-actions">
-            <Button variant="outlined" onClick={closeConfirmModal}>
-              Cancelar
-            </Button>
-            <Button
-              variant="contained"
-              color={selectedFuncionario?.status === "ativo" ? "secondary" : "success"}
-              onClick={() => {
-                toggleStatus(selectedFuncionario);
-                closeConfirmModal();
-              }}
-            >
-              Sim
-            </Button>
-          </div>
-        </div>
-      </Modal>
-      )}
+      {/* {isConfirmModalOpen && (
+  <Modal
+    open={isConfirmModalOpen}
+    onClose={closeConfirmModal}
+    aria-labelledby="confirm-modal-title"
+    aria-describedby="confirm-modal-description"
+    disableBackdropClick={true} // Garante que o modal só feche pelo botão
+  >
+    <div className="modal-content">
+      <h2 id="confirm-modal-title">Confirmação</h2>
+      <p id="confirm-modal-description">
+        Você realmente deseja {selectedFuncionario?.status === "ativo" ? "desativar" : "ativar"} o acesso desse funcionário?
+      </p>
+      <div className="modal-actions">
+        <Button variant="outlined" onClick={closeConfirmModal}>
+          Cancelar
+        </Button>
+        <Button
+          variant="contained"
+          color={selectedFuncionario?.status === "ativo" ? "secondary" : "success"}
+          onClick={toggleStatus} // Chama a função diretamente
+        >
+          Sim
+        </Button>
+      </div>
+    </div>
+  </Modal>
+)} */}
     </div>
   </div>
 )}
