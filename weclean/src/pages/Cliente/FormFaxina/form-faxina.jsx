@@ -58,15 +58,15 @@ function FormularioFaxina() {
   const calcularPrecoFaxina = (duracao, produtosFornecidos, tipoFaxina, qtdComodos) => {
     let precoBase = 150;
   
-    // Ajusta o preço pela duração da faxina
+    // Ajuste para duração da faxina
     if (duracao === "4 horas") precoBase += 25;
     else if (duracao === "5 horas") precoBase += 35;
     else if (duracao === "6 horas") precoBase += 50;
   
-    // Acréscimo se a empresa fornecer os produtos
+    // Acréscimos para empresa fornecer produtos
     if (produtosFornecidos === "empresa") precoBase += 30;
   
-    // Ajusta o preço pelo tipo de faxina
+    // Ajustes pelo tipo de faxina
     switch (tipoFaxina) {
       case "pre_mudanca":
         precoBase += 40;
@@ -78,14 +78,13 @@ function FormularioFaxina() {
         break;
     }
   
-    // Acréscimo para quantidade de cômodos (a partir de 5)
+    // Acréscimos por quantidade de cômodos
     if (qtdComodos >= 5 && qtdComodos <= 10) {
-      precoBase += (qtdComodos - 4) * 10; // R$10 por cômodo adicional acima de 4
+      precoBase += (qtdComodos - 4) * 10; // R$10 por cômodo adicional
     }
   
-    return precoBase;
+    return precoBase; // Retorna como número
   };
-  
 
 
 const handleSubmit = async (e) => {
@@ -116,7 +115,7 @@ const handleSubmit = async (e) => {
       modalidade_servico: 'faxina',
       observacoes: observacoes || '',
       pagamento_status: 'pendente',
-      valor: precoFinal.toFixed(2), // Valor final como string
+      valor: precoFinal, 
       status: 'pendente',
       criado_em: serverTimestamp()
     });

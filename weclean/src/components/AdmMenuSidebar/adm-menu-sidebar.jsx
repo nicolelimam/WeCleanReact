@@ -51,12 +51,12 @@ function MenuSidebarAdministrador() {
                 </Link>
                 <Tooltip id="menu-tooltip" place="right" type="dark" effect="solid" />
               </li>
-              <li className={`ams-menu-item ${activeMenu === 1 ? 'active' : ''}`}>
+              {/* <li className={`ams-menu-item ${activeMenu === 1 ? 'active' : ''}`}>
                 <Link className='ams-menu-item-link' onClick={() => handleMenuClick(1)}>
                   <i className="bi bi-bell-fill ams-menu-item-icon"></i>
                   <span className="ams-menu-item-text">Notificações</span>
                 </Link>
-              </li>
+              </li> */}
               <li className={`ams-menu-item ${activeMenu === 2 ? 'active' : ''}`}>
                 <Link className='ams-menu-item-link' onClick={() => handleMenuClick(2)}>
                   <i className="bi bi-pen-fill ams-menu-item-icon"></i>

@@ -72,7 +72,7 @@ function FormularioLavanderia() {
       pagamento: "",
       pagamento_status: "pendente",
       pagamento_tipo: "",
-      valor: preco.toString(),
+      valor: preco,
       status: "pendente",
     });
 
@@ -430,7 +430,7 @@ function FormularioLavanderia() {
             </div>
             <div className="form-faxina-item preco-panel">
               <p>Valor total:</p>
-              <h2 className="preco">R$ {preco.toFixed(2)}</h2>
+              <h2 className="preco">R$ {preco}</h2> 
             </div>
           </div>
           <br />

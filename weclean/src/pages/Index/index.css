@@ -26,10 +26,30 @@
     padding: 0;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 991px) {
     .sidebar {
         background: var(--corBg);
         backdrop-filter: blur(10px);
+    }
+
+    .sections-link {
+        margin-top: 3rem;
+        margin-bottom: 5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .s-link {
+        width: 100% !important;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 20px;
     }
 }
 

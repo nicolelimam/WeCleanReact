@@ -36,7 +36,7 @@ function FormularioCozinha() {
 
   useEffect(() => {
     let newPrice = 100;
-
+  
     // Refeições
     if (selectedRefeicoes) {
       if (selectedRefeicoes.value === "1a6") {
@@ -45,7 +45,7 @@ function FormularioCozinha() {
         newPrice += 10; // Adiciona 10 reais para outras opções
       }
     }
-
+  
     // Número de pessoas
     if (selectedNumPessoas) {
       const peopleExtra = {
@@ -58,15 +58,15 @@ function FormularioCozinha() {
       };
       newPrice += peopleExtra[selectedNumPessoas.value] || 0;
     }
-
+  
     // Dias da semana
     if (selectedDiasSemanaCozinha.length > 1) {
       newPrice += (selectedDiasSemanaCozinha.length - 1) * 50;
     }
-
-    setBasePrice(newPrice);
+  
+    setBasePrice(Math.round(newPrice)); 
   }, [selectedRefeicoes, selectedNumPessoas, selectedDiasSemanaCozinha]);
-
+  
 
   const locais = [
     { label: "Minha residência", value: "residencia" },
@@ -114,9 +114,10 @@ function FormularioCozinha() {
         pagamento: "",
         pagamento_status: "pendente",
         pagamento_tipo: "",
-        valor: data.precoTotal,
+        valor: Math.round(data.precoTotal),
         status: "pendente",
       });
+      
   
       // Salva o ID do serviço no localStorage
       localStorage.setItem("servicoId", servicoRef.id);

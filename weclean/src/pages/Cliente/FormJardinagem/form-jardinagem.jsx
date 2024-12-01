@@ -62,13 +62,13 @@ function FormularioJardinagem() {
         pagamento: "", // Deixar vazio conforme solicitado
         pagamento_status: "pendente", // Status fixo
         pagamento_tipo: "", // Deixar vazio conforme solicitado
-        valor: preco.toString(), // Converte o valor para string
+        valor: preco, // Salva o valor como número
         status: "pendente", // Status fixo
       });
   
       // Adiciona os dados de jardinagem na subcoleção "jardinagem"
       await addDoc(collection(servicoRef, "jardinagem"), {
-        area_verde: areaVerde,
+        area_verde: areaVerde, // Salva como número
         tipo_local: tipoLocal,
         tipo_servico: tipoServico,
       });
@@ -80,6 +80,7 @@ function FormularioJardinagem() {
       console.error("Erro ao salvar no Firestore", e);
     }
   };
+  
   
   const tipoServicoValue = [
     { label: "Manutenção", value: "manutencao" },

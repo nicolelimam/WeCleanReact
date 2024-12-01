@@ -110,10 +110,11 @@
     justify-content: flex-start;
     text-align: left;
     width: 100% !important;
-    border-radius: 15px;
-    height: 170px;
+    border-radius: 10px !important;
+    height: 180px;
     cursor: pointer;
     margin-bottom: 0;
+    padding: 10px;
 }
 
 .lf-card-content {

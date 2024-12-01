@@ -449,13 +449,13 @@ function ListaServicosCliente() {
                 Carregando dados, aguarde por favor!
               </p>
             </div>
-          ) : (
+          )  : (
             <>
               {servicos.length === 0 ? (
                 <div style={{ textAlign: "center", margin: "20px 0" }}>
-                  <Typography variant="h4">
-                    Não há nenhum serviço para exibir :(
-                  </Typography>
+                <Typography variant="h4">
+                  Não há nenhum serviço para exibir :(
+                </Typography>
                 </div>
               ) : (
                 <>
@@ -463,7 +463,7 @@ function ListaServicosCliente() {
                     value={categoriaAtual}
                     onChange={(event, newValue) => {
                       setCategoriaAtual(newValue);
-                      setPaginaAtual(1); // Reinicia para a primeira página ao mudar de categoria
+                      setPaginaAtual(1);// Reinicia para a primeira página ao mudar de categoria
                     }}
                     aria-label="Categorias de serviços"
                     className="lsc-abas-servicos"

@@ -95,18 +95,18 @@ function MenuAdm({ activePage = 'dashboard' }) {
                                 <PiCashRegisterFill  className='menu-adm-link-icon'/>
                                 <span className="menu-adm-link-txt">Financeiro</span>
                             </Nav.Link>
-                            <Nav.Link 
+                            {/* <Nav.Link 
                                 href="#configuracoes" 
                                 className={`menu-adm-link ${activeLink === 'configuracoes' ? 'active' : ''}`}
                                 onClick={() => handleLinkClick('configuracoes')}
                             >
                                 <IoMdSettings className='menu-adm-link-icon'/>
                                 <span className="menu-adm-link-txt">Configurações</span>
-                            </Nav.Link>
+                            </Nav.Link> */}
                         </Nav>
                         {/* Alinha botão de sair à direita */}
                         <div className="d-flex justify-content-end align-items-center menu-adm-btn-group">
-                            <button className="btn-notificacao"
+                            {/* <button className="btn-notificacao"
                             data-tooltip-id="tooltip-notificacao"
                             onClick={handleMenuOpen} 
                             data-tooltip-content="Notificações">
@@ -133,7 +133,7 @@ function MenuAdm({ activePage = 'dashboard' }) {
                             <MenuItem onClick={handleMenuClose}>Notificação 1</MenuItem>
                             <MenuItem onClick={handleMenuClose}>Notificação 2</MenuItem>
                             <MenuItem onClick={handleMenuClose}>Notificação 3</MenuItem>
-                            </Menu>
+                            </Menu> */}
                             <button className="btn-logout"
                                 data-tooltip-id="tooltip-logout"
                                 data-tooltip-content="Sair"

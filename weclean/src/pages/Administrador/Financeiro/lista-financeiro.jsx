@@ -297,7 +297,8 @@ function ListaFinanceiro() {
               {isLoading ? (
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
                   <BeatLoader color="#4f1d64" size={30}/>
-                  <p>Carregando registros de pagamentos...</p>
+                  <br />
+                  <h4>Carregando registros de pagamentos...</h4>
                 </div>
               ) : getFilteredPayments().length === 0 ? (
                 <Typography variant="body1" sx={{ mt: 2 }}>Não há registros para exibir no momento :(</Typography>
@@ -319,7 +320,7 @@ function ListaFinanceiro() {
                         {pagamento.pagamento_status === "pendente" && (
                           <button
                             onClick={() => handleConfirmarPagamento(pagamento.id)}
-                            style={{ backgroundColor: "green", color: "white", padding: "10px", border: "none", borderRadius: "5px", cursor: "pointer" }}
+                            style={{ backgroundColor: "green", color: "white", padding: "10px", border: "none", borderRadius: "30px", cursor: "pointer" }}
                           >
                             Confirmar pagamento
                           </button>
@@ -332,7 +333,7 @@ function ListaFinanceiro() {
                                 color: "white",
                                 padding: "10px",
                                 border: "none",
-                                borderRadius: "5px",
+                                borderRadius: "30px",
                                 cursor: "pointer",
                               }}
                             >

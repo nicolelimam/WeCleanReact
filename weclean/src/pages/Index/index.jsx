@@ -80,12 +80,12 @@ function Index() {
                 </Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
-                <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                  <Nav.Link href="#servicos-section">Serviços</Nav.Link>
-                  <Nav.Link href="#trabalhe-conosco-section">Trabalhe Conosco</Nav.Link>
-                  <Nav.Link href="#contato-section">Contate-nos</Nav.Link>
+                <Nav className="justify-content-center align-items-center flex-grow-1 pe-3 sections-link">
+                  <Nav.Link href="#servicos-section" className="s-link">Serviços</Nav.Link>
+                  <Nav.Link href="#trabalhe-conosco-section" className="s-link">Trabalhe Conosco</Nav.Link>
+                  <Nav.Link href="#contato-section" className="s-link">Contate-nos</Nav.Link>
                 </Nav>
-                <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
+                <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2 actions-link">
                   <Link to='/login' className="btn-login-link text-decoration-none">
                     Fazer login
                   </Link>
