@@ -262,7 +262,9 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
       const sucesso = await assignFuncionario(userId, cidade);
       if (sucesso) {
         toast.success("Solicitação finalizada com sucesso!");
-        navigate("/home-cliente");
+        setTimeout(() => {
+          navigate("/home-cliente");
+        }, 3000);
       } else {
         toast.error("Nenhum funcionário disponível no momento.");
       }
@@ -375,87 +377,87 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
   
   const assignFuncionario = async (userId, cidadeCliente) => {
     try {
-      const servicoId = localStorage.getItem("servicoId");
-      const modalidade = localStorage.getItem("modalidadeServico");
-  
-      if (!servicoId || !modalidade) {
-        toast.error("Erro: Serviço não encontrado.");
-        return false;
-      }
-  
-      // Buscar todos os usuários com a subcoleção 'funcionarios'
-      const usuariosRef = collection(db, "usuarios");
-      const usuariosSnapshot = await getDocs(usuariosRef);
-  
-      const funcionariosDisponiveis = [];
-  
-      for (const usuarioDoc of usuariosSnapshot.docs) {
-        const usuarioId = usuarioDoc.id;
-        const funcionariosRef = collection(db, "usuarios", usuarioId, "funcionarios");
-        const funcionariosSnapshot = await getDocs(funcionariosRef);
-  
-        for (const funcionarioDoc of funcionariosSnapshot.docs) {
-          const funcionarioData = funcionarioDoc.data();
-          const enderecoFuncionario = funcionarioData.endereco || {};
-  
-          // Verificar requisitos iniciais (modalidade e cidade)
-          if (
-            funcionarioData.tipo_de_servico === modalidade &&
-            enderecoFuncionario.cidade === cidadeCliente
-          ) {
-            const hoje = new Date();
-            let compromissosSemana = parseInt(funcionarioData.compromissos_semana || "0", 10);
-            let semana = funcionarioData.semana ? new Date(funcionarioData.semana) : null;
-  
-            // Resetar contador semanal se for uma nova semana
-            if (!semana || (hoje - semana) / (1000 * 60 * 60 * 24) >= 7) {
-              compromissosSemana = 0;
-              semana = hoje; // Atualizar data para a semana atual
-            }
-  
-            // Adicionar funcionário à lista se tiver disponibilidade
-            if (compromissosSemana < 7) {
-              funcionariosDisponiveis.push({
-                id: funcionarioDoc.id,
-                compromissos_semana: compromissosSemana,
-                semana,
-                ref: funcionarioDoc.ref,
-                ...funcionarioData,
-              });
-            }
-          }
+        const servicoId = localStorage.getItem("servicoId");
+        const modalidade = localStorage.getItem("modalidadeServico");
+
+        if (!servicoId || !modalidade) {
+            toast.error("Erro: Serviço não encontrado.");
+            return false;
         }
-      }
-  
-      if (funcionariosDisponiveis.length === 0) {
-        toast.error("Nenhum funcionário disponível para esta modalidade na sua cidade.");
-        return false;
-      }
-  
-      // Selecionar o funcionário com menos compromissos
-      const funcionarioSelecionado = funcionariosDisponiveis.sort(
-        (a, b) => a.compromissos_semana - b.compromissos_semana
-      )[0];
-  
-      // Atualizar contador semanal e data no Firestore
-      await updateDoc(funcionarioSelecionado.ref, {
-        compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
-        semana: funcionarioSelecionado.semana,
-      });
-  
-      // Atualizar o ID do funcionário no serviço
-      await updateDoc(doc(db, "servicos", servicoId), {
-        funcionario_id: funcionarioSelecionado.id,
-      });
-  
-      toast.success(`Funcionário ${funcionarioSelecionado.nome} foi atribuído ao serviço!`);
-      return true;
+
+        const usuariosRef = collection(db, "usuarios");
+        const usuariosSnapshot = await getDocs(usuariosRef);
+
+        const funcionariosDisponiveis = [];
+
+        for (const usuarioDoc of usuariosSnapshot.docs) {
+            const usuarioId = usuarioDoc.id;
+            const funcionariosRef = collection(db, "usuarios", usuarioId, "funcionarios");
+            const funcionariosSnapshot = await getDocs(funcionariosRef);
+
+            for (const funcionarioDoc of funcionariosSnapshot.docs) {
+                const funcionarioData = funcionarioDoc.data();
+                const enderecoFuncionario = funcionarioData.endereco || {};
+
+                if (
+                    funcionarioData.tipo_de_servico === modalidade &&
+                    enderecoFuncionario.cidade === cidadeCliente
+                ) {
+                    const hoje = new Date();
+                    let compromissosSemana = Number(funcionarioData.compromissos_semana || 0);
+                    let semana = funcionarioData.semana ? new Date(funcionarioData.semana) : null;
+
+                    // Resetar contador semanal se for uma nova semana
+                    if (!semana || (hoje - semana) / (1000 * 60 * 60 * 24) >= 7) {
+                        compromissosSemana = 0;
+                        semana = hoje.toISOString(); // Atualizar data para a semana atual em formato ISO
+                    }
+
+                    // Adicionar funcionário à lista se tiver disponibilidade
+                    if (compromissosSemana < 7) {
+                        funcionariosDisponiveis.push({
+                            id: funcionarioDoc.id,
+                            compromissos_semana: compromissosSemana,
+                            semana,
+                            ref: funcionarioDoc.ref,
+                            ...funcionarioData,
+                        });
+                    }
+                }
+            }
+        }
+
+        if (funcionariosDisponiveis.length === 0) {
+            toast.error("Nenhum funcionário disponível para esta modalidade na sua cidade.");
+            return false;
+        }
+
+        // Selecionar o funcionário com menos compromissos
+        const funcionarioSelecionado = funcionariosDisponiveis.sort(
+            (a, b) => a.compromissos_semana - b.compromissos_semana
+        )[0];
+
+        // Atualizar contador semanal e data no Firestore
+        await updateDoc(funcionarioSelecionado.ref, {
+            compromissos_semana: funcionarioSelecionado.compromissos_semana + 1, // Incrementa o contador
+            semana: funcionarioSelecionado.semana, // Atualiza a data da semana
+        });
+
+        // Atualizar o ID do funcionário no serviço
+        await updateDoc(doc(db, "servicos", servicoId), {
+            funcionario_id: funcionarioSelecionado.id,
+        });
+
+        toast.success(`Funcionário ${funcionarioSelecionado.nome} foi atribuído ao serviço!`);
+        return true;
     } catch (error) {
-      console.error("Erro ao atribuir funcionário:", error);
-      toast.error("Erro ao atribuir funcionário.");
-      return false;
+        console.error("Erro ao atribuir funcionário:", error);
+        toast.error("Erro ao atribuir funcionário.");
+        return false;
     }
-  };
+};
+
+  
   
 
    // Função para gerar boleto

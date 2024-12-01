@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Routes from './routes/routes-index'
 import ReactDOM from 'react-dom/client';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
 
   return (
    <div className="App">
+      <ToastContainer position="top-right" />
       <Routes />
    </div>
   )
