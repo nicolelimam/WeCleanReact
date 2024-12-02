@@ -11,6 +11,8 @@ import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../../backend/firebase";
 import { getUserSession } from "../../../utils/session";
 import { useClearSessionAndRedirect } from "../../../utils/session";
+import { LuLogOut } from "react-icons/lu";
+import { Tooltip } from "recharts";
 
 function FormularioJardinagem() {
   const [areaVerde, setAreaVerde] = useState(0);
@@ -124,12 +126,25 @@ function FormularioJardinagem() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="#">Início</Nav.Link>
+                <Nav.Link href="/home-cliente">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff" onClick={handleLogout}>
-                  <i className="bi bi-box-arrow-right"></i> Sair
+                <button
+                  className="btn-logout"
+                  data-tooltip-id="tooltip-logout"
+                  data-tooltip-content="Sair"
+                  onClick={handleLogout}
+                >
+                  <LuLogOut />
                 </button>
+                <Tooltip
+                  id="tooltip-logout"
+                  place="bottom"
+                  style={{
+                    backgroundColor: "var(--corPrincipal)",
+                    color: "#fff",
+                  }} 
+                />
               </div>
             </Offcanvas.Body>
           </Navbar.Offcanvas>

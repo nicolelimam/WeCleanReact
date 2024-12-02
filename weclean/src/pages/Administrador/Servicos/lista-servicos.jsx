@@ -65,6 +65,20 @@ function ListaServicos() {
           const servico = servicoDoc.data();
           const servicoId = servicoDoc.id;
 
+          // Parse da avaliação
+          let avaliacao = null;
+          if (servico.avaliacao) {
+            try {
+              avaliacao = JSON.parse(servico.avaliacao);
+            } catch (error) {
+              console.warn(
+                `Erro ao parsear avaliação do serviço ${servicoId}:`,
+                error
+              );
+            }
+          }
+
+
           // Obter informações do funcionário
           let funcionarioNome = "Não atribuído";
           if (servico.funcionario_id) {
@@ -124,6 +138,7 @@ function ListaServicos() {
             funcionarioNome,
             clienteNome,
             detalhes,
+            avaliacao, 
           });
         }
 
@@ -456,7 +471,36 @@ function ListaServicos() {
                             : "Não"
                           : valor}
                       </Typography>
+                      
                     ))}
+
+              {detalhesServico.avaliacao && (
+                <div style={{ marginTop: "20px" }}>
+                  <h5
+                    style={{
+                      color: "var(--corPrincipal)",
+                      marginBottom: "10px",
+                      fontSize: "20px",
+                      fontWeight: "700",
+                    }}
+                  >
+                    Avaliação
+                  </h5>
+                  <p style={{ fontSize: "18px" }}>
+                    <strong>Qualidade:</strong>{" "}
+                    {detalhesServico.avaliacao.qualidade || "Não avaliado"} estrelas
+                  </p>
+                  <p style={{ fontSize: "18px" }}>
+                    <strong>Profissionalismo:</strong>{" "}
+                    {detalhesServico.avaliacao.profissionalismo || "Não avaliado"} estrelas
+                  </p>
+                  <p style={{ fontSize: "18px" }}>
+                    <strong>Comentário:</strong>{" "}
+                    {detalhesServico.avaliacao.comentario || "Nenhum comentário."}
+                  </p>
+                </div>
+              )}
+
                   </div>
                 );
               })}
@@ -470,7 +514,7 @@ function ListaServicos() {
         <Modal.Footer>
           {detalhesServico &&
             (detalhesServico.status === "pendente" ||
-              detalhesServico.status === "em análise") && (
+              detalhesServico.status === "em analise") && (
               <Button
                 variant="danger"
                 onClick={() => cancelarServico(detalhesServico.id)}

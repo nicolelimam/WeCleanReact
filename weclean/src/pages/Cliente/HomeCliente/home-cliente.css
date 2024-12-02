@@ -51,7 +51,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
     height: calc(100% - 90px) !important;
     margin-top: 8rem;
@@ -91,51 +91,89 @@
 
 .home-cliente-content{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 90%;
     gap: 20px;
-    padding: 5px;
-    min-height: 600px;
-    height: 700px;
+    padding: 2%;
+    min-height: 500px;
+    height: auto;
     margin-top: 0;
     margin-bottom: 3rem;
-}
-
-.hc-left-content {
-    display: flex;
-    flex-direction: column;
-    padding: 3%;
-    width: 60%;
-    height: 100%;
     background: var(--corBg);
-    border-radius: 15px;
+    border-radius: 10px;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-.forms-list {
+/* Cabeçalho do calendário */
+.hc-calendar-header {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    width: 100%;
-    height: 100%;
+    align-items: flex-end;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    width: 90%;
 }
 
-.hc-form-link {
+@media screen and (max-width: 999px) {
+    .hc-calendar-header {
+       margin-top: 30px;
+    }
+}
+
+.btn-forms-dropdown-hc {
+    width: 280px;
+}
+
+/* Conteúdo do calendário */
+.hc-calendar-content {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 90%;
+    width: 100%;
+    height: auto;
+}
+
+/* .react-calendar__viewContainer,
+.react-calendar__month-view,
+.react-calendar__month-view__days {
+    height: 100% !important;
+} */
+
+.react-calendar {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 10px;
+    border: 2px solid var(--corPrincipal) !important;
+}
+
+.react-calendar__navigation {
+    background: var(--corBg2);
+}
+
+.react-calendar__tile--active {
+    background: var(--corPrincipal) !important;
+    color: #ffffff;
+}
+
+.react-calendar__tile--now {
+    background: var(--corBg2) !important;
+}
+
+.btn-forms-hc {
+    display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    background: var(--corPrincipal) !important;
+    color: #ffffff;
+    font-size: 18px;
+    width: 280px;
+    height: 35px;
     border-radius: 30px;
-    width: 340px;
-    height: 50px;
-    background: var(--corPrincipal);
-    color: #ffff;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 20px;
+    border: none;
 
     &:hover {
         background: var(--corHover);
@@ -145,19 +183,30 @@
     }
 }
 
-.hc-right-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40%;
-    height: 100%;
-    background: var(--corBg2);
-    border-radius: 15px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-}
 
-.hc-right-content h3 {
-    color: var(--corPrincipal);
-    font-size: 24px;
-}
-
+  
+  /* Serviços pendentes - Azul claro */
+.highlight-pending {
+    background-color: #add8e6 !important; /* Azul claro */
+    color: black !important;
+    border-radius: 5px;
+  }
+  
+  /* Serviços cancelados - Laranja claro */
+  .highlight-canceled {
+    background-color: #ffd7b5 !important; /* Laranja claro */
+    color: black !important;
+    border-radius: 5px;
+  }
+  
+  /* Serviços no dia atual - Verde claro */
+  .highlight-today {
+    background-color: #b8e986 !important; /* Verde claro */
+    color: black !important;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  
+  .dropdown-item:active  {
+    background: var(--corPrincipal) !important;
+  }

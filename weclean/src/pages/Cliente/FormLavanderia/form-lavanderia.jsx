@@ -10,7 +10,8 @@ import { Autocomplete, TextField } from "@mui/material";
 import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { getUserSession } from "../../../utils/session";
 import { useClearSessionAndRedirect } from "../../../utils/session";
-
+import { LuLogOut } from "react-icons/lu";
+import { Tooltip } from "react-tooltip";
 
 function FormularioLavanderia() {
   const [quantidadePecas, setQuantidadePecas] = useState("10a20"); // Estado para quantidade de peças
@@ -178,12 +179,25 @@ function FormularioLavanderia() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="#">Início</Nav.Link>
+                <Nav.Link href="/home-cliente">Início</Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff" onClick={handleLogout}>
-                  <i className="bi bi-box-arrow-right"></i> Sair
+                <button
+                  className="btn-logout"
+                  data-tooltip-id="tooltip-logout"
+                  data-tooltip-content="Sair"
+                  onClick={handleLogout}
+                >
+                  <LuLogOut />
                 </button>
+                <Tooltip
+                  id="tooltip-logout"
+                  place="bottom"
+                  style={{
+                    backgroundColor: "var(--corPrincipal)",
+                    color: "#fff",
+                  }} 
+                />
               </div>
             </Offcanvas.Body>
           </Navbar.Offcanvas>

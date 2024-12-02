@@ -16,6 +16,8 @@ import jsPDF from "jspdf";
 import { QRCodeCanvas } from "qrcode.react";
 import { Modal } from "react-bootstrap";
 import { useClearSessionAndRedirect } from "../../../utils/session";
+import { LuLogOut } from "react-icons/lu";
+import { Tooltip } from "react-tooltip";
 
 function FormularioEndereco() {
   const [rua, setRua] = useState("");
@@ -71,7 +73,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
               setCidade(data.endereco.cidade || "");
               setEstado(data.endereco.estado || "");
             } else {
-              toast.error("Endereço não encontrado.");
+              toast.error("Endereço não encontrado. Cadastre um novo.");
             }
           }
         } catch (error) {
@@ -585,12 +587,25 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="#">Início</Nav.Link>
+                <Nav.Link href="#"></Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
-                <button className="btn-logout-ff" onClick={handleLogout}>
-                  <i className="bi bi-box-arrow-right"></i> Sair
+                <button
+                  className="btn-logout"
+                  data-tooltip-id="tooltip-logout"
+                  data-tooltip-content="Sair"
+                  onClick={handleLogout}
+                >
+                  <LuLogOut />
                 </button>
+                <Tooltip
+                  id="tooltip-logout"
+                  place="bottom"
+                  style={{
+                    backgroundColor: "var(--corPrincipal)",
+                    color: "#fff",
+                  }} 
+                />
               </div>
             </Offcanvas.Body>
           </Navbar.Offcanvas>

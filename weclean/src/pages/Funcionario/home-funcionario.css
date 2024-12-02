@@ -34,6 +34,25 @@
     100%{background-position:0% 50%}
 }
 
+.menu-bar-hf {
+    display: flex;
+    align-items: center;
+}
+
+@media screen and (max-width: 999px) {
+    .menu-bar-hf {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+.btn-logout-hf-div {
+    height: 100%;
+}
+
 .btn-logout {
     display: flex;
     align-items: center;
@@ -122,6 +141,7 @@
 @media screen and (max-width: 999px) {
     .home-funcionario-content{  
         min-height: 75vh;
+        margin-top: -5px;
     }
     
 }
@@ -149,6 +169,8 @@
 .rbc-calendar {
     width: 100% !important;
     height: 100% !important;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .rbc-month-header,
@@ -203,6 +225,8 @@
     padding: 10px;
 }
 
+
+
 .hf-card {
     width: 100%;
     border-radius: 10px;
@@ -211,4 +235,9 @@
 .hf-card-title {
     font-weight: 700;
     color: var(--corPrincipal);
+}
+
+.rbc-toolbar-label,
+.rbc-header {
+    text-transform: capitalize !important;
 }
