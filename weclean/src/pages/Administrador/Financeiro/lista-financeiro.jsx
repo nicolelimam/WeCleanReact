@@ -45,6 +45,13 @@ function ListaFinanceiro() {
           querySnapshot.docs.map(async (docSnap) => {
             const servico = { id: docSnap.id, ...docSnap.data() };
   
+              // Atualiza o pagamento_status automaticamente
+          if (servico.status === "cancelado" && servico.pagamento_status === "pendente") {
+            const serviceRef = doc(db, "servicos", servico.id);
+            await updateDoc(serviceRef, { pagamento_status: "cancelado" });
+            servico.pagamento_status = "cancelado"; // Atualiza localmente para refletir
+          }
+          
            // Formatando a data de solicitação
           const dataSolicitacao = servico.criado_em
           ? new Date(servico.criado_em.seconds * 1000).toLocaleDateString("pt-BR")
@@ -128,6 +135,7 @@ function ListaFinanceiro() {
             : pagamento
         )
       );
+      console.success("Pagamento confirmado!");
       setOpenModal(false);
     } catch (error) {
       console.error("Erro ao confirmar pagamento: ", error);
@@ -244,7 +252,7 @@ function ListaFinanceiro() {
           <div className="lf-main-top">
             <h2>Entrada e Saída de Pagamentos</h2>
             <br />
-            <Box
+            {/* <Box
               display="flex"
               gap={2}
               className="lf-top-filters"
@@ -283,7 +291,7 @@ function ListaFinanceiro() {
                   ))}
                 </Select>
               </FormControl>
-            </Box>
+            </Box> */}
           </div>
 
           <div className="lf-main-content">
@@ -320,7 +328,7 @@ function ListaFinanceiro() {
                         {pagamento.pagamento_status === "pendente" && (
                           <button
                             onClick={() => handleConfirmarPagamento(pagamento.id)}
-                            style={{ backgroundColor: "green", color: "white", padding: "10px", border: "none", borderRadius: "30px", cursor: "pointer" }}
+                            style={{ backgroundColor: "green", color: "white", padding: "10px", border: "none", borderRadius: "10px", cursor: "pointer" }}
                           >
                             Confirmar pagamento
                           </button>
@@ -333,7 +341,7 @@ function ListaFinanceiro() {
                                 color: "white",
                                 padding: "10px",
                                 border: "none",
-                                borderRadius: "30px",
+                                borderRadius: "10px",
                                 cursor: "pointer",
                               }}
                             >

@@ -35,7 +35,94 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    max-height: 400px;
+    overflow-y: auto;
   }
+
+  .chat-container .p-3 {
+    padding: 10px !important;
+  } 
   
   /* Outras regras existentes no chatbot permanecem */
+  .chat-header {
+
+    width: 319px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--corBg2);
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
   
+  .chat-header h4 {
+    margin: 0;
+    font-weight: 800;
+    color: var(--corPrincipal);
+  }
+
+  .chat-header .close-btn {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 26px;
+  }
+
+  .chat-bubble.bot {
+      padding: 10px;
+      background:  #ffffff;
+      border-radius: 10px;
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+      margin-bottom: 14px;
+  }
+
+  .chat-bubble.user {
+    padding: 10px;
+    background:  #e9c3fa;
+    border-radius: 10px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    margin-bottom: 14px;
+  }
+
+  .chat-options .btn-outline-primary {
+    background: var(--corPrincipal);
+    border: 2px solid var(--corPrincipal);
+    color:  #ffff;
+    font-weight: 700;
+
+    &:hover {
+      background: var(--corBg);
+      color: var(--corPrincipal);
+      border: 2px solid var(--corPrincipal);
+    }
+
+    &:active {
+      border: 2px solid var(--corPrincipal);
+    }
+  }
+
+  .chat-container .message-input {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .chat-toggle-btn {
+    background: var(--corPrincipal);
+    color: #ffff;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--corHover);
+    }
+
+    &:active {
+      background: var(--corActive);
+    }
+  }

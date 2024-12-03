@@ -161,7 +161,8 @@
     background: var(--corBg2) !important;
 }
 
-.btn-forms-hc {
+.btn-forms-hc,
+.dropdown-toggle.show {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -177,9 +178,11 @@
 
     &:hover {
         background: var(--corHover);
+        color: #ffff;
     }
     &:active {
         background: var(--corActive);
+        color: #ffff;
     }
 }
 

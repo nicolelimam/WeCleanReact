@@ -30,6 +30,7 @@ import {
   where,
 } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
+import Chatbot from "../../components/ChatBot/chatbot";
 
 moment.locale("pt-br");
 
@@ -44,19 +45,48 @@ function HomeFuncionario() {
   const [showModalConfirmarCancelamento, setShowModalConfirmarCancelamento] =
     useState(false);
   const [activeTab, setActiveTab] = useState(0); // Controle das abas (Pendentes, Finalizados, etc.)
-  const categorias = ["pendente", "finalizado", "cancelado", "em analise"]; // Status permitidos
+  const categorias = ["pendente", "finalizado", "cancelado", "em analise"];
   const servicesPerPage = 7; // Quantidade de serviços por página
   const [page, setPage] = useState(1); // Página atual para paginação
   const [detalhesServico, setDetalhesServico] = useState(null);
 
+  // useEffect(() => {
+  //   const loadServicos = async () => {
+  //     const fetchedServicos = await fetchFuncionarioServicos();
+  //     setServicos(fetchedServicos); // Corrigir para setServicos
+  //   };
+
+  
+  // }, []);
   useEffect(() => {
     const loadServicos = async () => {
-      const fetchedServicos = await fetchFuncionarioServicos();
-      setServicos(fetchedServicos); // Corrigir para setServicos
-    };
+      try {
+        
+        const fetchedServicos = await fetchFuncionarioServicos();
+        if (fetchedServicos.length === 0) {
+          console.warn("Nenhum serviço encontrado.");
+        }
+        console.log(fetchedServicos); // Verifique se contém "status", "start", etc.
 
+        setServicos(fetchedServicos);
+      } catch (error) {
+        console.error("Erro ao carregar serviços:", error);
+      }
+    };
+  
     loadServicos();
   }, []);
+  
+  const isServiceInPast = (serviceDate) => {
+    const now = new Date();
+    return serviceDate < now && serviceDate.toDateString() !== now.toDateString();
+  };
+  
+  const isServiceToday = (serviceDate) => {
+    const now = new Date();
+    return serviceDate.toDateString() === now.toDateString();
+  };
+  
 
   const capitalizeFirstLetter = (text) => {
     if (!text) return "";
@@ -145,8 +175,10 @@ function HomeFuncionario() {
           serviceType: capitalizeFirstLetter(servicoData.modalidade_servico),
           status: capitalizeFirstLetter(servicoData.status) || "Sem status",
           start: servicoData.data_realizacao
-            ? servicoData.data_realizacao.toDate()
-            : new Date(), // Fallback para data atual
+          ? servicoData.data_realizacao.toDate()
+          : new Date(),
+        
+        
           end: servicoData.data_realizacao
             ? servicoData.data_realizacao.toDate()
             : new Date(), // Fallback para data atual
@@ -175,18 +207,30 @@ function HomeFuncionario() {
       console.error("Evento selecionado é inválido:", event);
     }
   };
+  
 
   const handleClose = () => setOpen(false);
+  // const filteredServicos = servicos
+  //   .filter((servico) => {
+  //     const statusAtual = categorias[activeTab];
+  //     return (
+  //       servico.status !== "cancelado" &&
+  //       servico.status !== "em analise" &&
+  //       servico.status.toLowerCase() === statusAtual
+  //     );
+  //   })
+  //   .slice((page - 1) * servicesPerPage, page * servicesPerPage);
+
   const filteredServicos = servicos
-    .filter((servico) => {
-      const statusAtual = categorias[activeTab];
-      return (
-        servico.status !== "cancelado" &&
-        servico.status !== "em analise" &&
-        servico.status.toLowerCase() === statusAtual
-      );
-    })
-    .slice((page - 1) * servicesPerPage, page * servicesPerPage);
+  .filter((servico) => {
+    const statusAtual = categorias[activeTab]?.toLowerCase().trim();
+    return (
+      !["cancelado", "em analise"].includes(servico.status.toLowerCase().trim()) &&
+      servico.status.toLowerCase().trim() === statusAtual
+    );
+  })
+  .slice((page - 1) * servicesPerPage, page * servicesPerPage);
+
 
   const handleLogout = useClearSessionAndRedirect();
 
@@ -197,15 +241,21 @@ function HomeFuncionario() {
 
   const solicitarCancelamentoServico = async (id) => {
     try {
+      const servico = servicos.find((s) => s.id === id);
+      if (!servico || isServiceInPast(servico.start) || isServiceToday(servico.start)) {
+        toast.error("Não é possível cancelar um serviço já realizado ou no mesmo dia.");
+        return;
+      }
+  
       const servicoRef = doc(db, "servicos", id);
       await updateDoc(servicoRef, { status: "em analise" });
       toast.success("Solicitação de cancelamento enviada!");
-
+  
       // Atualizar o estado local
       setServicos((prev) =>
         prev.map((s) => (s.id === id ? { ...s, status: "em analise" } : s))
       );
-
+  
       setShowModalConfirmarCancelamento(false);
       setDetalhesServico(null);
     } catch (error) {
@@ -213,33 +263,38 @@ function HomeFuncionario() {
       toast.error("Erro ao solicitar cancelamento. Tente novamente.");
     }
   };
-
+  
   const confirmarServico = async (id) => {
     try {
       const servicoRef = doc(db, "servicos", id);
       await updateDoc(servicoRef, { status: "finalizado" });
       toast.success("Serviço confirmado como finalizado!");
-
+  
       // Atualizar o estado local
       setServicos((prev) =>
         prev.map((s) => (s.id === id ? { ...s, status: "finalizado" } : s))
       );
-
+  
       setDetalhesServico(null);
+      setOpen(false); // Fecha o modal de informações
     } catch (error) {
       console.error("Erro ao confirmar serviço:", error);
       toast.error("Erro ao confirmar o serviço. Tente novamente.");
     }
   };
+  
 
   const handleTabChange = (event, newValue) => {
+    console.log("Nova aba ativa:", newValue, "Status associado:", categorias[newValue]);
     setActiveTab(newValue);
-    setPage(1); // Reseta a página ao trocar de aba
+    setPage(1);
   };
+  
 
   return (
     <div className="home-funcionario-container">
       <ToastContainer />
+      <Chatbot userType="funcionario" />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#bannerHeader" className="fs-4 logo">
@@ -392,65 +447,71 @@ function HomeFuncionario() {
             <p style={{fontSize: "18px"}}><strong>Erro:</strong> Evento não encontrado ou inválido.</p>
           )}
         </Modal.Body>
-
         <Modal.Footer>
-          {detalhesServico && detalhesServico.status === "pendente" && (
-            <>
-              {detalhesServico.start &&
-              new Date() >= new Date(detalhesServico.start) ? (
-                <Button
-                  variant="success"
-                  onClick={() => confirmarServico(detalhesServico.id)}
-                >
-                  Confirmar Realização do Serviço
-                </Button>
-              ) : (
-                <Button
-                  variant="warning"
-                  onClick={() => abrirModalCancelarServico(detalhesServico.id)}
-                >
-                  Solicitar Cancelamento do Serviço
-                </Button>
-              )}
-            </>
-          )}
+  {selectedEvent && selectedEvent.status.toLowerCase() === "pendente" && (
+    <>
+      {!isServiceInPast(selectedEvent.start) && !isServiceToday(selectedEvent.start) && (
+        <Button
+          variant="warning"
+          onClick={() => {
+            setOpen(false); // Fecha o modal de informações
+            abrirModalCancelarServico(selectedEvent.id); // Abre o modal de confirmação
+          }}
+        >
+          Solicitar Cancelamento do Serviço
+        </Button>
+      )}
+      {(isServiceInPast(selectedEvent.start) || isServiceToday(selectedEvent.start)) && (
+        <Button
+          variant="success"
+          onClick={() => confirmarServico(selectedEvent.id)}
+        >
+          Confirmar Realização do Serviço
+        </Button>
+      )}
+    </>
+  )}
+  <Button variant="secondary" onClick={() => setOpen(false)}>
+    Fechar
+  </Button>
+</Modal.Footer>
 
-          <Button variant="secondary" onClick={() => setDetalhesServico(null)}>
-            Fechar
-          </Button>
-        </Modal.Footer>
+
+
       </Modal>
 
       <Modal
-        show={showModalConfirmarCancelamento}
-        onHide={() => setShowModalConfirmarCancelamento(false)}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmação</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            Tem certeza de que deseja solicitar o cancelamento deste serviço?
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => setShowModalConfirmarCancelamento(false)}
-          >
-            Não
-          </Button>
-          <Button
-            variant="warning"
-            onClick={() =>
-              solicitarCancelamentoServico(detalhesServico?.cancelarId)
-            }
-          >
-            Sim
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  show={showModalConfirmarCancelamento}
+  onHide={() => setShowModalConfirmarCancelamento(false)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>Confirmação</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p>Tem certeza de que deseja solicitar o cancelamento deste serviço?</p>
+    <p style={{ color: "red", fontWeight: "bold" }}>
+      Lembre-se: serviços realizados ou no mesmo dia não podem ser cancelados.
+    </p>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button
+      variant="secondary"
+      onClick={() => setShowModalConfirmarCancelamento(false)}
+    >
+      Não
+    </Button>
+    <Button
+      variant="warning"
+      onClick={() =>
+        solicitarCancelamentoServico(detalhesServico?.cancelarId)
+      }
+    >
+      Sim
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 }

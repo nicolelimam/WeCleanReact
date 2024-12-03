@@ -34,7 +34,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { db } from "../../../backend/firebase";
 import { BeatLoader } from "react-spinners";
 
-
 function ListaServicos() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
@@ -77,7 +76,6 @@ function ListaServicos() {
               );
             }
           }
-
 
           // Obter informações do funcionário
           let funcionarioNome = "Não atribuído";
@@ -138,7 +136,7 @@ function ListaServicos() {
             funcionarioNome,
             clienteNome,
             detalhes,
-            avaliacao, 
+            avaliacao,
           });
         }
 
@@ -166,6 +164,7 @@ function ListaServicos() {
       setServicos((prev) =>
         prev.map((s) => (s.id === id ? { ...s, status: "cancelado" } : s))
       );
+      setDetalhesServico(null)
     } catch (error) {
       console.error("Erro ao cancelar serviço:", error);
       toast.error("Erro ao cancelar serviço.");
@@ -280,7 +279,7 @@ function ListaServicos() {
           <div className="ls-main-top">
             <h2>Serviços e Solicitações</h2>
             <br />
-            <Box
+            {/* <Box
               display="flex"
               gap={2}
               alignItems="center"
@@ -317,7 +316,7 @@ function ListaServicos() {
                   <MenuItem value="Cozinha">Cozinha</MenuItem>
                 </Select>
               </FormControl>
-            </Box>
+            </Box> */}
           </div>
 
           <div className="ls-main-content">
@@ -346,53 +345,82 @@ function ListaServicos() {
             </Tabs>
 
             {loading ? (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    sx={{ mt: 2, width: "100%", mt: 1 }}
-  >
-    <div style={{width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-      <BeatLoader color="#4f1d64" size={30} />
-      <br />
-      <h4>Carregando serviços...</h4>
-    </div>
-  </Box>
-) : filteredServicos.length > 0 ? (
-  filteredServicos.map((servico) => (
-    <Card
-      key={servico.id || Math.random()}
-      sx={{ width: "80%", mb: 2 }}
-      className="ls-card"
-      onClick={() => handleAbrirModal(servico)}
-    >
-      <CardContent>
-        <Typography variant="h6" style={{fontSize: "22px", fontWeight: "700", color: "var(--corPrincipal)"}}>
-          Serviço - {servico.modalidade_servico || "Não especificada"}
-        </Typography>
-        <Typography>
-          Cliente: {servico.clienteNome || "Não identificado"}
-        </Typography>
-        <Typography>
-          Funcionário: {servico.funcionarioNome || "Não atribuído"}
-        </Typography>
-        <Typography>
-          Data Agendada:{" "}
-          {servico.data_realizacao
-            ? new Date(servico.data_realizacao.seconds * 1000).toLocaleDateString()
-            : "Data não disponível"}
-        </Typography>
-      </CardContent>
-    </Card>
-  ))
-) : (
-  <Typography variant="body1" color="textSecondary" sx={{ mt: 2, width: "100%" }}>
-    <div style={{width: "100%", display: "flex", textAlign: "center", alignItems: "center", justifyContent: "center"}}>
-      <h4>Nenhum serviço corresponde à sua busca :(</h4>
-    </div>
-  </Typography>
-)}
-
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 2, width: "100%", mt: 1 }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <BeatLoader color="#4f1d64" size={30} />
+                  <br />
+                  <h4>Carregando serviços...</h4>
+                </div>
+              </Box>
+            ) : filteredServicos.length > 0 ? (
+              filteredServicos.map((servico) => (
+                <Card
+                  key={servico.id || Math.random()}
+                  sx={{ width: "80%", mb: 2 }}
+                  className="ls-card"
+                  onClick={() => handleAbrirModal(servico)}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      style={{
+                        fontSize: "22px",
+                        fontWeight: "700",
+                        color: "var(--corPrincipal)",
+                      }}
+                    >
+                      Serviço -{" "}
+                      {servico.modalidade_servico || "Não especificada"}
+                    </Typography>
+                    <Typography>
+                      Cliente: {servico.clienteNome || "Não identificado"}
+                    </Typography>
+                    <Typography>
+                      Funcionário: {servico.funcionarioNome || "Não atribuído"}
+                    </Typography>
+                    <Typography>
+                      Data Agendada:{" "}
+                      {servico.data_realizacao
+                        ? new Date(
+                            servico.data_realizacao.seconds * 1000
+                          ).toLocaleDateString()
+                        : "Data não disponível"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                sx={{ mt: 2, width: "100%" }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    textAlign: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <h4>Nenhum serviço corresponde à sua busca :(</h4>
+                </div>
+              </Typography>
+            )}
 
             <Pagination
               count={Math.ceil(filteredServicos.length / servicesPerPage)}
@@ -471,36 +499,39 @@ function ListaServicos() {
                             : "Não"
                           : valor}
                       </Typography>
-                      
                     ))}
 
-              {detalhesServico.avaliacao && (
-                <div style={{ marginTop: "20px" }}>
-                  <h5
-                    style={{
-                      color: "var(--corPrincipal)",
-                      marginBottom: "10px",
-                      fontSize: "20px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Avaliação
-                  </h5>
-                  <p style={{ fontSize: "18px" }}>
-                    <strong>Qualidade:</strong>{" "}
-                    {detalhesServico.avaliacao.qualidade || "Não avaliado"} estrelas
-                  </p>
-                  <p style={{ fontSize: "18px" }}>
-                    <strong>Profissionalismo:</strong>{" "}
-                    {detalhesServico.avaliacao.profissionalismo || "Não avaliado"} estrelas
-                  </p>
-                  <p style={{ fontSize: "18px" }}>
-                    <strong>Comentário:</strong>{" "}
-                    {detalhesServico.avaliacao.comentario || "Nenhum comentário."}
-                  </p>
-                </div>
-              )}
-
+                    {detalhesServico.avaliacao && (
+                      <div style={{ marginTop: "20px" }}>
+                        <h5
+                          style={{
+                            color: "var(--corPrincipal)",
+                            marginBottom: "10px",
+                            fontSize: "20px",
+                            fontWeight: "700",
+                          }}
+                        >
+                          Avaliação
+                        </h5>
+                        <p style={{ fontSize: "18px" }}>
+                          <strong>Qualidade:</strong>{" "}
+                          {detalhesServico.avaliacao.qualidade ||
+                            "Não avaliado"}{" "}
+                          estrelas
+                        </p>
+                        <p style={{ fontSize: "18px" }}>
+                          <strong>Profissionalismo:</strong>{" "}
+                          {detalhesServico.avaliacao.profissionalismo ||
+                            "Não avaliado"}{" "}
+                          estrelas
+                        </p>
+                        <p style={{ fontSize: "18px" }}>
+                          <strong>Comentário:</strong>{" "}
+                          {detalhesServico.avaliacao.comentario ||
+                            "Nenhum comentário."}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}

@@ -152,13 +152,12 @@ function ListaServicosCliente() {
     setServicoParaCancelarId(id); // Define o serviço para cancelamento
     setModalConfirmacaoAberto(true); // Abre o modal de confirmação
   };
-  
-  
+
   const handleFecharModalConfirmacao = () => {
     setServicoParaCancelarId(null); // Limpa o ID do serviço para cancelamento
     setModalConfirmacaoAberto(false);
   };
-  
+
   // Função para confirmar o cancelamento do serviço
   const confirmarCancelamento = () => {
     if (detalhesServico) {
@@ -166,7 +165,6 @@ function ListaServicosCliente() {
       handleFecharModalConfirmacao();
     }
   };
-
 
   const handleAbrirModal = async (servico) => {
     // console.log("Abrindo modal com serviço:", servico); // Depuração
@@ -209,7 +207,7 @@ function ListaServicosCliente() {
 
   // const cancelarServico = async (id) => {
   //   if (!id) return; // Adiciona uma verificação para evitar erros
-  
+
   //   try {
   //     const db = getFirestore();
   //     const servicoRef = doc(db, "servicos", id);
@@ -230,18 +228,18 @@ function ListaServicosCliente() {
       console.error("ID do serviço não fornecido.");
       return;
     }
-  
+
     try {
       const db = getFirestore();
       const servicoRef = doc(db, "servicos", id);
       await updateDoc(servicoRef, { status: "cancelado" });
       toast.success("Serviço cancelado com sucesso!");
-  
+
       // Atualiza a lista de serviços localmente para refletir a mudança
       setServicos((prev) =>
         prev.map((s) => (s.id === id ? { ...s, status: "cancelado" } : s))
       );
-  
+
       // Fechar o modal de detalhes após a atualização
       handleFecharModal();
       handleFecharModalConfirmacao();
@@ -250,8 +248,12 @@ function ListaServicosCliente() {
       toast.error("Erro ao cancelar o serviço.");
     }
   };
-  
-  
+
+  const servicosFiltrados = servicos.filter((servico) => {
+    const statusServico = servico.status ? servico.status.toLowerCase() : "";
+    const abaAtual = categorias[categoriaAtual].toLowerCase();
+    return statusServico === abaAtual;
+  });
 
   const formatarCamposDetalhes = (modalidade, detalhes) => {
     const camposPorModalidade = {
@@ -296,52 +298,57 @@ function ListaServicosCliente() {
 
   const handleAbrirAvaliacaoModal = () => {
     if (!detalhesServico || !detalhesServico.id) {
-      console.error("Detalhes do serviço ou ID não encontrados ao abrir o modal de avaliação.");
+      console.error(
+        "Detalhes do serviço ou ID não encontrados ao abrir o modal de avaliação."
+      );
       toast.error("Erro ao abrir o modal de avaliação. Tente novamente.");
       return;
     }
-  
+
     setModalAberto(false);
     setAvaliacaoModalAberto(true); // Abre o modal de avaliação
   };
-  
-  
+
   const handleFecharAvaliacaoModal = () => {
     setAvaliacaoModalAberto(false);
     setAvaliacaoServico({ qualidade: 0, profissionalismo: 0, comentario: "" });
   };
 
-  
-
   const handleSalvarAvaliacao = async () => {
     if (!detalhesServico || !detalhesServico.id) {
-      console.error("Detalhes do serviço ou ID não encontrados ao salvar a avaliação:", detalhesServico);
+      console.error(
+        "Detalhes do serviço ou ID não encontrados ao salvar a avaliação:",
+        detalhesServico
+      );
       toast.error("Erro ao salvar a avaliação. Tente novamente.");
       return;
     }
-  
+
     const db = getFirestore();
     if (!db) {
       console.error("Erro ao conectar ao Firestore.");
       toast.error("Erro ao conectar ao Firestore.");
       return;
     }
-  
+
     const servicoRef = doc(db, "servicos", detalhesServico.id);
-  
+
     const novaAvaliacao = {
       qualidade: avaliacaoServico.qualidade,
       profissionalismo: avaliacaoServico.profissionalismo,
       comentario: avaliacaoServico.comentario,
       data: new Date().toISOString(),
     };
-  
+
     try {
-      console.log("Salvando avaliação no Firestore para o serviço:", detalhesServico.id);
+      console.log(
+        "Salvando avaliação no Firestore para o serviço:",
+        detalhesServico.id
+      );
       await updateDoc(servicoRef, { avaliacao: JSON.stringify(novaAvaliacao) });
       console.log("Avaliação salva com sucesso no Firestore!");
       toast.success("Avaliação salva com sucesso!");
-  
+
       // Atualizar estado local
       setServicos((prev) =>
         prev.map((servico) =>
@@ -350,7 +357,7 @@ function ListaServicosCliente() {
             : servico
         )
       );
-  
+
       handleFecharAvaliacaoModal();
       handleFecharModal();
     } catch (error) {
@@ -358,7 +365,6 @@ function ListaServicosCliente() {
       toast.error("Erro ao salvar a avaliação.");
     }
   };
-  
 
   return (
     <div className="lista-servicos-cliente-container">
@@ -427,105 +433,103 @@ function ListaServicosCliente() {
         </div>
         <br />
         <div className="lsc-content">
-          {loading ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-                justifyContent: "center",
-                textAlign: "center",
-                margin: "20px 0",
-              }}
-            >
-              <BeatLoader color="#4f1d64" size={30} />
-              <p
+          <Tabs
+            value={categoriaAtual}
+            onChange={(event, newValue) => {
+              setCategoriaAtual(newValue);
+              setPaginaAtual(1); // Reinicia para a primeira página ao mudar de categoria
+            }}
+            aria-label="Categorias de serviços"
+            className="lsc-abas-servicos"
+          >
+            {categorias.map((categoria, index) => (
+              <Tab label={categoria} key={index} />
+            ))}
+          </Tabs>
+
+          {/* Container dos Cards */}
+          <div className="lsc-card-container">
+            {loading ? (
+              <div
                 style={{
-                  fontSize: "26px",
-                  fontWeight: "600",
-                  marginTop: "10px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  margin: "20px 0",
                 }}
               >
-                Carregando dados, aguarde por favor!
-              </p>
-            </div>
-          )  : (
-            <>
-              {servicos.length === 0 ? (
-                <div style={{ textAlign: "center", margin: "20px 0" }}>
-                <Typography variant="h4">
+                <BeatLoader color="#4f1d64" size={30} />
+                <p
+                  style={{
+                    fontSize: "26px",
+                    fontWeight: "600",
+                    marginTop: "10px",
+                  }}
+                >
+                  Carregando dados, aguarde por favor!
+                </p>
+              </div>
+            ) : servicosFiltrados.length === 0 ? (
+              <div style={{ textAlign: "center", margin: "20px 0" }}>
+                <Typography variant="h6">
                   Não há nenhum serviço para exibir :(
                 </Typography>
-                </div>
-              ) : (
-                <>
-                  <Tabs
-                    value={categoriaAtual}
-                    onChange={(event, newValue) => {
-                      setCategoriaAtual(newValue);
-                      setPaginaAtual(1);// Reinicia para a primeira página ao mudar de categoria
-                    }}
-                    aria-label="Categorias de serviços"
-                    className="lsc-abas-servicos"
-                  >
-                    {categorias.map((categoria, index) => (
-                      <Tab label={categoria} key={index} />
-                    ))}
-                  </Tabs>
+              </div>
+            ) : (
+              <>
+                {/* Exibição dos Cards */}
+                {servicosFiltrados
+                  .slice(
+                    (paginaAtual - 1) * CARDS_POR_PAGINA,
+                    paginaAtual * CARDS_POR_PAGINA
+                  )
+                  .map((servico, index) => (
+                    <Card
+                      key={index}
+                      sx={{
+                        width: "100%",
+                        cursor: "pointer",
+                      }}
+                      className="lsc-card"
+                      onClick={() => handleAbrirModal(servico)}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="h6"
+                          component="div"
+                          className="lsc-card-title"
+                        >
+                          Serviço:{" "}
+                          {servico.modalidade_servico
+                            ? servico.modalidade_servico
+                                .charAt(0)
+                                .toUpperCase() +
+                              servico.modalidade_servico.slice(1)
+                            : "Desconhecido"}
+                        </Typography>
+                        <Typography variant="body2" className="lsc-card-data">
+                          Data:{" "}
+                          {servico.data_realizacao
+                            ? new Date(
+                                servico.data_realizacao.seconds * 1000
+                              ).toLocaleDateString()
+                            : "Não disponível"}
+                        </Typography>
+                        <Typography variant="body2" className="lsc-valor">
+                          Valor: R$ {servico.valor || "Não informado"}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
 
-                  {servicos
-                    .filter((servico) => {
-                      const statusServico = servico.status
-                        ? servico.status.toLowerCase()
-                        : "";
-                      const abaAtual = categorias[categoriaAtual].toLowerCase();
-                      return statusServico === abaAtual;
-                    })
-                    .slice(
-                      (paginaAtual - 1) * CARDS_POR_PAGINA,
-                      paginaAtual * CARDS_POR_PAGINA
-                    ) // Paginando os cards
-                    .map((servico, index) => (
-                      <Card
-                        key={index}
-                        sx={{
-                          width: "100%",
-                          cursor: "pointer",
-                        }}
-                        className="lsc-card"
-                        onClick={() => handleAbrirModal(servico)}
-                      >
-                        <CardContent>
-                          <Typography
-                            variant="h6"
-                            component="div"
-                            className="lsc-card-title"
-                          >
-                            Serviço:{" "}
-                            {servico.modalidade_servico
-                              ? servico.modalidade_servico
-                                  .charAt(0)
-                                  .toUpperCase() +
-                                servico.modalidade_servico.slice(1)
-                              : "Desconhecido"}
-                          </Typography>
-                          <Typography variant="body2" className="lsc-card-data">
-                            Data:{" "}
-                            {servico.data_realizacao
-                              ? new Date(
-                                  servico.data_realizacao.seconds * 1000
-                                ).toLocaleDateString()
-                              : "Não disponível"}
-                          </Typography>
-                          <Typography variant="body2" className="lsc-valor">
-                            Valor: R$ {servico.valor || "Não informado"}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    ))}
-
+                {/* Paginação */}
+                {servicosFiltrados.length > CARDS_POR_PAGINA && (
                   <Pagination
-                    count={Math.ceil(servicos.length / CARDS_POR_PAGINA)} // Calcula o número de páginas
+                    count={Math.ceil(
+                      servicosFiltrados.length / CARDS_POR_PAGINA
+                    )}
                     page={paginaAtual}
                     onChange={(event, value) => setPaginaAtual(value)}
                     color="primary"
@@ -536,240 +540,258 @@ function ListaServicosCliente() {
                       marginTop: 2,
                     }}
                   />
-                </>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
+          </div>
         </div>
-        {detalhesServico && (
-          <Modal show={modalAberto} onHide={handleFecharModal} centered>
-            <Modal.Header closeButton>
-              <Modal.Title className="lsc-modal-title">
-                Detalhes do Serviço
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="lsc-modal-body">
-              <p>Modalidade: {detalhesServico.modalidade_servico}</p>
-              <p>
-                Data:{" "}
-                {new Date(
-                  detalhesServico.data_realizacao.seconds * 1000
-                ).toLocaleDateString()}
-              </p>
-              <p>Valor: R$ {detalhesServico.valor}</p>
-              <p>Observações: {detalhesServico.observacoes}</p>
-              <p>Funcionário: {funcionarioNome || "Não atribuído"}</p>
-              {detalhesServico.detalhes.map((detalhe, idx) => (
-                <div key={idx}>
-                  <strong
-                    style={{
-                      color: "var(--corPrincipal)",
-                      marginBottom: "20px",
-                      fontSize: "20px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {detalhe.modalidade.charAt(0).toUpperCase() +
-                      detalhe.modalidade.slice(1)}
-                  </strong>
-                  {formatarCamposDetalhes(detalhe.modalidade, detalhe).map(
-                    ({ nomeCampo, valorFormatado }, index) => (
-                      <p key={index}>
-                        {nomeCampo}: {valorFormatado}
-                      </p>
-                    )
-                  )}
-                </div>
-              ))}
+      </div>
 
-              {detalhesServico.avaliacao && (
-                <div style={{ marginTop: "10px" }}>
-                  <h5
-                    style={{
-                      color: "var(--corPrincipal)",
-                      marginBottom: "20px",
-                      fontSize: "22px",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Avaliação
-                  </h5>
-                  <p>
-                    <strong>Qualidade:</strong>{" "}
-                    {detalhesServico.avaliacao.qualidade || "Não avaliado"}{" "}
-                    estrelas
-                  </p>
-                  <p>
-                    <strong>Profissionalismo:</strong>{" "}
-                    {detalhesServico.avaliacao.profissionalismo ||
-                      "Não avaliado"}{" "}
-                    estrelas
-                  </p>
-                  <p>
-                    <strong>Comentário:</strong>{" "}
-                    {detalhesServico.avaliacao.comentario ||
-                      "Nenhum comentário."}
-                  </p>
-                </div>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              {detalhesServico.status === "pendente" && (
-                <Button
+      {detalhesServico && (
+        <Modal show={modalAberto} onHide={handleFecharModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title className="lsc-modal-title">
+              Detalhes do Serviço
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="lsc-modal-body">
+            <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Modalidade:</strong> {detalhesServico.modalidade_servico}</p>
+            <p style={{textTransform: "capitalize", fontSize: "18px"}}>
+              <strong>Data:</strong>
+              {" "}
+              {new Date(
+                detalhesServico.data_realizacao.seconds * 1000
+              ).toLocaleDateString()}
+            </p>
+            <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Valor:</strong> R$ {detalhesServico.valor}</p>
+            <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Observações:</strong> {detalhesServico.observacoes}</p>
+            <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Funcionário:</strong> {funcionarioNome || "Não atribuído"}</p>
+            {detalhesServico.detalhes.map((detalhe, idx) => (
+              <div key={idx}>
+                <strong
+                  style={{
+                    color: "var(--corPrincipal)",
+                    marginBottom: "20px",
+                    fontSize: "20px",
+                    fontWeight: "600",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {detalhe.modalidade.charAt(0).toUpperCase() +
+                    detalhe.modalidade.slice(1)}
+                </strong>
+                {formatarCamposDetalhes(detalhe.modalidade, detalhe).map(
+                  ({ nomeCampo, valorFormatado }, index) => (
+                    <p key={index} style={{textTransform: "capitalize", fontSize: "18px"}}>
+                      <strong>{nomeCampo}:</strong> {valorFormatado}
+                    </p>
+                  )
+                )}
+              </div>
+            ))}
+
+            {detalhesServico.avaliacao && (
+              <div style={{ marginTop: "10px" }}>
+                <h5
+                  style={{
+                    color: "var(--corPrincipal)",
+                    marginBottom: "20px",
+                    fontSize: "22px",
+                    fontWeight: "700",
+                  }}
+                >
+                  Avaliação
+                </h5>
+                <p>
+                  <strong>Qualidade:</strong>{" "}
+                  {detalhesServico.avaliacao.qualidade || "Não avaliado"}{" "}
+                  estrelas
+                </p>
+                <p>
+                  <strong>Profissionalismo:</strong>{" "}
+                  {detalhesServico.avaliacao.profissionalismo || "Não avaliado"}{" "}
+                  estrelas
+                </p>
+                <p>
+                  <strong>Comentário:</strong>{" "}
+                  {detalhesServico.avaliacao.comentario || "Nenhum comentário."}
+                </p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            {detalhesServico.status === "pendente" && (
+              <Button
                 variant="danger"
                 onClick={() => handleAbrirModalConfirmacao(detalhesServico.id)}
-                className="lsc-modal-button"
+                className="lsc-cancel-button"
               >
                 Cancelar Serviço
               </Button>
-              
+            )}
+
+            {detalhesServico.status === "finalizado" &&
+              !detalhesServico.avaliacao && (
+                <Button
+                  variant="primary"
+                  className="lsc-modal-button"
+                  onClick={handleAbrirAvaliacaoModal}
+                >
+                  Avaliar Serviço
+                </Button>
               )}
 
-              {detalhesServico.status === "finalizado" &&
-                !detalhesServico.avaliacao && (
-                  <Button
-                    variant="primary"
-                    className="lsc-modal-button"
-                    onClick={handleAbrirAvaliacaoModal}
-                  >
-                    Avaliar Serviço
-                  </Button>
-                )}
-
-              <Button
-                variant="secondary"
-                className="lsc-modal-button"
-                onClick={handleFecharModal}
-              >
-                Fechar
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        )}
-
-        <Modal
-          show={avaliacaoModalAberto}
-          onHide={handleFecharAvaliacaoModal}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title className="lsc-modal-title">Avaliar Serviço</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h6>Como você classificaria...</h6>
-            <h5>Qualidade do Serviço</h5>
-            <ReactStars
-              count={5}
-              onChange={(newRating) =>
-                setAvaliacaoServico((prev) => ({
-                  ...prev,
-                  qualidade: newRating,
-                }))
-              }
-              size={40}
-              activeColor="#ffd700"
-            />
-            <h5
-            style={{
-              marginTop: "10px",
-              marginBottom: "5px"
-            }}>Profissionalismo do(a) Prestador(a) de Serviço</h5>
-            <ReactStars
-              count={5}
-              onChange={(newRating) =>
-                setAvaliacaoServico((prev) => ({
-                  ...prev,
-                  profissionalismo: newRating,
-                }))
-              }
-              size={40}
-              activeColor="#ffd700"
-            />
-            <textarea
-              placeholder="Deixe um comentário (opcional)"
-              value={avaliacaoServico.comentario}
-              onChange={(e) =>
-                setAvaliacaoServico((prev) => ({
-                  ...prev,
-                  comentario: e.target.value,
-                }))
-              }
-              style={{ 
-                width: "100%", 
-                marginTop: "10px",
-                borderRadius: "10px",
-                padding: "10px",
-                fontSize: "16px",
-                height: "100px"
-              }}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={handleSalvarAvaliacao} className="lsc-modal-button">
-              Salvar Avaliação
-            </Button>
-            <Button variant="secondary" onClick={handleFecharAvaliacaoModal} className="lsc-modal-button">
-              Cancelar
+            <Button
+              variant="secondary"
+              className="lsc-btn-fechar"
+              onClick={handleFecharModal}
+            >
+              Fechar
             </Button>
           </Modal.Footer>
         </Modal>
+      )}
 
-        <Modal show={modalConfirmacaoAberto} onHide={handleFecharModalConfirmacao} centered>
-          <Modal.Header closeButton style={{border: "none"}}>
-            <Modal.Title className="lsc-modal-title">Confirmação</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <span
-            style={{fontSize: "18px"}}
-            >Tem certeza que deseja cancelar esse serviço? Essa ação é irreversível!</span>
-          </Modal.Body>
-          <Modal.Footer style={{
-            width: "100%", 
-            display: "flex", 
+      <Modal
+        show={avaliacaoModalAberto}
+        onHide={handleFecharAvaliacaoModal}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="lsc-modal-title">Avaliar Serviço</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6>Como você classificaria...</h6>
+          <h5>Qualidade do Serviço</h5>
+          <ReactStars
+            count={5}
+            onChange={(newRating) =>
+              setAvaliacaoServico((prev) => ({
+                ...prev,
+                qualidade: newRating,
+              }))
+            }
+            size={40}
+            activeColor="#ffd700"
+          />
+          <h5
+            style={{
+              marginTop: "10px",
+              marginBottom: "5px",
+            }}
+          >
+            Profissionalismo do(a) Prestador(a) de Serviço
+          </h5>
+          <ReactStars
+            count={5}
+            onChange={(newRating) =>
+              setAvaliacaoServico((prev) => ({
+                ...prev,
+                profissionalismo: newRating,
+              }))
+            }
+            size={40}
+            activeColor="#ffd700"
+          />
+          <textarea
+            placeholder="Deixe um comentário (opcional)"
+            value={avaliacaoServico.comentario}
+            onChange={(e) =>
+              setAvaliacaoServico((prev) => ({
+                ...prev,
+                comentario: e.target.value,
+              }))
+            }
+            style={{
+              width: "100%",
+              marginTop: "10px",
+              borderRadius: "10px",
+              padding: "10px",
+              fontSize: "16px",
+              height: "100px",
+            }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={handleSalvarAvaliacao}
+            className="lsc-modal-button"
+          >
+            Salvar Avaliação
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={handleFecharAvaliacaoModal}
+            className="lsc-modal-button"
+          >
+            Cancelar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={modalConfirmacaoAberto}
+        onHide={handleFecharModalConfirmacao}
+        centered
+      >
+        <Modal.Header closeButton style={{ border: "none" }}>
+          <Modal.Title className="lsc-modal-title">Confirmação</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <span style={{ fontSize: "18px" }}>
+            Tem certeza que deseja cancelar esse serviço? Essa ação é
+            irreversível!
+          </span>
+        </Modal.Body>
+        <Modal.Footer
+          style={{
+            width: "100%",
+            display: "flex",
             flexDirection: "row",
             border: "none",
             alignItems: "center",
-            justifyContent: "space-between"
-            }}>
-            <Button variant="secondary" onClick={handleFecharModalConfirmacao}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "gray",
-                color: "#ffff",
-                borderRadius: "5px"
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                if (servicoParaCancelarId) {
-                  cancelarServico(servicoParaCancelarId); // Usa o ID armazenado
-                } else {
-                  console.error("ID do serviço para cancelamento não está disponível.");
-                }
-              }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "red",
-                color: "#ffff",
-                borderRadius: "5px",
-              }}
-            >
-              Sim
-            </Button>
-
-
-
-          </Modal.Footer>
-        </Modal>
-
-      </div>
+            justifyContent: "space-between",
+          }}
+        >
+          <Button
+            variant="secondary"
+            onClick={handleFecharModalConfirmacao}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "gray",
+              color: "#ffff",
+              borderRadius: "5px",
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              if (servicoParaCancelarId) {
+                cancelarServico(servicoParaCancelarId); // Usa o ID armazenado
+              } else {
+                console.error(
+                  "ID do serviço para cancelamento não está disponível."
+                );
+              }
+            }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "red",
+              color: "#ffff",
+              borderRadius: "5px",
+            }}
+          >
+            Sim
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

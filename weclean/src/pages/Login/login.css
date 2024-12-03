@@ -95,19 +95,21 @@
 }
 
 
-.btn-link {
-    text-decoration: none;
-    color: var(--corPrincipal);
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
+.btn-link-login {
+    text-decoration: none !important;
+    color: var(--corPrincipal) !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    margin-top: 10px !important;
+    background: transparent !important;
+    border: none !important;
 
     &:hover {
-        color: var(--corHover);
+        color: var(--corHover) !important;
     }
 
     &:active {
-        color: var(--corActive);
+        color: var(--corActive) !important;
     }
 }
 

@@ -23,6 +23,7 @@ function HomeCliente() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedEvents, setSelectedEvents] = useState([]); // Agora armazena múltiplos eventos
 
 
   useEffect(() => {
@@ -129,16 +130,16 @@ function HomeCliente() {
   
   const handleDayClick = (date) => {
     const formattedDate = date.toISOString().split("T")[0];
-    const event = events.find(
-      (event) =>
-        event.data_realizacao.toISOString().split("T")[0] === formattedDate
+    const eventsForDay = events.filter(
+      (event) => event.data_realizacao.toISOString().split("T")[0] === formattedDate
     );
   
-    if (event) {
-      setSelectedEvent(event);
+    if (eventsForDay.length > 0) {
+      setSelectedEvents(eventsForDay); // Define todos os eventos do dia
       setShowModal(true);
     }
   };
+  
 
   const handleCancel = async (id) => {
     try {
@@ -153,9 +154,6 @@ function HomeCliente() {
       console.error(error);
     }
   };
-  
-  
-  
   
 
   return (
@@ -222,7 +220,9 @@ function HomeCliente() {
             <h2 className="hc-header-txt">
                 Seus agendamentos
             </h2>
+            
         </div>
+        <p>Para cancelar serviços, acesse a área "Serviços" no menu.</p>
         <div className="home-cliente-content">
         <div className="hc-calendar-header">
           <Dropdown>
@@ -252,47 +252,47 @@ function HomeCliente() {
       </div>
 
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title style={{fontSize: "22px", fontWeight: "700", color: "var(--corPrincipal)"}}>Informações do Serviço</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedEvent && (
-            <>
-              <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Modalidade:</strong> {selectedEvent.modalidade}</p>
-              <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Nome do prestador de serviço:</strong> {selectedEvent.funcionario}</p>
-              <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Data de realização:</strong> {selectedEvent.data_realizacao.toLocaleString()}</p>
-              <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Endereço:</strong> {selectedEvent.endereco}</p>
-              <p style={{textTransform: "capitalize", fontSize: "18px"}}><strong>Status do pagamento:</strong> {selectedEvent.pagamento_status}</p>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-        {selectedEvent?.status === "pendente" && (
-          <Button
-            variant="danger"
-            onClick={() => {
-              setShowModal(false); // Fecha o modal de informações
-              setShowConfirmationModal(true); // Abre o modal de confirmação
-            }}
-          >
-            Cancelar
-          </Button>
-        )}
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Fechar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
+  <Modal.Header closeButton>
+    <Modal.Title style={{ fontSize: "22px", fontWeight: "700", color: "var(--corPrincipal)" }}>
+      Serviços do Dia
+    </Modal.Title>
+    
+  </Modal.Header>
+  <Modal.Body>
+    {selectedEvents.length > 0 ? (
+      selectedEvents.map((event, index) => (
+        <div key={index} style={{ marginBottom: "20px" }}>
+          <p style={{ textTransform: "capitalize", fontSize: "18px" }}><strong>Modalidade:</strong> {event.modalidade}</p>
+          <p style={{ textTransform: "capitalize", fontSize: "18px" }}><strong>Nome do prestador de serviço:</strong> {event.funcionario}</p>
+          <p style={{ textTransform: "capitalize", fontSize: "18px" }}><strong>Data de realização:</strong> {event.data_realizacao.toLocaleString()}</p>
+          <p style={{ textTransform: "capitalize", fontSize: "18px" }}><strong>Endereço:</strong> {event.endereco}</p>
+          <p style={{ textTransform: "capitalize", fontSize: "18px" }}><strong>Status do pagamento:</strong> {event.pagamento_status}</p>
+          <hr />
+        </div>
+      ))
+    ) : (
+      <p>Nenhum serviço marcado para este dia.</p>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowModal(false)}>
+      Fechar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+<Modal
   show={showConfirmationModal}
   onHide={() => {
     setShowConfirmationModal(false);
-    setShowModal(false); // Garante que o modal de informações também seja fechado
+    setShowModal(false); // Fecha o modal de informações
   }}
   centered
 >
   <Modal.Header closeButton>
-    <Modal.Title style={{fontSize: "22px", fontWeight: "700", color: "var(--corPrincipal)"}}>Confirmar Cancelamento</Modal.Title>
+    <Modal.Title style={{ fontSize: "22px", fontWeight: "700", color: "var(--corPrincipal)" }}>
+      Confirmar Cancelamento
+    </Modal.Title>
   </Modal.Header>
   <Modal.Body>
     <p>Você realmente deseja cancelar este serviço?</p>
@@ -300,14 +300,11 @@ function HomeCliente() {
   <Modal.Footer>
     <Button
       variant="danger"
-      onClick={() => handleCancel(selectedEvent?.id)}
+      onClick={() => handleCancel(selectedEvents[0]?.id)} // Exemplo para cancelar o primeiro serviço selecionado
     >
       Confirmar
     </Button>
-    <Button
-      variant="secondary"
-      onClick={() => setShowConfirmationModal(false)}
-    >
+    <Button variant="secondary" onClick={() => setShowConfirmationModal(false)}>
       Voltar
     </Button>
   </Modal.Footer>

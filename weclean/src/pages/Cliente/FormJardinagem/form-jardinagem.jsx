@@ -13,6 +13,7 @@ import { getUserSession } from "../../../utils/session";
 import { useClearSessionAndRedirect } from "../../../utils/session";
 import { LuLogOut } from "react-icons/lu";
 import { Tooltip } from "recharts";
+import Chatbot from "../../../components/ChatBot/chatbot";
 
 function FormularioJardinagem() {
   const [areaVerde, setAreaVerde] = useState(0);
@@ -46,6 +47,8 @@ function FormularioJardinagem() {
       setSelectedDiasSemanaCozinha([...selectedDiasSemanaCozinha, diasSemanaCozinha]);
     }
   };
+
+  
 
   const handleSaveData = async () => {
     const userSession = getUserSession();
@@ -95,9 +98,16 @@ function FormularioJardinagem() {
     { label: "Jardim residencial", value: "residencia" },
     { label: "Jardim empresarial", value: "estabelecimento" },
   ];
+
+  const handleCancel = () => {
+    navigate('/home-cliente');
+  };
+
+
   return (
     <div className="form-page-container">
       <ToastContainer />
+      <Chatbot userType="cliente" />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">
@@ -126,7 +136,7 @@ function FormularioJardinagem() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="/home-cliente">Início</Nav.Link>
+                <Nav.Link href="/home-cliente"></Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
                 <button
@@ -293,7 +303,7 @@ function FormularioJardinagem() {
               </p>
           </div>
           <div className="ff-btn-div">
-            <button className="cancel-button">Cancelar e voltar</button>
+            <button onClick={handleCancel} type="reset" className="cancel-button">Cancelar e voltar</button>
             <button type="submit" className="confirm-button">Confirmar</button>
           </div>
         </form>

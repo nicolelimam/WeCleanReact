@@ -14,6 +14,7 @@ import { getUserSession } from "../../../utils/session";
 import { useClearSessionAndRedirect } from "../../../utils/session";
 import { LuLogOut } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
+import Chatbot from "../../../components/ChatBot/chatbot";
 
 function FormularioFaxina() {
   const [selectedDuration, setSelectedDuration] = useState(null);
@@ -148,6 +149,7 @@ const handleSubmit = async (e) => {
   return (
     <div className="form-faxina-container">
       <ToastContainer />
+      <Chatbot userType="cliente" />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">
@@ -176,7 +178,7 @@ const handleSubmit = async (e) => {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="/home-cliente">Início</Nav.Link>
+                <Nav.Link href="/home-cliente"></Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
                 <button

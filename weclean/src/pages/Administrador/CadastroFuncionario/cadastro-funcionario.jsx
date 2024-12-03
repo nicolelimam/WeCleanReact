@@ -386,13 +386,28 @@ function CadastroFuncionario() {
         status: "ativo",
         criado_em: serverTimestamp(),
         atualizado_em: serverTimestamp(),
-        compromissos_semana: ""
+        compromissos_semana: "",
       });
   
       toast.success("Funcionário cadastrado com sucesso!");
-      closeModal();
   
-      // Reseta o formulário
+      // Atualiza a tabela com o novo funcionário
+      setRows((prevRows) => [
+        ...prevRows,
+        {
+          id: funcionariosRef.id,
+          userId: userRef.id,
+          nome: formData.nome,
+          email: formData.email,
+          telefone: formData.telefone,
+          localizacao: formData.endereco?.cidade || "",
+          modalidade: formData.modalidade,
+          status: "ativo",
+        },
+      ]);
+  
+      // Fecha o modal e reseta o formulário
+      closeModal();
       setFormData({
         nome: "",
         dataDeNascimento: "",
@@ -417,6 +432,7 @@ function CadastroFuncionario() {
       setIsSubmitting(false);
     }
   };
+  
   
   
   

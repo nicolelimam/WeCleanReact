@@ -14,6 +14,7 @@ import { getUserSession } from "../../../utils/session";
 import { useClearSessionAndRedirect } from "../../../utils/session";
 import { LuLogOut } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
+import Chatbot from "../../../components/ChatBot/chatbot";
 
 function FormularioCozinha() {
   const [selectedDiasSemanaCozinha, setSelectedDiasSemanaCozinha] = useState([]);
@@ -173,10 +174,14 @@ function FormularioCozinha() {
     }
   };
   
+  const handleCancel = () => {
+    navigate('/home-cliente');
+  };
 
   return (
     <div className="form-page-container">
       <ToastContainer />
+      <Chatbot userType="cliente" />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">
@@ -205,7 +210,7 @@ function FormularioCozinha() {
             </Offcanvas.Header>
             <Offcanvas.Body>
               <Nav className="justify-content-center align-items-center flex-grow-1 pe-3">
-                <Nav.Link href="/home-cliente">Início</Nav.Link>
+                <Nav.Link href="/home-cliente"></Nav.Link>
               </Nav>
               <div className="d-flex flex-column justify-content-center flex-lg-row align-items-center gap-2">
                 <button
@@ -455,7 +460,7 @@ function FormularioCozinha() {
               </p>
           </div>
           <div className="ff-btn-div">
-            <button className="cancel-button">Cancelar e voltar</button>
+          <button onClick={handleCancel} type="reset" className="cancel-button">Cancelar e voltar</button>
             <button className="confirm-button" type="button" onClick={handleConfirmClick}>
               Confirmar
             </button>

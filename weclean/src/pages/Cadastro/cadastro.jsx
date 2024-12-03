@@ -33,77 +33,7 @@ const Cadastro = () => {
       [name]: value || '', // Fallback para string vazia
     }));
   };
-  // const handleRegister = async () => {
-  //   if (!formData.email || !formData.senha) {
-  //     toast.error("Preencha todos os campos obrigatórios.");
-  //     return;
-  //   }
-    
-  //   try {
-  //     const hashedPassword = bcrypt.hashSync(formData.senha, 10);
-  
-  //     // Cria o usuário na autenticação
-  //     const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
-  //     const user = userCredential.user;
-  
-  //     // Cria o documento do usuário na coleção 'usuarios'
-  //     const userRef = doc(collection(db, 'usuarios'), user.uid);
-  //     await setDoc(userRef, {
-  //       email: formData.email,
-  //       senha: hashedPassword,
-  //       funcao: 'cliente',
-  //       tipo_de_usuario: tipoUsuario === 'Pessoa Física' ? 'fisico' : 'juridico', // Adiciona o tipo de usuário
-  //       criado_em: serverTimestamp(),
-  //       atualizado_em: serverTimestamp()
-  //     });
 
-  //     // Define os dados do cliente para a sub-coleção 'clientes'
-  //     const clientData = {
-  //       telefone: formData.telefone || '', // Evita valor undefined
-  //       endereco: '',                      // Campo vazio como padrão
-  //       criado_em: serverTimestamp(),
-  //       atualizado_em: serverTimestamp(),
-  //       status: 'ativo'
-  //     };
-  
-  //     // Campos adicionais específicos para cada tipo de cliente
-  //     if (tipoUsuario === 'Pessoa Física') {
-  //       await addDoc(collection(userRef, 'clientes'), {
-  //         ...clientData,
-  //         nome: formData.nome || '',           // Evita valor undefined
-  //         cpf: formData.cpf || '',             // Apenas Pessoa Física usa CPF
-  //         data_de_nascimento: formData.data_de_nascimento || ''
-  //       });
-  //     } else {
-  //       await addDoc(collection(userRef, 'clientes'), {
-  //         ...clientData,
-  //         nome_da_empresa: formData.nome || '', // Evita valor undefined
-  //         cnpj: formData.cnpj || '',            // Apenas Pessoa Jurídica usa CNPJ
-  //         pessoa_de_contato: formData.nome || ''
-  //       });
-  //     }
-  
-  //     toast.success('Cadastro realizado com sucesso!');
-  //     navigate('/home-cliente');
-  //   } catch (error) {
-  //     console.error("Erro ao cadastrar: ", error);
-    
-  //     // Verifica o tipo de erro retornado pelo Firebase
-  //     switch (error.code) {
-  //       case 'auth/email-already-in-use':
-  //         toast.error('Este e-mail já está em uso. Tente outro e-mail.');
-  //         break;
-  //       case 'auth/invalid-email':
-  //         toast.error('O formato do e-mail é inválido. Verifique e tente novamente.');
-  //         break;
-  //       case 'auth/weak-password':
-  //         toast.error('A senha deve ter pelo menos 6 caracteres.');
-  //         break;
-  //       default:
-  //         toast.error('Erro ao cadastrar. Tente novamente mais tarde.');
-  //     }
-  //   }    
-  // };
 
   const handleRegister = async () => {
     if (!formData.email || !formData.senha) {

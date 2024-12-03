@@ -18,6 +18,7 @@ import { Modal } from "react-bootstrap";
 import { useClearSessionAndRedirect } from "../../../utils/session";
 import { LuLogOut } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
+import Chatbot from "../../../components/ChatBot/chatbot";
 
 function FormularioEndereco() {
   const [rua, setRua] = useState("");
@@ -28,7 +29,9 @@ function FormularioEndereco() {
   const [estado, setEstado] = useState("");
   const navigate = useNavigate();
   const [showPixModal, setShowPixModal] = useState(false); 
-const [pixQrCodeData, setPixQrCodeData] = useState(null); 
+  const [pixQrCodeData, setPixQrCodeData] = useState(null); 
+  const [modalBlocked, setModalBlocked] = useState(false); // Controla o bloqueio do botão
+
 
 
   // Estado para armazenar o valor do botão selecionado
@@ -87,12 +90,14 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
 
   const fetchNomeCliente = async (userId) => {
     try {
-      const clienteRef = collection(db, "usuarios", userId, "clientes");
+      const clienteRef = collection(db, `usuarios/${userId}/clientes`);
       const clienteSnapshot = await getDocs(clienteRef);
+  
       if (!clienteSnapshot.empty) {
         const clienteDoc = clienteSnapshot.docs[0];
-        return clienteDoc.data().nome || "Cliente não informado";
+        return clienteDoc.data().nome || "Cliente não identificado";
       }
+  
       return "Cliente não encontrado";
     } catch (error) {
       console.error("Erro ao buscar o nome do cliente:", error);
@@ -100,22 +105,25 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
     }
   };
   
+  
   const fetchNomeFuncionario = async (funcionarioId) => {
     try {
-      const funcionariosRef = collectionGroup(db, "funcionarios");
-      const funcionariosSnapshot = await getDocs(funcionariosRef);
+      const funcionariosQuery = collectionGroup(db, "funcionarios");
+      const funcionariosSnapshot = await getDocs(funcionariosQuery);
   
       for (const doc of funcionariosSnapshot.docs) {
         if (doc.id === funcionarioId) {
           return doc.data().nome || "Funcionário não informado";
         }
       }
+  
       return "Funcionário não encontrado";
     } catch (error) {
       console.error("Erro ao buscar o nome do funcionário:", error);
       return "Erro ao obter nome";
     }
   };
+  
   
   const handleLogout = useClearSessionAndRedirect();
 
@@ -134,80 +142,6 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
   };
   
 
-  // const handleSaveEndereco = async (event) => {
-  //   event.preventDefault();
-  //   const userSession = getUserSession();
-  //   if (!userSession) {
-  //     toast.error("Usuário não logado.");
-  //     return;
-  //   }
-  
-  //   const userId = userSession.userId;
-  //   const servicoId = localStorage.getItem("servicoId");
-  //   let pixString = null;
-
-  //   try {
-  //     const valorServico = await fetchValorServico(servicoId);
-  //     let linhaDigitavel = null; 
-
-  //     if (selectedPayment === "Boleto") {
-  //       linhaDigitavel = await gerarBoleto(valorServico);
-  //       await updateDoc(doc(db, "servicos", servicoId), { pagamento: linhaDigitavel });
-  //     } else if (selectedPayment === "PIX") {
-  //       const pixString = await gerarQRCodePix(valorServico);
-  //       await updateDoc(doc(db, "servicos", servicoId), { pagamento: pixString });
-  //     }      
-
-  //    const servicoRef = doc(db, "servicos", servicoId);
-  //     await updateDoc(servicoRef, {
-  //       pagamento_tipo: selectedPayment.toLowerCase(),
-  //       pagamento: selectedPayment === "Boleto" ? linhaDigitavel : pixString,
-  //     });
-  
-  //     // Restante do código de salvar endereço e alocar funcionário
-  //   } catch (error) {
-  //     console.error("Erro ao salvar endereço ou gerar boleto:", error);
-  //     toast.error("Erro ao processar sua solicitação.");
-  //   }
-  
-  //   try {
-  //     const enderecoData = { rua, bairro, numero, cep, cidade, estado };
-  
-  //     // Atualizar endereço no Firestore
-  //     const clientesRef = collection(db, "usuarios", userId, "clientes");
-  //     const clientesSnapshot = await getDocs(clientesRef);
-  
-  //     if (!clientesSnapshot.empty) {
-  //       const clienteDoc = clientesSnapshot.docs[0];
-  //       await setDoc(clienteDoc.ref, { endereco: enderecoData }, { merge: true });
-  //     } else {
-  //       const newDocRef = doc(collection(db, "usuarios", userId, "clientes"));
-  //       await setDoc(newDocRef, { endereco: enderecoData });
-  //     }
-  
-  //     if (!rua || !bairro || !numero || !cep || !cidade || !estado) {
-  //       toast.error("Preencha todos os campos obrigatórios do endereço.");
-  //       return;
-  //     }
-  
-  //     if (isNaN(parseInt(numero, 10)) || !numero.trim()) {
-  //       toast.error("O número informado é inválido.");
-  //       return;
-  //     }
-
-  
-  //     const sucesso = await assignFuncionario(userId, cidade);
-  //     if (sucesso) {
-  //       toast.success("Solicitação finalizada com sucesso!");
-  //       navigate("/home-cliente");
-  //     } else {
-  //       toast.error("Nenhum funcionário disponível no momento.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Erro ao salvar endereço:", error);
-  //     toast.error("Erro ao salvar endereço.");
-  //   }
-  // };
   
   const handleSaveEndereco = async (event) => {
     event.preventDefault();
@@ -264,9 +198,11 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
       const sucesso = await assignFuncionario(userId, cidade);
       if (sucesso) {
         toast.success("Solicitação finalizada com sucesso!");
-        setTimeout(() => {
-          navigate("/home-cliente");
-        }, 3000);
+        if (selectedPayment === "Boleto") {
+          setTimeout(() => {
+            navigate("/home-cliente");
+          }, 3000);
+        }
       } else {
         toast.error("Nenhum funcionário disponível no momento.");
       }
@@ -276,106 +212,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
     }
   };
   
-  
-  
-  // const assignFuncionario = async (userId, cidadeCliente) => {
-  //   try {
-  //     const servicoId = localStorage.getItem("servicoId");
-  //     const modalidade = localStorage.getItem("modalidadeServico");
-  
-  //     if (!servicoId || !modalidade) {
-  //       toast.error("Erro: Serviço não encontrado.");
-  //       return false;
-  //     }
-  
-  //     // Buscar todos os usuários com a subcoleção 'funcionarios'
-  //     const usuariosRef = collection(db, "usuarios");
-  //     const usuariosSnapshot = await getDocs(usuariosRef);
-  
-  //     const funcionariosDisponiveis = [];
-  
-  //     for (const usuarioDoc of usuariosSnapshot.docs) {
-  //       const usuarioId = usuarioDoc.id;
-  //       const funcionariosRef = collection(db, "usuarios", usuarioId, "funcionarios");
-  //       const funcionariosSnapshot = await getDocs(funcionariosRef);
-  
-  //       for (const funcionarioDoc of funcionariosSnapshot.docs) {
-  //         const funcionarioData = funcionarioDoc.data();
-  //         const enderecoFuncionario = funcionarioData.endereco || {};
-  
-  //         if (
-  //           funcionarioData.tipo_de_servico === modalidade &&
-  //           enderecoFuncionario.cidade === cidadeCliente
-  //         ) {
-  //           const hoje = new Date();
-  //           let compromissosSemana = parseInt(funcionarioData.compromissos_semana || "0", 10);
-  //           let semana = funcionarioData.semana ? new Date(funcionarioData.semana) : null;
-  
-  //           // Resetar contador semanal se for uma nova semana
-  //           if (semana && (hoje - semana) / (1000 * 60 * 60 * 24 * 7) >= 1) {
-  //             compromissosSemana = 0; // Resetar compromissos da semana
-  //             semana = hoje; // Atualizar data para a semana atual
-  //           }
-  
-  //           // Adicionar funcionário se ainda pode assumir serviços
-  //           if (compromissosSemana < 7) {
-  //             funcionariosDisponiveis.push({
-  //               id: funcionarioDoc.id,
-  //               compromissos_semana: compromissosSemana,
-  //               semana: semana || hoje,
-  //               ref: funcionarioDoc.ref,
-  //               ...funcionarioData,
-  //             });
-  //           }
 
-  //           if (!funcionarioData.compromissos_semana || !funcionarioData.semana) {
-  //             compromissosSemana = 0;
-  //             semana = hoje;
-  //           } else {
-  //             compromissosSemana = parseInt(funcionarioData.compromissos_semana, 10);
-  //             semana = new Date(funcionarioData.semana);
-  //           }
-
-  //           await updateDoc(funcionarioSelecionado.ref, {
-  //             compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
-  //             semana: funcionarioSelecionado.semana || hoje,
-  //           });
-            
-            
-  //         }
-  //       }
-  //     }
-  
-  //     if (funcionariosDisponiveis.length === 0) {
-  //       toast.error("Nenhum funcionário disponível para esta modalidade na sua cidade.");
-  //       return false;
-  //     }
-  
-  //     // Selecionar o funcionário com menos compromissos
-  //     const funcionarioSelecionado = funcionariosDisponiveis.sort(
-  //       (a, b) => a.compromissos_semana - b.compromissos_semana
-  //     )[0];
-  
-  //     // Atualizar contador semanal e data no Firestore
-  //     await updateDoc(funcionarioSelecionado.ref, {
-  //       compromissos_semana: funcionarioSelecionado.compromissos_semana + 1,
-  //       semana: funcionarioSelecionado.semana || new Date(),
-  //     });
-  
-  //     // Atualizar o ID do funcionário no serviço
-  //     await updateDoc(doc(db, "servicos", servicoId), {
-  //       funcionario_id: funcionarioSelecionado.id,
-  //     });
-
-  
-  //     toast.success(`Funcionário ${funcionarioSelecionado.nome} foi atribuído ao serviço!`);
-  //     return true;
-  //   } catch (error) {
-  //     console.error("Erro ao atribuir funcionário:", error);
-  //     toast.error("Erro ao atribuir funcionário.");
-  //     return false;
-  //   }
-  // };
   
   const assignFuncionario = async (userId, cidadeCliente) => {
     try {
@@ -465,11 +302,34 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
    // Função para gerar boleto
    const gerarBoleto = async (valorServico) => {
     const servicoId = localStorage.getItem("servicoId");
+    const userSession = getUserSession();
+  
+    if (!userSession) {
+      toast.error("Erro: Usuário não logado.");
+      return;
+    }
+  
+    const userId = userSession.userId;
     const servicoDoc = await getDoc(doc(db, "servicos", servicoId));
   
     let funcionarioNome = "Funcionário não atribuído";
-    if (servicoDoc.exists() && servicoDoc.data().funcionario_id) {
-      funcionarioNome = await fetchNomeFuncionario(servicoDoc.data().funcionario_id);
+    let clienteNome = "Cliente não identificado";
+  
+    try {
+      // Obter nome do funcionário, se atribuído
+      if (servicoDoc.exists() && servicoDoc.data().funcionario_id) {
+        funcionarioNome = await fetchNomeFuncionario(servicoDoc.data().funcionario_id);
+      }
+  
+      // Obter nome do cliente
+      const clienteRef = collection(db, `usuarios/${userId}/clientes`);
+      const clienteSnapshot = await getDocs(clienteRef);
+      if (!clienteSnapshot.empty) {
+        const clienteDoc = clienteSnapshot.docs[0];
+        clienteNome = clienteDoc.data().nome || clienteNome;
+      }
+    } catch (error) {
+      console.error("Erro ao obter informações do cliente ou funcionário:", error);
     }
   
     // Exibir toast antes de gerar o boleto
@@ -487,23 +347,47 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
   
     pdf.setFontSize(12);
     pdf.text("Prestador de Serviços: WeClean", 10, 40);
-    pdf.text(`Responsável pela realização do serviço: ${funcionarioNome}`, 10, 50);
-    pdf.text(`Data: ${new Date().toLocaleDateString()}`, 10, 60);
-    pdf.text(`Valor: R$ ${parseFloat(valorServico).toFixed(2)}`, 10, 70);
-    pdf.text(`Linha Digitável: ${linhaDigitavel}`, 10, 80);
+    pdf.text(`Cliente: ${clienteNome}`, 10, 50);
+    pdf.text(`Responsável pela realização do serviço: ${funcionarioNome}`, 10, 60);
+    pdf.text(`Data: ${new Date().toLocaleDateString()}`, 10, 70);
+    pdf.text(`Valor: R$ ${parseFloat(valorServico).toFixed(2)}`, 10, 80);
+    pdf.text(`Linha Digitável: ${linhaDigitavel}`, 10, 90);
   
     const barcodeDataURL = canvas.toDataURL();
-    pdf.addImage(barcodeDataURL, "PNG", 10, 90, 190, 20);
+    pdf.addImage(barcodeDataURL, "PNG", 10, 100, 190, 20);
   
     pdf.save("boleto_weclean.pdf");
-
+  
     return linhaDigitavel;
   };
+  
   
   // Função para alterar a seleção do radiobutton
   const handlePaymentChange = (event) => {
     setSelectedPayment(event.target.value); // Atualiza o valor selecionado
   };
+
+  // const gerarQRCodePix = async (valorServico) => {
+  //   const pixData = {
+  //     chave: "suporte@weclean.com.br",
+  //     nome: "WeClean Serviços LTDA",
+  //     valor: parseFloat(valorServico).toFixed(2),
+  //     cidade: "São Paulo",
+  //     descricao: "Pagamento WeClean",
+  //   };
+  
+  //   const pixString = `
+  //     00020126360014BR.GOV.BCB.PIX0114${pixData.chave}
+  //     520400005303986540${pixData.valor}5802BR
+  //     5913${pixData.nome}6009${pixData.cidade}
+  //     62170503***6304
+  //   `.replace(/\s/g, ""); // Remove espaços
+  
+  //   setPixQrCodeData(pixString); // Ainda define o estado para o modal, se necessário
+  //   setShowPixModal(true);
+  
+  //   return pixString; // Retorna o valor para uso imediato
+  // };
 
   const gerarQRCodePix = async (valorServico) => {
     const pixData = {
@@ -521,11 +405,20 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
       62170503***6304
     `.replace(/\s/g, ""); // Remove espaços
   
-    setPixQrCodeData(pixString); // Ainda define o estado para o modal, se necessário
+    // Exibir os toasts antes de abrir o modal
+    toast.success("Solicitação realizada com sucesso! Veja o QR Code para concluir o pagamento.");
     setShowPixModal(true);
   
-    return pixString; // Retorna o valor para uso imediato
+    // Bloqueia o botão "Fechar e voltar ao Início" por 10 segundos
+    setModalBlocked(true);
+    setTimeout(() => {
+      setModalBlocked(false); // Desbloqueia após 10 segundos
+    }, 10000);
+  
+    setPixQrCodeData(pixString); // Define o QR Code para exibição no modal
+    return pixString; // Retorna o valor
   };
+  
   
 
   const baixarQRCodePix = (pixData) => {
@@ -554,11 +447,14 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
   };
   
   
-  
+  const handleCancel = () => {
+    navigate('/home-cliente');
+  };
 
   return (
     <div className="form-page-container">
       <ToastContainer />
+      <Chatbot userType="cliente" />
       <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
         <Container>
           <Navbar.Brand href="#" className="fs-4 logo">
@@ -729,7 +625,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
             </div>
           </div>
           <div className="ff-btn-div">
-            <button className="cancel-button">Cancelar e voltar</button>
+          <button onClick={handleCancel} type="reset" className="cancel-button">Cancelar e voltar</button>
             <button className="confirm-button2" onClick={handleSaveEndereco}>
               Finalizar solicitação
             </button>
@@ -737,7 +633,7 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
         </form>
       </div>
 
-      <Modal
+      {/* <Modal
         show={showPixModal}
         onHide={() => {
           setShowPixModal(false);
@@ -787,7 +683,60 @@ const [pixQrCodeData, setPixQrCodeData] = useState(null);
             Fechar e voltar ao Início
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
+
+<Modal
+  show={showPixModal}
+  onHide={() => {
+    setShowPixModal(false);
+  }}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>Pagamento via Pix</Modal.Title>
+  </Modal.Header>
+  <Modal.Body className="text-center">
+    <p className="alert alert-warning">
+      Atenção! Faça o download do QR Code ou copie o código PIX antes de fechar o modal, pois essa informação não pode ser perdida.
+    </p>
+    {pixQrCodeData && (
+      <>
+        <QRCodeCanvas value={pixQrCodeData} size={256} />
+        <p className="mt-3" style={{ wordWrap: "break-word", wordBreak: "break-word" }}>
+          <strong>Código Pix:</strong> {pixQrCodeData}
+          <br />
+          <Button
+            variant="link"
+            onClick={() => navigator.clipboard.writeText(pixQrCodeData)}
+            style={{ marginLeft: "10px", padding: 0 }}
+          >
+            Copiar
+          </Button>
+        </p>
+        <Button
+          variant="primary"
+          className="mt-3 btn-baixar-pix"
+          onClick={() => baixarQRCodePix(pixQrCodeData)}
+        >
+          Baixar QR Code em PDF
+        </Button>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button
+      variant="secondary"
+      disabled={modalBlocked} // Bloqueia o botão durante 10 segundos
+      onClick={() => {
+        setShowPixModal(false);
+        navigate("/home-cliente");
+      }}
+    >
+      {modalBlocked ? "Aguarde..." : "Fechar e voltar ao Início"}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
 
     </div>
   );

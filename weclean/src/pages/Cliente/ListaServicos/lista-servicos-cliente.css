@@ -71,27 +71,28 @@
     justify-content: flex-start;
     width: 100%;
     padding: 3.5%;
-    padding-left: 3.8%;
+    padding-left: 0;
     padding-top: 0;
     padding-bottom: 2%;
     height: 50px;
     margin-top: -2rem;
+    margin-bottom: 5px;
 
 }
 
 .lsc-header-txt{
     height: 100%;
-    margin-left: 20px;
+    margin-left: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     padding-top: 5px;
     color: var(--corPrincipal);
     font-weight: 700;
-
+    margin-bottom: 5px;
 }
 
-.lsc-content{
+/* .lsc-content{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -102,11 +103,24 @@
     min-height: 600px;
     height: 820px;
     margin-top: -20px;
-    /* margin-bottom: 3rem; */
-}
+} */
 
 .lsc-abas-servicos {
     margin-bottom: 20px;
+}
+
+.lsc-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    height: auto;
+    padding: 2%;
+    width: 100%;
+    background-color: rgba(227, 187, 244, 0.4);
+    margin-top: 0;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 }
 
 .lsc-card {
@@ -116,11 +130,26 @@
     justify-content: flex-start !important;
     text-align: left;
     width: 100%;
-    height: 110px;
+    height: 120px;
     background: var(--corBg);
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     font-family: "DM Sans", sans-serif !important;
+}
+
+.lsc-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.lsc-card .css-1lt5qva-MuiCardContent-root {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 }
 
 .lsc-card-title {
@@ -190,5 +219,19 @@
     z-index: 1040; 
 }
 
+.lsc-cancel-button {
+    background: red !important;
+    color: white !important;
+    border-radius: 5px !important;
+    cursor: pointer;
+    text-transform: none !important;
+    margin-left: 10px !important;
+}
 
-  
+.lsc-btn-fechar {
+    background: gray !important;
+    color: white !important;
+    border-radius: 5px !important;
+    text-transform: none !important;
+    margin-left: 10px !important;
+}

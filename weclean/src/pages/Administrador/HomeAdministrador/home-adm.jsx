@@ -99,87 +99,88 @@ const HomeAdministrador = () => {
       try {
         const serviceQuery = query(collection(db, "servicos"));
         const querySnapshot = await getDocs(serviceQuery);
-
+  
         const fetchedServicos = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
-        setServicos(fetchedServicos); // Atualiza o estado 'servicos' com os dados
+  
+        setServicos(fetchedServicos); // Atualiza o estado 'servicos' com todos os serviços
       } catch (error) {
         console.error("Erro ao buscar os serviços:", error);
       }
     };
-
+  
     fetchServicos();
   }, []);
+  
 
-  useEffect(() => {
-    const fetchServiceData = async () => {
-      const serviceQuery = query(collection(db, "servicos"));
-      const querySnapshot = await getDocs(serviceQuery);
+  // useEffect(() => {
+  //   const fetchServiceData = async () => {
+  //     const serviceQuery = query(collection(db, "servicos"));
+  //     const querySnapshot = await getDocs(serviceQuery);
 
-      // Corrigido: cityCounts agora é definido antes do loop
-      const cityCounts = {};
-      const serviceCounts = {
-        faxina: 0,
-        lavanderia: 0,
-        cozinha: 0,
-        jardinagem: 0,
-      };
+  //     // Corrigido: cityCounts agora é definido antes do loop
+  //     const cityCounts = {};
+  //     const serviceCounts = {
+  //       faxina: 0,
+  //       lavanderia: 0,
+  //       cozinha: 0,
+  //       jardinagem: 0,
+  //     };
 
-      querySnapshot.forEach(async (serviceDoc) => {
-        const { cliente_id } = serviceDoc.data();
-        const userDoc = await getDoc(doc(db, "usuarios", cliente_id));
-        const city = userDoc?.data()?.clientes?.endereco?.cidade;
+  //     querySnapshot.forEach(async (serviceDoc) => {
+  //       const { cliente_id } = serviceDoc.data();
+  //       const userDoc = await getDoc(doc(db, "usuarios", cliente_id));
+  //       const city = userDoc?.data()?.clientes?.endereco?.cidade;
 
-        if (city) {
-          cityCounts[city] = (cityCounts[city] || 0) + 1;
-        }
-      });
+  //       if (city) {
+  //         cityCounts[city] = (cityCounts[city] || 0) + 1;
+  //       }
+  //     });
 
-      const data = Object.entries(serviceCounts).map(([name, value]) => ({
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        value,
-      }));
-      setPieData(data);
-    };
+  //     const data = Object.entries(serviceCounts).map(([name, value]) => ({
+  //       name: name.charAt(0).toUpperCase() + name.slice(1),
+  //       value,
+  //     }));
+  //     setPieData(data);
+  //   };
 
-    fetchServiceData();
-  }, []);
+  //   fetchServiceData();
+  // }, []);
 
-  useEffect(() => {
-    const fetchClientData = async () => {
-      try {
-        const clientQuery = query(
-          collection(db, "usuarios"),
-          where("funcao", "==", "cliente")
-        );
-        const querySnapshot = await getDocs(clientQuery);
+  // useEffect(() => {
+  //   const fetchClientData = async () => {
+  //     try {
+  //       const clientQuery = query(
+  //         collection(db, "usuarios"),
+  //         where("funcao", "==", "cliente")
+  //       );
+  //       const querySnapshot = await getDocs(clientQuery);
 
-        let residencial = 0;
-        let empresa = 0;
+  //       let residencial = 0;
+  //       let empresa = 0;
 
-        querySnapshot.forEach((doc) => {
-          const clienteData = doc.data();
-          if (clienteData?.clientes?.cpf) {
-            residencial += 1;
-          } else if (clienteData?.clientes?.cnpj) {
-            empresa += 1;
-          }
-        });
+  //       querySnapshot.forEach((doc) => {
+  //         const clienteData = doc.data();
+  //         if (clienteData?.clientes?.cpf) {
+  //           residencial += 1;
+  //         } else if (clienteData?.clientes?.cnpj) {
+  //           empresa += 1;
+  //         }
+  //       });
 
-        setLineData([
-          { name: "Residencial", value: residencial },
-          { name: "Empresa", value: empresa },
-        ]);
-      } catch (error) {
-        console.error("Erro ao buscar dados de clientes:", error);
-      }
-    };
+  //       setLineData([
+  //         { name: "Residencial", value: residencial },
+  //         { name: "Empresa", value: empresa },
+  //       ]);
+  //     } catch (error) {
+  //       console.error("Erro ao buscar dados de clientes:", error);
+  //     }
+  //   };
 
-    fetchClientData();
-  }, []);
+  //   fetchClientData();
+  // }, []);
 
   // useEffect(() => {
   //   const fetchCityData = async () => {
@@ -233,41 +234,109 @@ const HomeAdministrador = () => {
   // }, []);
 
   useEffect(() => {
-    const fetchMonthlyProfit = async () => {
-      try {
-        const now = new Date();
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(now.getMonth() - 1);
+    if (servicos.length > 0) {
+      const filteredData = servicos.reduce((acc, servico) => {
+        const modalidade = servico.modalidade_servico || "Não especificada";
+        const valor = parseFloat(servico.valor || 0);
+  
+        const existingEntry = acc.find((item) => item.name === modalidade);
+        if (existingEntry) {
+          existingEntry.value += valor;
+        } else {
+          acc.push({ name: modalidade, value: valor });
+        }
+  
+        return acc;
+      }, []);
+  
+      setLineData(filteredData); // Define os dados consolidados para o LineChart
+      setLucroTotal(
+        filteredData.reduce((sum, item) => sum + item.value, 0) // Soma total dos lucros
+      );
+    }
+  }, [servicos]);
 
-        const serviceQuery = query(
-          collection(db, "servicos"),
-          where("criado_em", ">=", oneMonthAgo)
-        );
-        const querySnapshot = await getDocs(serviceQuery);
+// Atualização de gráficos e dados derivados de `servicos`
+useEffect(() => {
+  if (servicos.length > 0) {
+    // Atualizar contadores de modalidades (PieChart)
+    const modalidadeCounts = servicos.reduce((acc, servico) => {
+      const modalidade = servico.modalidade_servico?.toLowerCase() || "não especificada";
+      acc[modalidade] = (acc[modalidade] || 0) + 1;
+      return acc;
+    }, {});
 
-        let totalProfit = 0;
-        const filteredData = [];
+    const pieChartData = Object.entries(modalidadeCounts).map(([name, value]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      value,
+    }));
+    setPieData(pieChartData);
 
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.status !== "cancelado") {
-            totalProfit += data.valor || 0;
-            filteredData.push({
-              name: data.modalidade_servico,
-              value: data.valor,
-            });
-          }
-        });
-
-        setLineData(filteredData);
-        setLucroTotal(totalProfit); // Armazena o lucro total
-      } catch (error) {
-        console.error("Erro ao calcular o lucro mensal:", error);
+    // Atualizar dados do LineChart
+    const lineChartData = servicos.reduce((acc, servico) => {
+      const modalidade = servico.modalidade_servico || "Não especificada";
+      const valor = parseFloat(servico.valor || 0);
+      const existingEntry = acc.find((item) => item.name === modalidade);
+      if (existingEntry) {
+        existingEntry.value += valor;
+      } else {
+        acc.push({ name: modalidade, value: valor });
       }
-    };
+      return acc;
+    }, []);
+    setLineData(lineChartData);
 
-    fetchMonthlyProfit();
-  }, []);
+    // Atualizar entradas recentes (Tabela)
+    const recentData = [...servicos]
+      .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em))
+      .slice(0, 5)
+      .map((service) => ({
+        codigo: service.id,
+        modalidade_servico: service.modalidade_servico || "Não especificada",
+        valor: parseFloat(service.valor || 0),
+      }));
+    setEntradasRecentes(recentData);
+  }
+}, [servicos]);
+
+  
+
+  // useEffect(() => {
+  //   const fetchMonthlyProfit = async () => {
+  //     try {
+  //       const now = new Date();
+  //       const oneMonthAgo = new Date();
+  //       oneMonthAgo.setMonth(now.getMonth() - 1);
+
+  //       const serviceQuery = query(
+  //         collection(db, "servicos"),
+  //         where("criado_em", ">=", oneMonthAgo)
+  //       );
+  //       const querySnapshot = await getDocs(serviceQuery);
+
+  //       let totalProfit = 0;
+  //       const filteredData = [];
+
+  //       querySnapshot.forEach((doc) => {
+  //         const data = doc.data();
+  //         if (data.status !== "cancelado") {
+  //           totalProfit += data.valor || 0;
+  //           filteredData.push({
+  //             name: data.modalidade_servico,
+  //             value: data.valor,
+  //           });
+  //         }
+  //       });
+
+  //       setLineData(filteredData);
+  //       setLucroTotal(totalProfit); // Armazena o lucro total
+  //     } catch (error) {
+  //       console.error("Erro ao calcular o lucro mensal:", error);
+  //     }
+  //   };
+
+  //   fetchMonthlyProfit();
+  // }, []);
 
   const [lucroTotal, setLucroTotal] = useState(0);
 
@@ -341,25 +410,25 @@ const HomeAdministrador = () => {
     );
   };
 
-  useEffect(() => {
-    const fetchRecentServices = async () => {
-      const serviceQuery = query(
-        collection(db, "servicos"),
-        orderBy("data_realizacao", "desc"),
-        limit(5)
-      );
-      const querySnapshot = await getDocs(serviceQuery);
+  // useEffect(() => {
+  //   const fetchRecentServices = async () => {
+  //     const serviceQuery = query(
+  //       collection(db, "servicos"),
+  //       orderBy("data_realizacao", "desc"),
+  //       limit(5)
+  //     );
+  //     const querySnapshot = await getDocs(serviceQuery);
 
-      const recentData = querySnapshot.docs.map((serviceDoc) => ({
-        codigo: serviceDoc.id,
-        ...serviceDoc.data(),
-      }));
+  //     const recentData = querySnapshot.docs.map((serviceDoc) => ({
+  //       codigo: serviceDoc.id,
+  //       ...serviceDoc.data(),
+  //     }));
 
-      setEntradasRecentes(recentData);
-    };
+  //     setEntradasRecentes(recentData);
+  //   };
 
-    fetchRecentServices();
-  }, []);
+  //   fetchRecentServices();
+  // }, []);
 
   return (
     <div className="home-administrador-container">
@@ -471,7 +540,7 @@ const HomeAdministrador = () => {
                   variant="h6"
                   style={{ color: "var(--corPrincipal)" }}
                 >
-                  Funcionários com base em serviços realizados
+                  Funcionários com base em compromissos na semana
                 </Typography>
                 <List>
                   {funcionarios.length > 0 ? (
@@ -507,7 +576,7 @@ const HomeAdministrador = () => {
                   <TableBody>
                     {entradasRecentes.map((entrada, index) => (
                       <TableRow key={index}>
-                        <TableCell>
+                        <TableCell style={{textTransform: "capitalize"}}>
                           {entrada.modalidade_servico || "N/A"}
                         </TableCell>
                         <TableCell>

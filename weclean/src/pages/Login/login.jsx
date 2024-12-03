@@ -115,15 +115,41 @@ function Login() {
           criado_em: serverTimestamp(),
           atualizado_em: serverTimestamp(),
         });
+  
+        // Cria o documento na subcoleção 'clientes' com os dados obrigatórios
+        const clienteRef = doc(collection(userRef, 'clientes'));
+        await setDoc(clienteRef, {
+          nome: user.displayName || '',
+          cpf: '', // CPF vazio, pois não é fornecido pelo Google
+          data_de_nascimento: '', // Pode ser preenchido posteriormente
+          telefone: user.phoneNumber || '', // Número de telefone do Google, se disponível
+          endereco: {
+            rua: '',
+            numero: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            cep: '',
+          }, // Inicializa como objeto vazio
+          status: 'ativo',
+          criado_em: serverTimestamp(),
+          atualizado_em: serverTimestamp(),
+        });
+  
+        toast.success('Cadastro com Google realizado com sucesso!');
+      } else {
+        toast.info('Bem-vindo de volta!');
       }
   
+      // Salva a sessão e redireciona o usuário
       saveUserSession(user.uid);
-      navigate('/home-cliente'); 
+      navigate('/home-cliente');
     } catch (error) {
       console.error('Erro ao fazer login com Google: ', error);
       toast.error('Erro ao fazer login com o Google. Tente novamente.');
     }
   };
+  
 
   const handleRedefSubmit = async (e) => {
     e.preventDefault();
@@ -192,7 +218,7 @@ function Login() {
 
             <div className="input-group mb-5 d-flex redefinir">
               <small>
-                <Button variant="link" className="btn-link" onClick={handleRedefShow}>
+                <Button variant="link" className="btn-link-login" onClick={handleRedefShow}>
                   Esqueceu a senha?
                 </Button>
               </small>
